@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import What from "../_components/what";
 import Who from "../_components/who";
+import { AppWrapper } from "@/components/ui/app-wrapper";
 type poll = {
    id: string;
    title: string;
@@ -48,7 +49,8 @@ export default function Client({ poll: initialPoll, sampleData }: { poll: poll }
    const allKeys = extractKeys(sampleData.map((user) => user));
 
    return (
-      <div className="flex flex-col px-32 py-16 w-full">
+      // <AppWrapper>
+      <div className="flex flex-col px-16 py-16 w-full overflow-hidden">
          <button
             onClick={async () => {
                const { data, error } = await supabase
@@ -59,11 +61,11 @@ export default function Client({ poll: initialPoll, sampleData }: { poll: poll }
          >
             push data
          </button>
-         <Tabs defaultValue="what" className="w-full">
+         <Tabs defaultValue="what" className="w-full ">
             {/* <div className="flex flex-row items-center justify-center">
               
             </div> */}
-            <div className="mb-10">
+            <div className="mb-10 ">
                <div className="flex flex-row items-end justify-between">
                   <div>
                      <p className="tracking-wider font-semibold text-neutral-600">FORMI</p>
@@ -113,6 +115,7 @@ export default function Client({ poll: initialPoll, sampleData }: { poll: poll }
             </TabsContent>
          </Tabs>
       </div>
+      // </AppWrapper>
    );
 }
 

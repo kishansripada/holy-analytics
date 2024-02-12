@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { Switch } from "@/components/ui/switch";
 import Client from "./client";
-export default async function Index() {
+export default async function Index({ params: { id } }: { params: { id: string } }) {
    const cookieStore = cookies();
    const supabase = createClient(cookieStore);
 
@@ -11,8 +11,9 @@ export default async function Index() {
       data: { user },
    } = await supabase.auth.getUser();
 
-   let { data: projects, error: projectError } = await supabase.from("projects").select("*").eq("user_id", user.id);
-   return <Client projects={projects}></Client>;
+   let { data: polls, error } = await supabase.from("polls").select("*, app_id (name)").eq("app_id", id);
+
+   return <Client polls={polls}></Client>;
 }
 
 function formatDate(date: Date): string {

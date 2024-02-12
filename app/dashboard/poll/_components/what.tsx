@@ -2,7 +2,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MCQ } from "@/Widget/Widget";
+import { MCQ } from "../../../../Widget/dist/userpollts";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -124,6 +124,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                               placeholder="Subtitle"
                            />
                            <Button
+                              className="w-12 p-0"
                               onClick={() => {
                                  setPoll((poll) => {
                                     return {
@@ -137,7 +138,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                                     };
                                  });
                               }}
-                              variant={"destructive"}
+                              variant={"outline"}
                            >
                               <svg
                                  xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +146,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                                  viewBox="0 0 24 24"
                                  strokeWidth={1.5}
                                  stroke="currentColor"
-                                 className="w-6 h-6"
+                                 className="w-5 h-5 text-neutral-600"
                               >
                                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                               </svg>

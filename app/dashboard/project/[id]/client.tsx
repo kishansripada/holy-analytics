@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/client";
 import { Switch } from "@/components/ui/switch";
-import { MCQ, MCQShadow, YesOrNo } from "../././../Widget/dist/userpollts";
+import { MCQ, MCQShadow, YesOrNo } from "@/Widget/dist/userpollts";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { HDivider } from "@/components/ui/hdivider";
@@ -12,7 +12,7 @@ import Link from "next/link";
 import AuthButton from "@/components/AuthButton";
 import { Button } from "@/components/ui/button";
 
-export default function Client({ projects }: any) {
+export default function Client({ polls }: any) {
    const newNotification = async () => {
       const supabase = createClient();
       const { data, error } = await supabase.from("polls").insert([{ title: "My new poll!" }]);
@@ -23,35 +23,40 @@ export default function Client({ projects }: any) {
       <div className="flex flex-row h-screen w-full">
          <div className=" w-full flex flex-col">
             <div className="h-20 w-full px-10 flex flex-col justify-center">
-               <p className="tracking-tight font-bold text-3xl">Projects</p>
+               <p className="tracking-tight font-bold text-3xl">{polls[0].app_id.name}</p>
                {/* <AuthButton /> */}
             </div>
 
+            {/* <HDivider></HDivider> */}
             <div className="h-[1px] w-full bg-neutral-300"></div>
-            <div className="px-10 py-10">
+            <div className="px-10 py-10 flex-col flex gap-10">
                <div className="flex flex-row items-center justify-between">
                   <div></div>
-                  <Button>New project</Button>
+                  <Button>New notification</Button>
                </div>
-               <div className="grid grid-cols-3 w-full gap-20">
-                  {projects?.map((project) => {
+               <div className="grid grid-cols-2 w-full gap-20 ">
+                  {polls?.map((poll) => {
                      return (
-                        <Link
-                           className="w-full h-[70px] rounded-md border text-neutral-700 transition hover:bg-neutral-50 flex flex-row items-center justify-between px-4  border-neutral-300 shadow-sm"
-                           href={`dashboard/project/${project.app_id}`}
-                           key={project.app_id}
-                        >
-                           <div className="font-medium ">{project.name}</div>
-                           <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="w-6 h-6"
-                           >
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                           </svg>
+                        <Link href={`dashboard/poll/${poll.id}`} key={poll.id}>
+                           <div className="flex flex-col w-full justify-between  gap-5">
+                              <div className="flex flex-row w-full items-end justify-between">
+                                 <p className="tracking-tight font-medium text-2xl">{poll.title}</p>
+                                 <div className="flex flex-col items-end">
+                                    <p className="text-3xl font-medium text-neutral-900">34</p>
+                                    <p className="text-sm text-neutral-600 ">responses</p>
+                                 </div>
+                              </div>
+
+                              <div className="flex flex-col gap-4 justify-center h-full ">
+                                 <div className=" overflow-hidden select-none  w-[500px] min-h-[100px] rounded-lg border  dark:border-neutral-700 border-neutral-300">
+                                    {poll.poll_data.type === "mcq" ? (
+                                       <MCQ sendResponse={() => null} poll={poll}></MCQ>
+                                    ) : (
+                                       <YesOrNo sendResponse={() => null} poll={poll}></YesOrNo>
+                                    )}
+                                 </div>
+                              </div>
+                           </div>
                         </Link>
                      );
                   })}
