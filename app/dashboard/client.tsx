@@ -1,21 +1,31 @@
 "use client";
 
-import Header from "@/components/Header";
-import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/client";
-import { Switch } from "@/components/ui/switch";
-import { MCQ, MCQShadow, YesOrNo } from "../././../Widget/dist/userpollts";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { HDivider } from "@/components/ui/hdivider";
 import Link from "next/link";
-import AuthButton from "@/components/AuthButton";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 export default function Client({ projects }: any) {
-   const newNotification = async () => {
+   const router = useRouter();
+   const [newProjectName, setNewProjectName] = useState("");
+   const newProject = async () => {
       const supabase = createClient();
-      const { data, error } = await supabase.from("polls").insert([{ title: "My new poll!" }]);
+      const { data, error } = await supabase
+         .from("projects")
+         .insert([
+            {
+               name: newProjectName,
+            },
+         ])
+         .select("*")
+         .single();
+
+      router.refresh();
+      // router.push("/dashboard/poll/" + data.id);
    };
    const supabase = createClient();
 
@@ -31,9 +41,41 @@ export default function Client({ projects }: any) {
             <div className="px-10 py-10">
                <div className="flex flex-row items-center justify-between">
                   <div></div>
-                  <Button>New project</Button>
+                  <Dialog>
+                     <DialogTrigger>
+                        {" "}
+                        <Button>New project</Button>
+                     </DialogTrigger>
+
+                     <DialogContent>
+                        <DialogHeader>
+                           <DialogTitle>Name your project</DialogTitle>
+                           <DialogDescription>This is the name of the app you are putting your notification in</DialogDescription>
+                           <div className="h-4"></div>
+                           <Input
+                              value={newProjectName}
+                              onChange={(e) => {
+                                 setNewProjectName(e.target.value);
+                              }}
+                           />
+                           <div className="h-3"></div>
+                           <div className="flex flex-row justify-between">
+                              <div></div>
+                              <DialogClose>
+                                 <Button
+                                    onClick={() => {
+                                       newProject();
+                                    }}
+                                 >
+                                    Create
+                                 </Button>
+                              </DialogClose>
+                           </div>
+                        </DialogHeader>
+                     </DialogContent>
+                  </Dialog>
                </div>
-               <div className="grid grid-cols-3 w-full gap-20">
+               <div className="grid grid-cols-3 w-full gap-x-20 gap-y-10 py-10">
                   {projects?.map((project) => {
                      return (
                         <Link

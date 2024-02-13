@@ -6,38 +6,9 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { poll } from "@/utils/types";
 
-type poll = {
-   id: string;
-   title: string;
-   active: boolean;
-   poll_data: {
-      title: string;
-      subtitle: string;
-      options: option[];
-   };
-   conditions: condition[];
-};
-
-type condition = {
-   id: string;
-   condition_string: string;
-};
-
-type option = {
-   id: string;
-   title: string;
-   //    votes: number;
-};
-
-type User = {
-   id: string;
-   created_at: string;
-   email: string;
-   selectedUses: string[];
-};
-
-export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll: Function }) {
+export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll: Function; sampleData: any }) {
    const [testIds, setTestIds] = useState("");
    const allKeys = extractKeys(sampleData.map((user) => user));
    const supabase = createClient();
@@ -54,7 +25,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                      setPoll((poll: poll) => {
                         return {
                            ...poll,
-                           conditions: [...poll.conditions, { id: Math.random().toString(36).substring(7), condition_string: "" }],
+                           conditions: [...(poll.conditions || []), { id: Math.random().toString(36).substring(7), condition_string: "" }],
                         };
                      });
                   }}
@@ -69,7 +40,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                <p className="">{`user.created_at < (new Date() - 7)`}</p>
                <p className="">user.selectedUses.includes("Cheer")</p> */}
             </div>
-            {poll.conditions.map((condition: condition) => {
+            {poll.conditions.map((condition) => {
                return (
                   <div className="flex flex-row w-full items-center gap-1.5 ">
                      <Input
@@ -148,11 +119,11 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                   </p>
                   <div className="flex flex-row justify-between">
                      <p className="text-sm text-neutral-600 mb-1">Rows highlighted in green pass all conditions</p>
-                     <p className="text-sm text-neutral-600 mb-1">
+                     {/* <p className="text-sm text-neutral-600 mb-1">
                         {" "}
                         <span className="font-bold">42%</span>
                         {" of users pass"}
-                     </p>
+                     </p> */}
                   </div>
                </div>
             </div>

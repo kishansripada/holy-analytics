@@ -1,40 +1,9 @@
 "use client";
-import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MCQ, YesOrNo } from "../../../../Widget/dist/userpollts";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-
-type poll = {
-   id: string;
-   title: string;
-   active: boolean;
-   poll_data: {
-      title: string;
-      subtitle: string;
-      options: option[];
-   };
-   conditions: condition[];
-};
-
-type condition = {
-   id: string;
-   condition_string: string;
-};
-
-type option = {
-   id: string;
-   title: string;
-   //    votes: number;
-};
-
-type User = {
-   id: string;
-   created_at: string;
-   email: string;
-   selectedUses: string[];
-};
+import { poll } from "@/utils/types";
 
 export default function What({ poll, setPoll }: { poll: poll; setPoll: Function }) {
    return (
@@ -215,7 +184,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                <div className="flex flex-row justify-between w-full items-end">
                   <p className="text-neutral-600 text-xl font-semibold">Live preview</p>
 
-                  <Button variant={"outline"}>Open modal</Button>
+                  {/* <Button variant={"outline"}>Open modal</Button> */}
                   {/* <div className="flex items-center space-x-2"></div> */}
                </div>
                <div className=" overflow-hidden select-none  w-[500px] min-h-[100px] rounded-lg border  dark:border-neutral-700 border-neutral-300">

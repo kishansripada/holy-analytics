@@ -13,7 +13,7 @@ export default async function Index({ params: { id } }: { params: { id: string }
       data: { user },
    } = await supabase.auth.getUser();
 
-   let { data: poll, error } = await supabase.from("polls").select("*, app_id (name)").eq("id", id).single();
+   let { data: poll, error } = await supabase.from("polls").select("*, app_id (name, app_id)").eq("id", id).single();
    let { data: sampleData } = await supabase.from("sample_data").select("*");
    //    .eq("id", id).single();
    return <Client poll={poll} sampleData={sampleData}></Client>;

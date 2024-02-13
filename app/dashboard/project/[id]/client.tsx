@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { poll } from "@/utils/types";
 
-export default function Client({ polls, projectId }: any) {
+export default function Client({ polls, projectId, project }: { polls: poll[]; projectId: string; project: any }) {
    const router = useRouter();
    const [newNotificationName, setNewNotificationName] = useState("");
    const newNotification = async () => {
@@ -44,7 +45,7 @@ export default function Client({ polls, projectId }: any) {
       <div className="flex flex-row h-screen w-full">
          <div className=" w-full flex flex-col">
             <div className=" py-7 w-full px-10 flex flex-col justify-center">
-               <p className="tracking-tight font-bold text-2xl">{polls[0].app_id.name}</p>
+               <p className="tracking-tight font-bold text-2xl">{project.name}</p>
                <p className="text-sm text-neutral-700">
                   <span className=" font-semibold">API Key:</span> <span>{projectId}</span>
                </p>
