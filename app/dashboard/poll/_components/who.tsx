@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 type poll = {
    id: string;
@@ -37,13 +38,14 @@ type User = {
 };
 
 export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll: Function }) {
+   const [testIds, setTestIds] = useState("");
    const allKeys = extractKeys(sampleData.map((user) => user));
    const supabase = createClient();
    console.log({ poll });
    console.log({ allKeys });
    return (
-      <div className="flex flex-row w-full justify-between h-full  gap-20 overflow-hidden">
-         <div className="flex flex-col gap-5 items-start w-1/2">
+      <div className="flex flex-row w-full justify-between h-full  gap-20 ">
+         <div className="flex flex-col gap-3 items-start w-1/2">
             <div className="flex flex-row items-end justify-between w-full">
                <p className="tracking-tight font-medium text-2xl">Write your filter conditions</p>
 
@@ -60,8 +62,9 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                   New condition
                </Button>
             </div>
+
             <div className="text-xs text-neutral-600">
-               <p className="text-sm text-neutral-800 mb-1">Write conditions in Javascript where the root object is "user"</p>
+               <p className="text-sm text-neutral-600 mb-1">Write conditions in Javascript where the root object is "user"</p>
                {/* <p className="">user.name === "Jonathan"</p>
                <p className="">{`user.created_at < (new Date() - 7)`}</p>
                <p className="">user.selectedUses.includes("Cheer")</p> */}
@@ -91,7 +94,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                         value={condition.condition_string}
                         type="title"
                         id="condition"
-                        placeholder={`e.g. user.selectedUses.includes("Cheer"); user.name === "Jonathan"; user.created_at < (new Date() - 7)"`}
+                        placeholder={`e.g. user.selectedUses.includes("Cheer")`}
                      />
                      <Button
                         className="w-12 p-0"
@@ -153,12 +156,12 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                   </div>
                </div>
             </div>
-            <div className="overflow-scroll w-full max-h-[450px] border-2 border-neutral-300 text-sm rounded-md">
+            <div className="overflow-scroll w-full max-h-[450px] border-2 border-neutral-300 text-xs rounded-md">
                {sampleData.length ? (
                   <div className="flex flex-row   ">
                      {Object.keys(sampleData[0].user).map((key) => (
                         <div className="flex flex-col min-w-[200px]">
-                           <div className=" border-b border-r h-[50px] min-h-[50px] flex flex-col justify-center font-semibold items-center">
+                           <div className=" border-b border-r h-[40px] min-h-[40px] flex flex-col justify-center font-semibold items-center">
                               {key}
                            </div>
                            {sampleData.map((user) => {
@@ -182,7 +185,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                                     style={{
                                        backgroundColor: passesAllConditions ? "rgb(0 255 0 / 25%)" : "transparent",
                                     }}
-                                    className=" border-b border-r h-[50px] min-h-[50px] flex flex-col justify-center"
+                                    className=" border-b border-r h-[40px] min-h-[40px] flex flex-col justify-center"
                                  >
                                     <div>{typeof value === "string" ? <span>{value}</span> : <span>{JSON.stringify(value)}</span>}</div>
                                  </div>

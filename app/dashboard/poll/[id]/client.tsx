@@ -11,6 +11,7 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "
 import What from "../_components/what";
 import Who from "../_components/who";
 import { AppWrapper } from "@/components/ui/app-wrapper";
+import Preview from "../_components/preview";
 type poll = {
    id: string;
    title: string;
@@ -50,12 +51,12 @@ export default function Client({ poll: initialPoll, sampleData }: { poll: poll }
 
    return (
       // <AppWrapper>
-      <div className="flex flex-col px-16 py-16 w-full overflow-hidden">
+      <div className="flex flex-col px-16 py-10 w-full overflow-hidden">
          <button
             onClick={async () => {
                const { data, error } = await supabase
                   .from("polls")
-                  .update({ poll_data: poll.poll_data, conditions: poll.conditions })
+                  .update({ poll_data: poll.poll_data, conditions: poll.conditions, test_ids: poll.test_ids })
                   .eq("id", poll.id);
             }}
          >
@@ -66,15 +67,20 @@ export default function Client({ poll: initialPoll, sampleData }: { poll: poll }
               
             </div> */}
             <div className="mb-10 ">
-               <div className="flex flex-row items-end justify-between">
-                  <div>
-                     <p className="tracking-wider font-semibold text-neutral-600">FORMI</p>
-                     <p className="tracking-tight font-medium text-4xl">{poll.title}</p>
-                  </div>
+               <div className="flex flex-row justify-center">
                   <TabsList>
                      <TabsTrigger value="what">Design it</TabsTrigger>
                      <TabsTrigger value="who">Choose who sees it</TabsTrigger>
+                     <TabsTrigger value="preview">Preview</TabsTrigger>
+                     <TabsTrigger value="responses">Responses</TabsTrigger>
                   </TabsList>
+               </div>
+               <div className="flex flex-row items-end justify-between">
+                  <div>
+                     <p className="tracking-wider font-semibold text-neutral-600">{poll?.app_id?.name || ""}</p>
+                     <p className="tracking-tight font-medium text-4xl">{poll.title}</p>
+                  </div>
+
                   <div className="flex flex-row gap-5 items-end">
                      {/* <div className="flex flex-col items-end">
                      <p className="text-3xl font-medium text-neutral-900">34</p>
@@ -112,6 +118,9 @@ export default function Client({ poll: initialPoll, sampleData }: { poll: poll }
             </TabsContent>
             <TabsContent value="who">
                <Who poll={poll} setPoll={setPoll} sampleData={sampleData}></Who>
+            </TabsContent>
+            <TabsContent value="preview">
+               <Preview poll={poll} setPoll={setPoll} sampleData={sampleData}></Preview>
             </TabsContent>
          </Tabs>
       </div>

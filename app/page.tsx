@@ -50,12 +50,17 @@ export default async function Index() {
             }
          `}</style>
          <nav className="w-full flex justify-center border-b border-b-foreground/10 h-20">
-            <div className="w-full max-w-6xl flex justify-between items-center p-3 text-sm">
-               <div className="flex flex-row items-center gap-4">
+            <div className="w-full max-w-7xl flex justify-between items-center p-3 text-sm">
+               <div className="flex flex-row items-end gap-4">
                   {/* <div className="w-8 h-8 rotate-12 border-4 border-purple-500"></div> */}
                   <p className="text-4xl">🙏🏽</p>
-                  <div className=" text-3xl font-medium ">holy user</div>
+                  <div className=" text-3xl font-medium whitespace-nowrap ">holy user</div>
+                  <div className="flex flex-row gap-5 items-end ml-4 text-neutral-500 text-sm  mb-1">
+                     <p>Pricing</p>
+                     <p>Features</p>
+                  </div>
                </div>
+
                <Link href={"/dashboard"}>
                   {" "}
                   <Button variant={"outline"}>Log in</Button>
@@ -63,23 +68,19 @@ export default async function Index() {
             </div>
          </nav>
 
-         <div className="flex flex-col gap-5">
+         <div className="flex flex-col ">
+            {/* <p className="text-center text-neutral-500 text-lg">Get to know your users with</p> */}
             <div className="animate-in text-6xl tracking-tight max-w-4xl text-center">
-               {" "}
                <span className="gradient font-semibold">Beautiful</span>, in-app product announcements & notifications
             </div>
-            <p className="text-center text-neutral-500 text-lg">for React developers</p>
+            <p className="text-center text-neutral-500 text-lg mt-5">for React developers</p>
          </div>
          <div className="blob pointer-events-none"></div>
          <div className="blob2 pointer-events-none"></div>
-         {/* <div className="w-full flex flex-row ">
-            <div className="relative top-[-100px] left-[-100px]">
-               <MCQWrapper></MCQWrapper>
-            </div>
-            <div className="relative top-[50px] right-[-100px]">
-               <MCQWrapper></MCQWrapper>
-            </div>
-         </div> */}
+         <div>
+            <p className="text-center text-neutral-500 text-lg">Get to know your users with our suite of notifications</p>
+            <div className="w-full flex flex-row "></div>
+         </div>
 
          <div className="mt-auto flex flex-row py-16 text-2xl text-center gap-12 text-neutral-800 w-full px-16 border-y border-neutral-300">
             <p className="">

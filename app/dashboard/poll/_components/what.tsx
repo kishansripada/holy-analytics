@@ -2,7 +2,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MCQ } from "../../../../Widget/dist/userpollts";
+import { MCQ, YesOrNo } from "../../../../Widget/dist/userpollts";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -69,7 +69,59 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                />
             </div>
             <div className="flex flex-col gap-4">
-               <div className="flex flex-row items-end w-full justify-between">
+               <div className="flex flex-row justify-between w-full">
+                  <div>
+                     <Label htmlFor="title">Negative text</Label>
+                     <Input
+                        className="w-full"
+                        onChange={(e) => {
+                           //  console.log(e);
+                           setPoll((poll) => {
+                              return {
+                                 ...poll,
+                                 poll_data: {
+                                    ...poll.poll_data,
+                                    yesorno: {
+                                       ...poll.poll_data.yesorno,
+                                       no_button: e.target.value,
+                                    },
+                                 },
+                              };
+                           });
+                        }}
+                        value={poll.poll_data.yesorno.no_button}
+                        type="negative"
+                        id="negative"
+                        placeholder="No, thanks"
+                     />
+                  </div>
+                  <div>
+                     <Label htmlFor="title">Affirmative text</Label>
+                     <Input
+                        className="w-full"
+                        onChange={(e) => {
+                           //  console.log(e);
+                           setPoll((poll) => {
+                              return {
+                                 ...poll,
+                                 poll_data: {
+                                    ...poll.poll_data,
+                                    yesorno: {
+                                       ...poll.poll_data.yesorno,
+                                       yes_button: e.target.value,
+                                    },
+                                 },
+                              };
+                           });
+                        }}
+                        value={poll.poll_data.yesorno.yes_button}
+                        type="affirmative"
+                        id="affirmative"
+                        placeholder="Sure"
+                     />
+                  </div>
+               </div>
+               {/* <div className="flex flex-row items-end w-full justify-between">
                   <Label htmlFor="title">Options</Label>
                   <Button
                      variant={"outline"}
@@ -93,12 +145,12 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                   >
                      New option
                   </Button>
-               </div>
-               <div className="grid grid-cols-2 w-full gap-4">
+               </div> */}
+               {/* <div className="grid grid-cols-2 w-full gap-4">
                   {poll.poll_data.options.map((option) => {
                      return (
                         <div className="flex flex-row w-full items-center gap-1.5 ">
-                           {/* <Label htmlFor="title">Subtitle</Label> */}
+                           <Label htmlFor="title">Subtitle</Label>
                            <Input
                               className="w-full"
                               onChange={(e) => {
@@ -154,7 +206,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                         </div>
                      );
                   })}
-               </div>
+               </div> */}
             </div>
          </div>
 
@@ -167,7 +219,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                   {/* <div className="flex items-center space-x-2"></div> */}
                </div>
                <div className=" overflow-hidden select-none  w-[500px] min-h-[100px] rounded-lg border  dark:border-neutral-700 border-neutral-300">
-                  <MCQ poll={poll}></MCQ>
+                  <YesOrNo poll={poll}></YesOrNo>
                </div>
             </div>
          </div>

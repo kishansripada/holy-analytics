@@ -13,7 +13,7 @@ export default async function Index({ params: { id } }: { params: { id: string }
 
    let { data: polls, error } = await supabase.from("polls").select("*, app_id (name)").eq("app_id", id);
 
-   return <Client polls={polls}></Client>;
+   return <Client projectId={id} polls={polls}></Client>;
 }
 
 function formatDate(date: Date): string {
