@@ -18,7 +18,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
       <div className="flex flex-row w-full justify-between h-full  gap-20 ">
          <div className="flex flex-col gap-3 items-start w-1/2">
             <div className="flex flex-row items-end justify-between w-full">
-               <p className="tracking-tight font-medium text-2xl">Write your filter conditions</p>
+               <p className="tracking-tight font-medium text-2xl">User segmentation</p>
 
                <Button
                   onClick={async () => {
@@ -35,7 +35,9 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
             </div>
 
             <div className="text-xs text-neutral-600">
-               <p className="text-sm text-neutral-600 mb-1">Write conditions in Javascript where the root object is "user"</p>
+               <p id="test" className="text-sm text-neutral-600 mb-1">
+                  Write conditions in Javascript where the root object is "user"
+               </p>
                {/* <p className="">user.name === "Jonathan"</p>
                <p className="">{`user.created_at < (new Date() - 7)`}</p>
                <p className="">user.selectedUses.includes("Cheer")</p> */}

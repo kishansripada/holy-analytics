@@ -1,0 +1,40 @@
+.gradient {
+    /* Beautiful, in-app product announcements & notifications */
+
+    line-height: 75px;
+    /* or 123% */
+    text-align: center;
+    letter-spacing: -1.9px;
+
+    background: linear-gradient(270.06deg, #ff0000 47.82%, #ff00f5 99.95%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.blob {
+    /* Rectangle 32 */
+
+    position: absolute;
+    width: 628px;
+    height: 641px;
+    left: 1026px;
+    top: -100px;
+
+    background: radial-gradient(50% 50% at 50% 50%, rgba(217, 1, 162, 0.14) 0%, rgba(217, 1, 162, 0) 100%);
+    filter: blur(50px);
+}
+
+.blob2 {
+    /* Rectangle 33 */
+
+    position: absolute;
+    width: 628px;
+    height: 641px;
+    left: -277px;
+    top: 200px;
+
+    background: radial-gradient(50% 50% at 50% 50%, rgba(217, 1, 1, 0.135) 0%, rgba(217, 1, 1, 0) 100%);
+    filter: blur(50px);
+}

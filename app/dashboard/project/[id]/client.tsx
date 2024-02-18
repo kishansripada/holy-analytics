@@ -3,9 +3,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { MCQ, MCQShadow, YesOrNo } from "@/Widget/dist/userpollts";
-
 import Link from "next/link";
-import AuthButton from "@/components/AuthButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -89,27 +87,23 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                      </DialogContent>
                   </Dialog>
                </div>
-               <div className="grid grid-cols-2 w-full gap-20 ">
+               <div className="flex flex-col w-full gap-5 ">
                   {polls?.map((poll) => {
                      return (
-                        <Link href={`/dashboard/poll/${poll.id}`} key={poll.id}>
-                           <div className="flex flex-col w-full justify-between  gap-5">
-                              <div className="flex flex-row w-full items-end justify-between">
-                                 <p className="tracking-tight font-medium text-2xl">{poll.title}</p>
-                                 <div className="flex flex-col items-end">
-                                    <p className="text-3xl font-medium text-neutral-900">34</p>
-                                    <p className="text-sm text-neutral-600 ">responses</p>
-                                 </div>
+                        <Link className="hover:bg-neutral-100 transition px-5 py-2 rounded-md" href={`/dashboard/poll/${poll.id}`} key={poll.id}>
+                           <div className="flex flex-row w-full items-start justify-between">
+                              <div className="flex flex-row gap-3 items-center">
+                                 <p className="tracking-tight font-medium text-2xl"> {poll.title}</p>
+                                 {poll.active ? (
+                                    <span className="rounded-full px-2 py-1 text-xs font-medium text-green-800 bg-green-200">Live</span>
+                                 ) : (
+                                    <span className="rounded-full px-2 py-1 text-xs font-medium text-yellow-900 bg-yellow-200">Inactive</span>
+                                 )}
                               </div>
 
-                              <div className="flex flex-col gap-4 justify-center h-full ">
-                                 <div className=" overflow-hidden select-none  w-[500px] min-h-[100px] rounded-lg border  dark:border-neutral-700 border-neutral-300">
-                                    {poll.poll_data.type === "mcq" ? (
-                                       <MCQ sendResponse={() => null} poll={poll}></MCQ>
-                                    ) : (
-                                       <YesOrNo sendResponse={() => null} poll={poll}></YesOrNo>
-                                    )}
-                                 </div>
+                              <div className="flex flex-col items-end">
+                                 <p className="text-3xl font-medium text-neutral-900">34</p>
+                                 <p className="text-sm text-neutral-600 ">responses</p>
                               </div>
                            </div>
                         </Link>

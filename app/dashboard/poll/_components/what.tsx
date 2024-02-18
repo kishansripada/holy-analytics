@@ -1,13 +1,26 @@
 "use client";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MCQ, YesOrNo } from "../../../../Widget/dist/userpollts";
 import { Button } from "@/components/ui/button";
 import { poll } from "@/utils/types";
-
+import { useEffect, useState } from "react";
+import Script from "next/script";
+import RemoteWidget from "./remote-widget";
 export default function What({ poll, setPoll }: { poll: poll; setPoll: Function }) {
+   // const YesNoComponent = window.YesOrNo;
+
    return (
       <div className="flex flex-row w-full justify-between  gap-20 ">
+         {/* <Script
+            onReady={() => {
+               // setWidget(window.YesOrNo);
+               // console.log();
+            }}
+            strategy="afterInteractive"
+            type="module"
+            src="https://holyuser-widget.vercel.app/holyuser.js"
+         ></Script> */}
          <div className="flex flex-col pt-5 w-full gap-6">
             <div className="grid w-full items-center gap-1.5 ">
                <Label htmlFor="title">Title</Label>
@@ -39,7 +52,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             </div>
             <div className="flex flex-col gap-4">
                <div className="flex flex-row justify-between w-full">
-                  <div>
+                  {/* <div>
                      <Label htmlFor="title">Negative text</Label>
                      <Input
                         className="w-full"
@@ -88,7 +101,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                         id="affirmative"
                         placeholder="Sure"
                      />
-                  </div>
+                  </div> */}
                </div>
                {/* <div className="flex flex-row items-end w-full justify-between">
                   <Label htmlFor="title">Options</Label>
@@ -183,12 +196,10 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             <div className="flex flex-col gap-4 justify-center h-full ">
                <div className="flex flex-row justify-between w-full items-end">
                   <p className="text-neutral-600 text-xl font-semibold">Live preview</p>
-
-                  {/* <Button variant={"outline"}>Open modal</Button> */}
-                  {/* <div className="flex items-center space-x-2"></div> */}
                </div>
-               <div className=" overflow-hidden select-none  w-[500px] min-h-[100px] rounded-lg border  dark:border-neutral-700 border-neutral-300">
-                  <YesOrNo poll={poll}></YesOrNo>
+               <div className=" overflow-hidden select-none  w-[500px] min-h-[200px] grid place-items-center rounded-lg border  dark:border-neutral-700 border-neutral-300">
+                  {/* {typeof window !== "undefined" && YesNoComponent ? <YesNoComponent poll={poll}></YesNoComponent> : null} */}
+                  <RemoteWidget poll={poll}></RemoteWidget>
                </div>
             </div>
          </div>

@@ -8,7 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3002";
 
-export default function Login({ searchParams }: { searchParams: { message: string } }) {
+export default async function Login({ searchParams }: { searchParams: { message: string } }) {
+   const cookieStore = cookies();
+   const supabase = createClient(cookieStore);
+   const {
+      data: { user },
+   } = await supabase.auth.getUser();
+   if (user) {
+      redirect("/dashboard");
+   }
    const signIn = async (formData: FormData) => {
       "use server";
       const email = formData.get("email") as string;
