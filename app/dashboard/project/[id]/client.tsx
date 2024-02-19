@@ -2,7 +2,6 @@
 
 import { createClient } from "@/utils/supabase/client";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { MCQ, MCQShadow, YesOrNo } from "@/Widget/dist/userpollts";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

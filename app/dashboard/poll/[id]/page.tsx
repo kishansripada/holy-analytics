@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Switch } from "@/components/ui/switch";
 import Client from "./client";
 import { Label } from "@/components/ui/label";
-import { MCQ } from "@/Widget/Widget";
+
 export default async function Index({ params: { id } }: { params: { id: string } }) {
    const cookieStore = cookies();
    const supabase = createClient(cookieStore);
