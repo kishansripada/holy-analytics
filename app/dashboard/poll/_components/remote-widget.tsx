@@ -12,7 +12,7 @@ export default function RemoteWidget({ poll }: { poll: poll }) {
       ) : (
          <></>
       );
-
+   const Container = window.Container;
    return (
       <>
          <Script
@@ -24,8 +24,10 @@ export default function RemoteWidget({ poll }: { poll: poll }) {
             type="module"
             src="https://holyuser-widget.vercel.app/holyuser.js"
          ></Script>
-         {typeof window !== "undefined" && Widget ? (
-            <Widget poll={poll} />
+         {typeof window !== "undefined" && Widget && Container ? (
+            <Container>
+               <Widget sendResponse={() => null} poll={poll} />
+            </Container>
          ) : (
             <p className="font-bold text-neutral-600 text-xl">Loading live preview...</p>
          )}

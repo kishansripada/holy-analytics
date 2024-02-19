@@ -9,27 +9,42 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { poll } from "@/utils/types";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const SAMPLE_YESORNO = {
+   poll_data: {
+      type: "yesorno",
+      title: "Are you open to taking a 15 min zoom call to hear about how you use FORMI for cheer?",
+      yesorno: {
+         no_button: "No, thanks",
+         yes_button: "Sure",
+      },
+      subtitle: "Just quickly want to learn how to make the app better for you guys",
+   },
+};
+
+const SAMPLE_ANNOUNCEMENT = {
+   poll_data: {
+      type: "announcement",
+      title: "Hey Cheerleaders!",
+      subtitle: "You can now adjust the height of performers in 3D",
+      image_url: "https://upload.wikimedia.org/wikipedia/commons/6/6e/JU_Cheerleaders.jpg",
+   },
+};
 
 export default function Client({ polls, projectId, project }: { polls: poll[]; projectId: string; project: any }) {
    const router = useRouter();
    const [newNotificationName, setNewNotificationName] = useState("");
+   const [newNotificationType, setNewNotificationType] = useState("");
    const newNotification = async () => {
       const supabase = createClient();
       const { data, error } = await supabase
          .from("polls")
          .insert([
             {
+               ...(newNotificationType === "yesorno" ? SAMPLE_YESORNO : SAMPLE_ANNOUNCEMENT),
                title: newNotificationName,
                app_id: projectId,
-               poll_data: {
-                  type: "yesorno",
-                  title: "Are you open to taking a 15 min zoom call to hear about how you use FORMI for cheer?",
-                  yesorno: {
-                     no_button: "No, thanks",
-                     yes_button: "Sure",
-                  },
-                  subtitle: "Just quickly want to learn how to make the app better for you guys",
-               },
             },
          ])
          .select("*")
@@ -53,8 +68,8 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
             {/* <HDivider></HDivider> */}
             <div className="min-h-[1px] w-full bg-neutral-200"></div>
             <div className="px-10  flex-col flex gap-10 overflow-y-scroll py-10">
-               <div className="flex flex-row items-center justify-between  h-full">
-                  {/* <div></div> */}
+               <div className="flex flex-row items-center justify-between  h-full ">
+                  <div></div>
                   <Dialog>
                      <DialogTrigger>
                         {" "}
@@ -63,14 +78,32 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
 
                      <DialogContent>
                         <DialogHeader>
-                           <DialogTitle>Name your notification</DialogTitle>
+                           <DialogTitle>New notification</DialogTitle>
                            <div className="h-4"></div>
                            <Input
                               value={newNotificationName}
                               onChange={(e) => {
                                  setNewNotificationName(e.target.value);
                               }}
+                              placeholder="Notification name"
                            />
+                           <div className="h-3"></div>
+                           <Select
+                              onValueChange={(e) => {
+                                 setNewNotificationType(e);
+                              }}
+                           >
+                              <SelectTrigger className="">
+                                 <SelectValue placeholder="Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                 <SelectGroup>
+                                    <SelectLabel>Notification types</SelectLabel>
+                                    <SelectItem value="yesorno">Yes or no question</SelectItem>
+                                    <SelectItem value="announcement">Modal announcement</SelectItem>
+                                 </SelectGroup>
+                              </SelectContent>
+                           </Select>
                            <div className="h-3"></div>
                            <div className="flex flex-row justify-between">
                               <div></div>
@@ -87,29 +120,37 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                      </DialogContent>
                   </Dialog>
                </div>
-               <div className="flex flex-col w-full gap-5 ">
-                  {polls?.map((poll) => {
-                     return (
-                        <Link className="hover:bg-neutral-100 transition px-5 py-2 rounded-md" href={`/dashboard/poll/${poll.id}`} key={poll.id}>
-                           <div className="flex flex-row w-full items-start justify-between">
-                              <div className="flex flex-row gap-3 items-center">
-                                 <p className="tracking-tight font-medium text-2xl"> {poll.title}</p>
-                                 {poll.active ? (
-                                    <span className="rounded-full px-2 py-1 text-xs font-medium text-green-800 bg-green-200">Live</span>
-                                 ) : (
-                                    <span className="rounded-full px-2 py-1 text-xs font-medium text-yellow-900 bg-yellow-200">Inactive</span>
-                                 )}
-                              </div>
+               {polls.length ? (
+                  <div className="flex flex-col w-full gap-5  ">
+                     {polls?.map((poll) => {
+                        return (
+                           <Link
+                              className="hover:bg-neutral-100 transition flex flex-col justify-center  py-2 rounded-md px-3 h-16 "
+                              href={`/dashboard/poll/${poll.id}`}
+                              key={poll.id}
+                           >
+                              <div className="flex flex-row w-full items-center justify-between">
+                                 <div className="flex flex-row gap-3 items-center">
+                                    <p className="tracking-tight font-medium text-2xl"> {poll.title}</p>
+                                    {poll.active ? (
+                                       <span className="rounded-full px-2 py-1 text-xs font-medium text-green-800 bg-green-200">Live</span>
+                                    ) : (
+                                       <span className="rounded-full px-2 py-1 text-xs font-medium text-yellow-900 bg-yellow-200">Inactive</span>
+                                    )}
+                                 </div>
 
-                              <div className="flex flex-col items-end">
+                                 {/* <div className="flex flex-col items-end">
                                  <p className="text-3xl font-medium text-neutral-900">34</p>
                                  <p className="text-sm text-neutral-600 ">responses</p>
+                              </div> */}
                               </div>
-                           </div>
-                        </Link>
-                     );
-                  })}
-               </div>
+                           </Link>
+                        );
+                     })}
+                  </div>
+               ) : (
+                  <p className="text-neutral-700">Start by making your first notification to your users</p>
+               )}
             </div>
          </div>
       </div>

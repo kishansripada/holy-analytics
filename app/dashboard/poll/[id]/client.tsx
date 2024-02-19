@@ -25,7 +25,7 @@ export default function Client({ poll: initialPoll, sampleData, responses }: { p
    return (
       // <AppWrapper>
       <div className="flex flex-col px-16 py-10 w-full overflow-hidden">
-         <Tabs defaultValue="what" className="w-full ">
+         <Tabs defaultValue="what" className="w-full h-full overflow-hidden flex flex-col object-cover">
             <div className="mb-10 ">
                <div className="flex flex-row justify-center items-center relative mb-5">
                   {!saved ? <p className="absolute right-0 text-sm text-neutral-600">saving...</p> : null}
@@ -82,7 +82,7 @@ export default function Client({ poll: initialPoll, sampleData, responses }: { p
                   </div>
                </div>
             </div>
-            <TabsContent value="what">
+            <TabsContent className=" h-full overflow-hidden" value="what">
                <What setPoll={setPoll} poll={poll}></What>
             </TabsContent>
             <TabsContent value="who">

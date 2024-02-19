@@ -7,21 +7,11 @@ import { poll } from "@/utils/types";
 import { useEffect, useState } from "react";
 import Script from "next/script";
 import RemoteWidget from "./remote-widget";
+import { Divide } from "lucide-react";
 export default function What({ poll, setPoll }: { poll: poll; setPoll: Function }) {
-   // const YesNoComponent = window.YesOrNo;
-
    return (
-      <div className="flex flex-row w-full justify-between  gap-20 ">
-         {/* <Script
-            onReady={() => {
-               // setWidget(window.YesOrNo);
-               // console.log();
-            }}
-            strategy="afterInteractive"
-            type="module"
-            src="https://holyuser-widget.vercel.app/holyuser.js"
-         ></Script> */}
-         <div className="flex flex-col pt-5 w-full gap-6">
+      <div className="flex flex-row w-full justify-between  gap-20 h-full ">
+         <div className="flex flex-col pt-5  gap-6 w-1/2">
             <div className="grid w-full items-center gap-1.5 ">
                <Label htmlFor="title">Title</Label>
                <Input
@@ -52,57 +42,85 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             </div>
             <div className="flex flex-col gap-4">
                <div className="flex flex-row justify-between w-full">
-                  {/* <div>
-                     <Label htmlFor="title">Negative text</Label>
-                     <Input
-                        className="w-full"
-                        onChange={(e) => {
-                           //  console.log(e);
-                           setPoll((poll) => {
-                              return {
-                                 ...poll,
-                                 poll_data: {
-                                    ...poll.poll_data,
-                                    yesorno: {
-                                       ...poll.poll_data.yesorno,
-                                       no_button: e.target.value,
+                  {poll.poll_data.type === "announcement" ? (
+                     <div className="w-full">
+                        <Label htmlFor="title">Image URL</Label>
+                        <Input
+                           className="w-full"
+                           onChange={(e) => {
+                              //  console.log(e);
+                              setPoll((poll) => {
+                                 return {
+                                    ...poll,
+                                    poll_data: {
+                                       ...poll.poll_data,
+                                       image_url: e.target.value,
                                     },
-                                 },
-                              };
-                           });
-                        }}
-                        value={poll.poll_data.yesorno.no_button}
-                        type="negative"
-                        id="negative"
-                        placeholder="No, thanks"
-                     />
-                  </div>
-                  <div>
-                     <Label htmlFor="title">Affirmative text</Label>
-                     <Input
-                        className="w-full"
-                        onChange={(e) => {
-                           //  console.log(e);
-                           setPoll((poll) => {
-                              return {
-                                 ...poll,
-                                 poll_data: {
-                                    ...poll.poll_data,
-                                    yesorno: {
-                                       ...poll.poll_data.yesorno,
-                                       yes_button: e.target.value,
-                                    },
-                                 },
-                              };
-                           });
-                        }}
-                        value={poll.poll_data.yesorno.yes_button}
-                        type="affirmative"
-                        id="affirmative"
-                        placeholder="Sure"
-                     />
-                  </div> */}
+                                 };
+                              });
+                           }}
+                           value={poll.poll_data.image_url}
+                           type="negative"
+                           id="negative"
+                           placeholder="No, thanks"
+                        />
+                     </div>
+                  ) : (
+                     <div>
+                        <div>
+                           <Label htmlFor="title">Negative text</Label>
+                           <Input
+                              className="w-full"
+                              onChange={(e) => {
+                                 //  console.log(e);
+                                 setPoll((poll) => {
+                                    return {
+                                       ...poll,
+                                       poll_data: {
+                                          ...poll.poll_data,
+                                          yesorno: {
+                                             ...poll.poll_data.yesorno,
+                                             no_button: e.target.value,
+                                          },
+                                       },
+                                    };
+                                 });
+                              }}
+                              value={poll.poll_data.yesorno.no_button}
+                              type="negative"
+                              id="negative"
+                              placeholder="No, thanks"
+                           />
+                        </div>
+                        <div>
+                           <Label htmlFor="title">Affirmative text</Label>
+                           <Input
+                              className="w-full"
+                              onChange={(e) => {
+                                 //  console.log(e);
+                                 setPoll((poll) => {
+                                    return {
+                                       ...poll,
+                                       poll_data: {
+                                          ...poll.poll_data,
+                                          yesorno: {
+                                             ...poll.poll_data.yesorno,
+                                             yes_button: e.target.value,
+                                          },
+                                       },
+                                    };
+                                 });
+                              }}
+                              value={poll.poll_data.yesorno.yes_button}
+                              type="affirmative"
+                              id="affirmative"
+                              placeholder="Sure"
+                           />
+                        </div>
+                     </div>
+                  )}
                </div>
+
                {/* <div className="flex flex-row items-end w-full justify-between">
                   <Label htmlFor="title">Options</Label>
                   <Button
@@ -192,16 +210,16 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             </div>
          </div>
 
-         <div className="">
-            <div className="flex flex-col gap-4 justify-center h-full ">
-               <div className="flex flex-row justify-between w-full items-end">
-                  <p className="text-neutral-600 text-xl font-semibold">Live preview</p>
-               </div>
-               <div className=" overflow-hidden select-none  w-[500px] min-h-[200px] grid place-items-center rounded-lg border  dark:border-neutral-700 border-neutral-300">
-                  {/* {typeof window !== "undefined" && YesNoComponent ? <YesNoComponent poll={poll}></YesNoComponent> : null} */}
-                  <RemoteWidget poll={poll}></RemoteWidget>
-               </div>
+         <div className="w-1/2 h-full flex flex-col gap-4 justify-start">
+            {/* <div className=" "> */}
+            <div className="flex flex-row justify-between w-full items-end  rounded-xl">
+               <p className="text-neutral-600 text-xl font-semibold">Live preview</p>
             </div>
+            {/* <div className=" overflow-hidden select-none  w-[500px] min-h-[200px] grid place-items-center rounded-lg border  dark:border-neutral-700 border-neutral-300"> */}
+            {/* {typeof window !== "undefined" && YesNoComponent ? <YesNoComponent poll={poll}></YesNoComponent> : null} */}
+            <RemoteWidget poll={poll}></RemoteWidget>
+            {/* </div> */}
+            {/* </div> */}
          </div>
       </div>
    );

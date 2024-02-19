@@ -9,11 +9,11 @@ import { Label } from "@/components/ui/label";
 import { poll } from "@/utils/types";
 
 export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll: Function; sampleData: any }) {
-   const [testIds, setTestIds] = useState("");
+   // sampleData = [];
+
    const allKeys = extractKeys(sampleData.map((user) => user));
    const supabase = createClient();
-   console.log({ poll });
-   console.log({ allKeys });
+
    return (
       <div className="flex flex-row w-full justify-between h-full  gap-20 ">
          <div className="flex flex-col gap-3 items-start w-1/2">
@@ -35,13 +35,17 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
             </div>
 
             <div className="text-xs text-neutral-600">
-               <p id="test" className="text-sm text-neutral-600 mb-1">
+               <a href="https://holy-user-docs.super.site/" className="text-sm text-neutral-600 mb-1">
                   Write conditions in Javascript where the root object is "user"
-               </p>
+               </a>
+
                {/* <p className="">user.name === "Jonathan"</p>
                <p className="">{`user.created_at < (new Date() - 7)`}</p>
                <p className="">user.selectedUses.includes("Cheer")</p> */}
             </div>
+            <a href="https://holy-user-docs.super.site/" className="text-sm text-neutral-600 mb-1">
+               View docs
+            </a>
             {poll.conditions.map((condition) => {
                return (
                   <div className="flex flex-row w-full items-center gap-1.5 ">
@@ -129,7 +133,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                   </div>
                </div>
             </div>
-            <div className="overflow-scroll w-full max-h-[450px] border-2 border-neutral-300 text-xs rounded-md">
+            <div className="overflow-scroll w-full max-h-[450px] border border-neutral-300 text-xs rounded-md">
                {sampleData.length ? (
                   <div className="flex flex-row   ">
                      {Object.keys(sampleData[0].user).map((key) => (
@@ -168,8 +172,9 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                      ))}
                   </div>
                ) : (
-                  <div className="flex flex-row justify-center">
-                     <p className="text-sm text-neutral-600 ">No sample users yet</p>
+                  <div className="flex flex-col justify-center items-center gap-3 text-center px-5 py-5">
+                     <p className="text-sm text-neutral-700 ">No sample users yet</p>
+                     <p className="text-sm text-neutral-700 ">Once you drop the widget in your React app, sample users will start populating here</p>
                   </div>
                )}
                {/* <table className="table-auto border-collapse w-full  ">
