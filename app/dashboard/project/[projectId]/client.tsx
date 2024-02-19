@@ -49,7 +49,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
          .select("*")
          .single();
 
-      router.push(`/dashboard/project/${projectId}poll/` + data.id);
+      router.push(`/dashboard/project/${projectId}/poll/` + data.id);
    };
    const supabase = createClient();
 
