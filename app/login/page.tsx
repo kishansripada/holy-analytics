@@ -6,7 +6,7 @@ import { AppWrapper } from "@/components/ui/app-wrapper";
 import { VStack } from "@/components/ui/stacks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3002";
+const defaultUrl = process.env.VERCEL_URL ? `https://${window.location.origin}/dashboard` : "http://localhost:3002";
 
 export default async function Login({ searchParams }: { searchParams: { message: string } }) {
    const cookieStore = cookies();
