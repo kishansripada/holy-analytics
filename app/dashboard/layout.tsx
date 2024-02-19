@@ -10,10 +10,9 @@ const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` 
 
 export const metadata = {
    metadataBase: new URL(defaultUrl),
-   title: "Holy User",
-   description: "Holy User — Beautiful, in-app product announcements & notifications",
+   title: "Dashboard | Holy User",
+   description: "Dashboard for Holy User. Create and edit your notifications",
 };
-
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
    const cookiesStore = cookies();
    const supabase = createClient(cookiesStore);
