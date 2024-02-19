@@ -29,6 +29,11 @@ export const AppWrapper = ({ className, children, style, ...props }) => {
                }
             `}
          </style>
+         <div className="flex h-10 min-h-10 flex-row items-center justify-center border-b border-neutral-300">
+            <p className="text-xs text-neutral-700">
+               Holy User is in beta, please email kishansripada@formistudio.app with bugs reports & suggestions
+            </p>
+         </div>
          {/* <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta> */}
          {children}
       </div>

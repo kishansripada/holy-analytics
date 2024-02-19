@@ -3,14 +3,17 @@ import Link from "next/link";
 import styles from "./landing-page-styles.module.css";
 export default async function Index() {
    return (
-      <div className="flex-1 w-full flex flex-col gap-20 items-center overflow-hidden h-full ">
-         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-20">
-            <div className="w-full max-w-7xl flex justify-between items-center p-3 text-sm">
+      <div className="flex h-full w-full flex-1 flex-col items-center gap-20 overflow-hidden ">
+         <nav className="border-b-foreground/10 flex h-20 w-full justify-center border-b">
+            <div className="flex w-full max-w-7xl items-center justify-between p-3 text-sm">
                <div className="flex flex-row items-end gap-4">
                   {/* <div className="w-8 h-8 rotate-12 border-4 border-purple-500"></div> */}
                   <p className="text-4xl">🙏🏽</p>
-                  <div className=" text-3xl font-medium whitespace-nowrap ">holy user</div>
-                  <div className="flex flex-row gap-5 items-end ml-4 text-neutral-500 text-sm  mb-1">
+                  <div className="flex flex-row items-end">
+                     <div className=" mr-2 whitespace-nowrap text-3xl font-medium ">holy user</div>
+                     <p className="mb-1 text-xs text-neutral-700">beta</p>
+                  </div>
+                  <div className="mb-1 ml-4 flex flex-row items-end gap-5 text-sm  text-neutral-500">
                      {/* <p>Pricing</p>
                      <p>Features</p> */}
                      <a target="_blank" href="https://holy-user-docs.super.site/">
@@ -28,19 +31,19 @@ export default async function Index() {
 
          <div className="flex flex-col ">
             {/* <p className="text-center text-neutral-500 text-lg">Get to know your users with</p> */}
-            <div className="animate-in text-6xl tracking-tight max-w-4xl text-center">
+            <div className="animate-in max-w-4xl text-center text-6xl tracking-tight">
                <span className={`${styles.gradient} font-semibold`}>Beautiful</span>, in-app product announcements & notifications
             </div>
-            <p className="text-center text-neutral-500 text-lg mt-5">for React developers</p>
+            <p className="mt-5 text-center text-lg text-neutral-500">for React developers</p>
          </div>
          <div className={`${styles.blob} pointer-events-none`}></div>
          <div className={`${styles.blob2} pointer-events-none`}></div>
          <div>
-            <p className="text-center text-neutral-500 text-lg">Get to know your users with our suite of notifications</p>
-            <div className="w-full flex flex-row "></div>
+            <p className="text-center text-lg text-neutral-500">Get to know your users with our suite of notifications</p>
+            <div className="flex w-full flex-row "></div>
          </div>
 
-         <div className="mt-auto flex flex-row py-16 text-2xl text-center gap-12 text-neutral-800 w-full px-16 border-y border-neutral-300">
+         <div className="mt-auto flex w-full flex-row gap-12 border-y border-neutral-300 px-16 py-16 text-center text-2xl text-neutral-800">
             <p className="">
                "I need to get a user who does <span className="font-bold">hip hop</span> on a <span className="font-bold">zoom call</span> ASAP"
             </p>
