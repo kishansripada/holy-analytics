@@ -35,7 +35,7 @@ export default function Client({
 
    return (
       // <AppWrapper>
-      <div className="flex w-full flex-col overflow-hidden px-16 py-10">
+      <div className="flex w-full flex-col overflow-hidden px-16 py-7">
          <Tabs defaultValue="what" className="flex h-full w-full flex-col overflow-hidden object-cover">
             <div className="mb-10 ">
                <div className="relative mb-5 flex flex-row items-center justify-center">

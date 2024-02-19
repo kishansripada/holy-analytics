@@ -54,9 +54,9 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
    const supabase = createClient();
 
    return (
-      <div className="flex h-screen w-full flex-row">
+      <div className="flex h-full w-full flex-row">
          <div className=" flex w-full flex-col">
-            <div className=" flex w-full flex-col justify-center px-10 py-7">
+            <div className=" flex w-full flex-col justify-center px-7 py-5">
                <p className="text-2xl font-bold tracking-tight">{project.name}</p>
                <p className="text-sm text-neutral-700">
                   <span className=" font-semibold">API Key:</span> <span>{projectId}</span>

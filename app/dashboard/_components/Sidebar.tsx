@@ -14,9 +14,9 @@ export default function Sidebar({ user }: { user: User }) {
       await supabase.auth.signOut();
       return router.push("/login");
    };
-   console.log(path);
+
    return (
-      <div className="tetx-medium flex h-full min-h-screen w-[250px] min-w-[250px] flex-col gap-3 border-r border-neutral-200 px-4 py-8">
+      <div className="flex h-full  w-[250px] min-w-[250px] flex-col gap-3 border-r border-neutral-200 px-4 py-8">
          <div className="flex flex-row items-center gap-3">
             <img className="h-8 w-8 rounded-full" src={user?.user_metadata.avatar_url} alt="" />
             <p className="text-sm text-neutral-700">{user?.user_metadata.full_name}</p>
@@ -43,7 +43,7 @@ export default function Sidebar({ user }: { user: User }) {
          {/* <Link href={"/"} className="w-full hover:bg-neutral-100 py-2 px-2 rounded-md text-sm text-neutral-800">
             Projects
          </Link> */}
-         <div className="mt-auto">
+         <div className="mt-auto ">
             <button
                className="text-sm text-neutral-700"
                onClick={() => {

@@ -31,7 +31,7 @@ export default function Client({ projects }: any) {
    const supabase = createClient();
 
    return (
-      <div className="flex h-screen w-full flex-row">
+      <div className="flex h-full w-full flex-row">
          <div className=" flex w-full flex-col">
             <div className="flex h-20 w-full flex-col justify-center px-10">
                <p className="text-3xl font-bold tracking-tight">Projects</p>
