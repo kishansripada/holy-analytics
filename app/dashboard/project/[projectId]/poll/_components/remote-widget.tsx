@@ -15,15 +15,7 @@ export default function RemoteWidget({ poll }: { poll: poll }) {
    const Container = window.Container;
    return (
       <>
-         <Script
-            onReady={() => {
-               // setWidget(window.YesOrNo);
-               // console.log();
-            }}
-            strategy="afterInteractive"
-            type="module"
-            src="https://holyuser-widget.vercel.app/holyuser.js"
-         ></Script>
+         <Script strategy="afterInteractive" type="module" src="https://holyuser-widget.vercel.app/holyuser.js"></Script>
          {typeof window !== "undefined" && Widget && Container ? (
             // <div className="select-none">
             <Container>

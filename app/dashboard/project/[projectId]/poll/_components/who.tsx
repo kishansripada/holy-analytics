@@ -136,7 +136,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
             <div className="max-h-[450px] w-full overflow-scroll rounded-md border border-neutral-300 text-xs">
                {sampleData.length ? (
                   <div className="flex flex-row   ">
-                     {Object.keys(sampleData[0].user).map((key) => (
+                     {[...new Set(sampleData.map((row) => Object.keys(row.user)).flat())].map((key) => (
                         <div className="flex min-w-[200px] flex-col">
                            <div className=" flex h-[40px] min-h-[40px] flex-col items-center justify-center border-b border-r font-semibold">
                               {key}
