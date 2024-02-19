@@ -6,43 +6,52 @@ import { redirect, usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 export default function Sidebar({ user }: { user: User }) {
+   // console.log(user);
    const path = usePathname();
    const router = useRouter();
-
+   const supabase = createClient();
    const signOut = async () => {
-      const supabase = createClient();
       await supabase.auth.signOut();
       return router.push("/login");
    };
    console.log(path);
    return (
-      <div className="h-full min-h-screen border-r w-[250px] border-neutral-200 min-w-[250px] py-8 px-4 flex flex-col gap-1 tetx-medium">
-         <Link
-            href={"/dashboard"}
-            className={`w-full ${path === "/dashboard" ? "bg-neutral-100" : ""}  hover:bg-neutral-100 py-2 px-2 rounded-md text-sm text-neutral-800`}
-         >
-            Projects
-         </Link>
-         <Link
-            href={"/dashboard/docs"}
-            className={`w-full ${
-               path === "/dashboard/docs" ? "bg-neutral-100" : ""
-            }  hover:bg-neutral-100 py-2 px-2 rounded-md text-sm text-neutral-800`}
-         >
-            Docs
-         </Link>
+      <div className="h-full min-h-screen border-r w-[250px] border-neutral-200 min-w-[250px] py-8 px-4 flex flex-col gap-3 tetx-medium">
+         <div className="flex flex-row items-center gap-3">
+            <img className="h-8 w-8 rounded-full" src={user?.user_metadata.avatar_url} alt="" />
+            <p className="text-sm text-neutral-700">{user?.user_metadata.full_name}</p>
+         </div>
+         <div className="flex flex-col gap-1">
+            {" "}
+            <Link
+               href={"/dashboard"}
+               className={`w-full ${
+                  path === "/dashboard" ? "bg-neutral-100" : ""
+               }  hover:bg-neutral-100 py-2 px-2 rounded-md text-sm text-neutral-800`}
+            >
+               Projects
+            </Link>
+            <Link
+               href={"/dashboard/docs"}
+               className={`w-full ${
+                  path === "/dashboard/docs" ? "bg-neutral-100" : ""
+               }  hover:bg-neutral-100 py-2 px-2 rounded-md text-sm text-neutral-800`}
+            >
+               Docs
+            </Link>
+         </div>
          {/* <Link href={"/"} className="w-full hover:bg-neutral-100 py-2 px-2 rounded-md text-sm text-neutral-800">
             Projects
          </Link> */}
          <div className="mt-auto">
             <button
+               className="text-sm text-neutral-700"
                onClick={() => {
                   signOut();
                }}
             >
                Sign out
             </button>
-            <p className="mt-auto text-sm text-neutral-700">{user?.email}</p>
          </div>
       </div>
    );

@@ -21,20 +21,35 @@ export default function Client({ searchParams }: { searchParams: { message: stri
          },
       });
    };
-   // const [isUsingEmail, setIsUsingEmail] = useState(false);
+
+   async function signInWithGithub() {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+         provider: "github",
+         options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+         },
+      });
+   }
+
+   async function signInWithGoogle() {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+         provider: "google",
+         options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+         },
+      });
+   }
 
    return (
       <AppWrapper
          className={"flex flex-col items-center justify-center h-screen w-full "}
-         style={{
-            // backgroundImage: "linear-gradient(180deg, #3A2C34 0%, #22191E 51.04%, #231A1F 97.92%)",
-            background: "linear-gradient(180deg, rgba(255, 0, 122, 0.15) 0%, rgba(188, 0, 0, 0.38) 100%)",
-         }}
+         style={
+            {
+               // backgroundImage: "linear-gradient(180deg, #3A2C34 0%, #22191E 51.04%, #231A1F 97.92%)",
+               // background: "linear-gradient(180deg, rgba(255, 0, 122, 0.15) 0%, rgba(188, 0, 0, 0.38) 100%)",
+            }
+         }
       >
-         <p>
-            {" "}
-            {`${process.env.NEXT_PUBLIC_VERCEL_URL ? "https" : "http"}://${process.env.NEXT_PUBLIC_VERCEL_URL || "localhost:3002"}/auth/callback`}
-         </p>
          <VStack className="max-w-[330px] w-[330px] items-center gap-6">
             <Link href={"/"}>
                <img className="w-8" src="/logo.png" alt="" />
@@ -42,37 +57,24 @@ export default function Client({ searchParams }: { searchParams: { message: stri
             <p className="text-xl w-full  font-semibold text-center">Sign in to holy user</p>
 
             <VStack className="w-full gap-3">
-               <Button className="">
+               <Button
+                  onClick={() => {
+                     signInWithGoogle();
+                  }}
+                  className=""
+               >
                   <p>Continue with Google</p>
                </Button>
-               {/* {isUsingEmail && (
-                  <>
-                     <HDivider></HDivider>
-                     <Input
-                        value={email}
-                        onChange={(e) => {
-                           setEmail(e.target.value);
-                        }}
-                        placeholder="Enter your email address..."
-                        className="bg-transparent text-white border dark:border-neutral-700"
-                     ></Input>
-                  </>
-               )} */}
-
                <Button
-                  // onClick={() => {
-                  //    if (isUsingEmail) {
-                  //       signInWithEmail();
-                  //    } else {
-                  //       setIsUsingEmail(true);
-                  //    }
-                  // }}
+                  onClick={() => {
+                     signInWithGithub();
+                  }}
                   className=""
                >
                   <p>Continue with GitHub</p>
                </Button>
             </VStack>
-            <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+            {/* <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
                <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground" action={signIn}>
                   <label className="text-md" htmlFor="email">
                      Email
@@ -90,7 +92,7 @@ export default function Client({ searchParams }: { searchParams: { message: stri
 
                   <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">Sign In</button>
                </form>
-            </div>
+            </div> */}
          </VStack>
       </AppWrapper>
    );
