@@ -18,8 +18,6 @@ export default async function Login({ searchParams }: { searchParams: { message:
    }
    const signIn = async (formData: FormData) => {
       "use server";
-      const heads = headers();
-      const domain = heads.get("x-forwarded-host");
 
       const email = formData.get("email") as string;
 
@@ -29,7 +27,9 @@ export default async function Login({ searchParams }: { searchParams: { message:
       const { data, error } = await supabase.auth.signInWithOtp({
          email,
          options: {
-            emailRedirectTo: `${domain?.startsWith("localhost") ? "http" : "https"}://${domain}/auth/callback`,
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_VERCEL_URL ? "https" : "http"}://${
+               process.env.NEXT_PUBLIC_VERCEL_URL || "localhost:3002"
+            }/auth/callback`,
          },
       });
    };
