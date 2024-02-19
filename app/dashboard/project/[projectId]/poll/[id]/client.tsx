@@ -12,7 +12,17 @@ import { poll } from "@/utils/types";
 import Link from "next/link";
 import Responses from "../_components/responses";
 
-export default function Client({ poll: initialPoll, sampleData, responses }: { poll: poll; sampleData: any; responses: any }) {
+export default function Client({
+   poll: initialPoll,
+   sampleData,
+   responses,
+   projectId,
+}: {
+   poll: poll;
+   sampleData: any;
+   responses: any;
+   projectId: string;
+}) {
    const [poll, setPoll] = useState(initialPoll);
    const supabase = createClient();
 

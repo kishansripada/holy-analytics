@@ -49,7 +49,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
          .select("*")
          .single();
 
-      router.push("/dashboard/poll/" + data.id);
+      router.push(`/dashboard/project/${projectId}poll/` + data.id);
    };
    const supabase = createClient();
 
@@ -125,7 +125,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                         return (
                            <Link
                               className="hover:bg-neutral-100 transition flex flex-col justify-center  py-2 rounded-md px-3 h-16 "
-                              href={`/dashboard/poll/${poll.id}`}
+                              href={`/dashboard/project/${projectId}/poll/${poll.id}`}
                               key={poll.id}
                            >
                               <div className="flex flex-row w-full items-center justify-between">
