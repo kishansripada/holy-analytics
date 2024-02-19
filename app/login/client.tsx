@@ -1,16 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { headers, cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { AppWrapper } from "@/components/ui/app-wrapper";
 import { VStack } from "@/components/ui/stacks";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 
-export default function Client({ searchParams }: { searchParams: { message: string } }) {
+export default function Client() {
    const supabase = createClient();
    const [email, setEmail] = useState("");
    const signIn = async () => {
@@ -42,7 +39,7 @@ export default function Client({ searchParams }: { searchParams: { message: stri
 
    return (
       <AppWrapper
-         className={"flex flex-col items-center justify-center h-screen w-full "}
+         className={"flex h-screen w-full select-none flex-col items-center justify-center "}
          style={
             {
                // backgroundImage: "linear-gradient(180deg, #3A2C34 0%, #22191E 51.04%, #231A1F 97.92%)",
@@ -50,14 +47,15 @@ export default function Client({ searchParams }: { searchParams: { message: stri
             }
          }
       >
-         <VStack className="max-w-[330px] w-[330px] items-center gap-6">
+         <VStack className="w-[330px] max-w-[330px] items-center gap-6">
             <Link href={"/"}>
-               <img className="w-8" src="/logo.png" alt="" />
+               <p className="text-6xl">🙏🏽</p>
             </Link>
-            <p className="text-xl w-full  font-semibold text-center">Sign in to holy user</p>
+            <p className="w-full text-center  text-xl font-semibold">Log in to Holy User</p>
 
             <VStack className="w-full gap-3">
                <Button
+                  variant={"default"}
                   onClick={() => {
                      signInWithGoogle();
                   }}
@@ -66,6 +64,7 @@ export default function Client({ searchParams }: { searchParams: { message: stri
                   <p>Continue with Google</p>
                </Button>
                <Button
+                  variant={"outline"}
                   onClick={() => {
                      signInWithGithub();
                   }}

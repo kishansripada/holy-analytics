@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
    return (
       <AppWrapper>
-         <div className="flex flex-row w-full h-full overflow-hidden w-screen">
+         <div className="flex h-full w-full w-screen flex-row overflow-hidden">
             <Sidebar user={user}></Sidebar>
             {children}
          </div>

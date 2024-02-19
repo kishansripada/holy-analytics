@@ -16,7 +16,7 @@ export default function Sidebar({ user }: { user: User }) {
    };
    console.log(path);
    return (
-      <div className="h-full min-h-screen border-r w-[250px] border-neutral-200 min-w-[250px] py-8 px-4 flex flex-col gap-3 tetx-medium">
+      <div className="tetx-medium flex h-full min-h-screen w-[250px] min-w-[250px] flex-col gap-3 border-r border-neutral-200 px-4 py-8">
          <div className="flex flex-row items-center gap-3">
             <img className="h-8 w-8 rounded-full" src={user?.user_metadata.avatar_url} alt="" />
             <p className="text-sm text-neutral-700">{user?.user_metadata.full_name}</p>
@@ -27,7 +27,7 @@ export default function Sidebar({ user }: { user: User }) {
                href={"/dashboard"}
                className={`w-full ${
                   path === "/dashboard" ? "bg-neutral-100" : ""
-               }  hover:bg-neutral-100 py-2 px-2 rounded-md text-sm text-neutral-800`}
+               }  rounded-md px-2 py-2 text-sm text-neutral-800 hover:bg-neutral-100`}
             >
                Projects
             </Link>
@@ -35,7 +35,7 @@ export default function Sidebar({ user }: { user: User }) {
                href={"/dashboard/docs"}
                className={`w-full ${
                   path === "/dashboard/docs" ? "bg-neutral-100" : ""
-               }  hover:bg-neutral-100 py-2 px-2 rounded-md text-sm text-neutral-800`}
+               }  rounded-md px-2 py-2 text-sm text-neutral-800 hover:bg-neutral-100`}
             >
                Docs
             </Link>

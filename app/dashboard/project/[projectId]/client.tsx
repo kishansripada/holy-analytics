@@ -54,10 +54,10 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
    const supabase = createClient();
 
    return (
-      <div className="flex flex-row h-screen w-full">
-         <div className=" w-full flex flex-col">
-            <div className=" py-7 w-full px-10 flex flex-col justify-center">
-               <p className="tracking-tight font-bold text-2xl">{project.name}</p>
+      <div className="flex h-screen w-full flex-row">
+         <div className=" flex w-full flex-col">
+            <div className=" flex w-full flex-col justify-center px-10 py-7">
+               <p className="text-2xl font-bold tracking-tight">{project.name}</p>
                <p className="text-sm text-neutral-700">
                   <span className=" font-semibold">API Key:</span> <span>{projectId}</span>
                </p>
@@ -66,8 +66,8 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
 
             {/* <HDivider></HDivider> */}
             <div className="min-h-[1px] w-full bg-neutral-200"></div>
-            <div className="px-10  flex-col flex gap-10 overflow-y-scroll py-10">
-               <div className="flex flex-row items-center justify-between  h-full ">
+            <div className="flex  flex-col gap-10 overflow-y-scroll px-10 py-10">
+               <div className="flex h-full flex-row items-center  justify-between ">
                   <div></div>
                   <Dialog>
                      <DialogTrigger>
@@ -120,21 +120,21 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                   </Dialog>
                </div>
                {polls.length ? (
-                  <div className="flex flex-col w-full gap-5  ">
+                  <div className="flex w-full flex-col gap-5  ">
                      {polls?.map((poll) => {
                         return (
                            <Link
-                              className="hover:bg-neutral-100 transition flex flex-col justify-center  py-2 rounded-md px-3 h-16 "
+                              className="flex h-16 flex-col justify-center rounded-md  px-3 py-2 transition hover:bg-neutral-100 "
                               href={`/dashboard/project/${projectId}/poll/${poll.id}`}
                               key={poll.id}
                            >
-                              <div className="flex flex-row w-full items-center justify-between">
-                                 <div className="flex flex-row gap-3 items-center">
-                                    <p className="tracking-tight font-medium text-2xl"> {poll.title}</p>
+                              <div className="flex w-full flex-row items-center justify-between">
+                                 <div className="flex flex-row items-center gap-3">
+                                    <p className="text-2xl font-medium tracking-tight"> {poll.title}</p>
                                     {poll.active ? (
-                                       <span className="rounded-full px-2 py-1 text-xs font-medium text-green-800 bg-green-200">Live</span>
+                                       <span className="rounded-full bg-green-200 px-2 py-1 text-xs font-medium text-green-800">Live</span>
                                     ) : (
-                                       <span className="rounded-full px-2 py-1 text-xs font-medium text-yellow-900 bg-yellow-200">Inactive</span>
+                                       <span className="rounded-full bg-yellow-200 px-2 py-1 text-xs font-medium text-yellow-900">Inactive</span>
                                     )}
                                  </div>
 

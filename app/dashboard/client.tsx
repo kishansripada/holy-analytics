@@ -31,10 +31,10 @@ export default function Client({ projects }: any) {
    const supabase = createClient();
 
    return (
-      <div className="flex flex-row h-screen w-full">
-         <div className=" w-full flex flex-col">
-            <div className="h-20 w-full px-10 flex flex-col justify-center">
-               <p className="tracking-tight font-bold text-3xl">Projects</p>
+      <div className="flex h-screen w-full flex-row">
+         <div className=" flex w-full flex-col">
+            <div className="flex h-20 w-full flex-col justify-center px-10">
+               <p className="text-3xl font-bold tracking-tight">Projects</p>
                {/* <AuthButton /> */}
             </div>
 
@@ -78,11 +78,11 @@ export default function Client({ projects }: any) {
                </div>
 
                {projects.length ? (
-                  <div className="grid grid-cols-3 w-full gap-x-20 gap-y-10 py-10">
+                  <div className="grid w-full grid-cols-3 gap-x-20 gap-y-10 py-10">
                      {projects?.map((project) => {
                         return (
                            <Link
-                              className="w-full h-[70px] rounded-md border text-neutral-700 transition hover:bg-neutral-50 flex flex-row items-center justify-between px-4  border-neutral-300 shadow-sm"
+                              className="flex h-[70px] w-full flex-row items-center justify-between rounded-md border border-neutral-300 px-4 text-neutral-700 shadow-sm  transition hover:bg-neutral-50"
                               href={`dashboard/project/${project.app_id}`}
                               key={project.app_id}
                            >
@@ -93,7 +93,7 @@ export default function Client({ projects }: any) {
                                  viewBox="0 0 24 24"
                                  strokeWidth={1.5}
                                  stroke="currentColor"
-                                 className="w-6 h-6"
+                                 className="h-6 w-6"
                               >
                                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                               </svg>

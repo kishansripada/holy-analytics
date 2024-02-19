@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { poll } from "@/utils/types";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function Responses({
    poll,
@@ -36,17 +37,83 @@ export default function Responses({
 
       //   console.log(responses);
    }, []);
+
+   const exportCSV = () => {
+      // Function to convert object to CSV row
+      const objectToCSVRow = (obj) => {
+         const keys = Object.keys(obj);
+         const values = Object.values(obj);
+         const escapedValues = values.map((value) => `"${value}"`);
+         return escapedValues.join(",");
+      };
+
+      // Function to extract all unique keys from response_data objects
+      const extractKeys = () => {
+         const allKeys = responses.reduce((keys, response) => {
+            Object.keys(response.response_data).forEach((key) => {
+               if (!keys.includes(key)) {
+                  keys.push(key);
+               }
+            });
+            return keys;
+         }, []);
+         return allKeys;
+      };
+
+      // Combine user_id and response_data keys to create CSV header
+      const csvHeader = ["user_id", ...extractKeys()];
+
+      // Combine user_id and corresponding response_data values for each response
+      const csvRows = responses.map((response) => {
+         const rowData = extractKeys().map((key) => {
+            return response.response_data[key] || ""; // Handle missing data
+         });
+         return `${response.user_id},${rowData.join(",")}`;
+      });
+
+      // Combine header and rows
+      const csvContent = `${csvHeader.join(",")}\n${csvRows.join("\n")}`;
+
+      // Create a Blob object with CSV data
+      const blob = new Blob([csvContent], { type: "text/csv" });
+
+      // Create a temporary URL to download the CSV file
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a link element and trigger a click event to download the CSV file
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "responses.csv");
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+   };
    return (
-      <div className="flex flex-row w-full justify-between h-full  gap-20 ">
-         <div className="flex flex-col w-full">
-            <div className="w-full justify-between font-semibold flex flex-row ">
+      <div className="flex h-full w-full  flex-col  ">
+         <div className="flex flex-row items-center justify-between">
+            <div className="bg-neutral-900 text-neutral-50 text-white"></div>
+
+            <Button
+               variant={"link"}
+               onClick={() => {
+                  exportCSV();
+               }}
+            >
+               Export CSV
+            </Button>
+         </div>
+         <div className="flex w-full flex-col">
+            <div className="flex w-full flex-row justify-between font-semibold ">
                <p>user_id</p>
                <p>response_data</p>
             </div>
-            <div className="flex flex-col gap-5 items-start w-full">
+            <div className="flex w-full flex-col items-start gap-5">
                {responses.map((response) => {
                   return (
-                     <div key={response.id} className="flex flex-row gap-1 justify-between border-y  w-full py-3">
+                     <div key={response.id} className="flex w-full flex-row justify-between gap-1  border-y py-3">
                         <p className="text-sm text-neutral-600">{response.user_id}</p>
                         <p className="text-sm text-neutral-600">{JSON.stringify(response.response_data)}</p>
                      </div>

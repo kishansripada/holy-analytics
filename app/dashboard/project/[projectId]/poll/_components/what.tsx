@@ -2,16 +2,15 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { poll } from "@/utils/types";
-import { useEffect, useState } from "react";
-import Script from "next/script";
-import RemoteWidget from "./remote-widget";
-import { Divide } from "lucide-react";
+import dynamic from "next/dynamic";
+const RemoteWidget = dynamic(() => import("./remote-widget"), {
+   ssr: false,
+});
 export default function What({ poll, setPoll }: { poll: poll; setPoll: Function }) {
    return (
-      <div className="flex flex-row w-full justify-between  gap-20 h-full ">
-         <div className="flex flex-col pt-5  gap-6 w-1/2">
+      <div className="flex h-full w-full flex-row  justify-between gap-20 ">
+         <div className="flex w-1/2 flex-col  gap-6 pt-5">
             <div className="grid w-full items-center gap-1.5 ">
                <Label htmlFor="title">Title</Label>
                <Input
@@ -41,7 +40,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                />
             </div>
             <div className="flex flex-col gap-4">
-               <div className="flex flex-row justify-between w-full">
+               <div className="flex w-full flex-row justify-between">
                   {poll.poll_data.type === "announcement" ? (
                      <div className="w-full">
                         <Label htmlFor="title">Image URL</Label>
@@ -210,10 +209,10 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             </div>
          </div>
 
-         <div className="w-1/2 h-full flex flex-col gap-4 justify-start">
+         <div className="flex h-full w-1/2 flex-col justify-start gap-4">
             {/* <div className=" "> */}
-            <div className="flex flex-row justify-between w-full items-end  rounded-xl">
-               <p className="text-neutral-600 text-xl font-semibold">Live preview</p>
+            <div className="flex w-full flex-row items-end justify-between  rounded-xl">
+               <p className="text-xl font-semibold text-neutral-600">Live preview</p>
             </div>
             {/* <div className=" overflow-hidden select-none  w-[500px] min-h-[200px] grid place-items-center rounded-lg border  dark:border-neutral-700 border-neutral-300"> */}
             {/* {typeof window !== "undefined" && YesNoComponent ? <YesNoComponent poll={poll}></YesNoComponent> : null} */}

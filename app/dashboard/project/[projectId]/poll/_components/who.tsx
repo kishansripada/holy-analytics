@@ -15,10 +15,10 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
    const supabase = createClient();
 
    return (
-      <div className="flex flex-row w-full justify-between h-full  gap-20 ">
-         <div className="flex flex-col gap-3 items-start w-1/2">
-            <div className="flex flex-row items-end justify-between w-full">
-               <p className="tracking-tight font-medium text-2xl">User segmentation</p>
+      <div className="flex h-full w-full flex-row justify-between  gap-20 ">
+         <div className="flex w-1/2 flex-col items-start gap-3">
+            <div className="flex w-full flex-row items-end justify-between">
+               <p className="text-2xl font-medium tracking-tight">User segmentation</p>
 
                <Button
                   onClick={async () => {
@@ -35,7 +35,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
             </div>
 
             <div className="text-xs text-neutral-600">
-               <a href="https://holy-user-docs.super.site/" className="text-sm text-neutral-600 mb-1">
+               <a href="https://holy-user-docs.super.site/" className="mb-1 text-sm text-neutral-600">
                   Write conditions in Javascript where the root object is "user"
                </a>
 
@@ -43,12 +43,12 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                <p className="">{`user.created_at < (new Date() - 7)`}</p>
                <p className="">user.selectedUses.includes("Cheer")</p> */}
             </div>
-            <a href="https://holy-user-docs.super.site/" className="text-sm text-neutral-600 mb-1">
+            <a href="https://holy-user-docs.super.site/" className="mb-1 text-sm text-neutral-600">
                View docs
             </a>
             {poll.conditions.map((condition) => {
                return (
-                  <div className="flex flex-row w-full items-center gap-1.5 ">
+                  <div className="flex w-full flex-row items-center gap-1.5 ">
                      <Input
                         style={{
                            outlineColor: isValidJavaScriptCondition(condition.condition_string) ? "rgb(0 255 0 / 25%)" : "rgb(255 0 0 / 25%)",
@@ -93,7 +93,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                            viewBox="0 0 24 24"
                            strokeWidth={1.5}
                            stroke="currentColor"
-                           className="w-5 h-5 text-neutral-600"
+                           className="h-5 w-5 text-neutral-600"
                         >
                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
@@ -102,10 +102,10 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                );
             })}
          </div>
-         <div className="flex flex-col gap-5 items-start w-1/2 overflow-hidden">
+         <div className="flex w-1/2 flex-col items-start gap-5 overflow-hidden">
             <div>
-               <div className="flex flex-row items-end justify-between w-full py-2">
-                  <p className="tracking-tight font-medium text-2xl">Test against sample users</p>
+               <div className="flex w-full flex-row items-end justify-between py-2">
+                  <p className="text-2xl font-medium tracking-tight">Test against sample users</p>
 
                   <Button
                      onClick={async () => {
@@ -119,12 +119,12 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                      Clear sample users
                   </Button>
                </div>
-               <div className="text-xs text-neutral-600 mt-1">
-                  <p className="text-sm text-neutral-600 mb-1">
+               <div className="mt-1 text-xs text-neutral-600">
+                  <p className="mb-1 text-sm text-neutral-600">
                      We collect minimum of 10 and up to 50 sample users so that you have some test data to run conditions against
                   </p>
                   <div className="flex flex-row justify-between">
-                     <p className="text-sm text-neutral-600 mb-1">Rows highlighted in green pass all conditions</p>
+                     <p className="mb-1 text-sm text-neutral-600">Rows highlighted in green pass all conditions</p>
                      {/* <p className="text-sm text-neutral-600 mb-1">
                         {" "}
                         <span className="font-bold">42%</span>
@@ -133,12 +133,12 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                   </div>
                </div>
             </div>
-            <div className="overflow-scroll w-full max-h-[450px] border border-neutral-300 text-xs rounded-md">
+            <div className="max-h-[450px] w-full overflow-scroll rounded-md border border-neutral-300 text-xs">
                {sampleData.length ? (
                   <div className="flex flex-row   ">
                      {Object.keys(sampleData[0].user).map((key) => (
-                        <div className="flex flex-col min-w-[200px]">
-                           <div className=" border-b border-r h-[40px] min-h-[40px] flex flex-col justify-center font-semibold items-center">
+                        <div className="flex min-w-[200px] flex-col">
+                           <div className=" flex h-[40px] min-h-[40px] flex-col items-center justify-center border-b border-r font-semibold">
                               {key}
                            </div>
                            {sampleData.map((user) => {
@@ -162,7 +162,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                                     style={{
                                        backgroundColor: passesAllConditions ? "rgb(0 255 0 / 25%)" : "transparent",
                                     }}
-                                    className=" border-b border-r h-[40px] min-h-[40px] flex flex-col justify-center"
+                                    className=" flex h-[40px] min-h-[40px] flex-col justify-center border-b border-r"
                                  >
                                     <div>{typeof value === "string" ? <span>{value}</span> : <span>{JSON.stringify(value)}</span>}</div>
                                  </div>
@@ -172,7 +172,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                      ))}
                   </div>
                ) : (
-                  <div className="flex flex-col justify-center items-center gap-3 text-center px-5 py-5">
+                  <div className="flex flex-col items-center justify-center gap-3 px-5 py-5 text-center">
                      <p className="text-sm text-neutral-700 ">No sample users yet</p>
                      <p className="text-sm text-neutral-700 ">Once you drop the widget in your React app, sample users will start populating here</p>
                   </div>

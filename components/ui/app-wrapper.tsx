@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export const AppWrapper = ({ className, children, style, ...props }) => {
    return (
       <div
-         className={cn(" overflow-hidden  full-screen overscroll-none max-w-full ", className)}
+         className={cn(" full-screen  max-w-full overflow-hidden overscroll-none ", className)}
          style={{
             touchAction: "none",
             ...style,

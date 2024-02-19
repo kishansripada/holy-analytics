@@ -11,6 +11,7 @@ import { useUploadToSupabase } from "@/utils/supabase/hooks";
 import { poll } from "@/utils/types";
 import Link from "next/link";
 import Responses from "../_components/responses";
+import { ArrowLeft, MoveLeft } from "lucide-react";
 
 export default function Client({
    poll: initialPoll,
@@ -34,13 +35,16 @@ export default function Client({
 
    return (
       // <AppWrapper>
-      <div className="flex flex-col px-16 py-10 w-full overflow-hidden">
-         <Tabs defaultValue="what" className="w-full h-full overflow-hidden flex flex-col object-cover">
+      <div className="flex w-full flex-col overflow-hidden px-16 py-10">
+         <Tabs defaultValue="what" className="flex h-full w-full flex-col overflow-hidden object-cover">
             <div className="mb-10 ">
-               <div className="flex flex-row justify-center items-center relative mb-5">
+               <div className="relative mb-5 flex flex-row items-center justify-center">
                   {!saved ? <p className="absolute right-0 text-sm text-neutral-600">saving...</p> : null}
-                  <Link href={`/dashboard/project/${poll.app_id?.app_id}`} className="absolute left-0 text-sm text-neutral-600 hover:underline">
-                     Back to {poll?.app_id?.name || ""}
+                  <Link
+                     href={`/dashboard/project/${poll.app_id?.app_id}`}
+                     className="absolute left-0 flex flex-row items-center text-sm text-neutral-600 hover:underline"
+                  >
+                     <MoveLeft className="mr-2" /> Back to {poll?.app_id?.name || ""}
                   </Link>
                   <TabsList>
                      <TabsTrigger value="what">Design it</TabsTrigger>
@@ -53,14 +57,14 @@ export default function Client({
                   <div>
                      <Link
                         href={`/dashboard/project/${poll.app_id?.app_id}`}
-                        className="tracking-wider font-semibold text-neutral-600 hover:underline"
+                        className="font-semibold tracking-wider text-neutral-600 hover:underline"
                      >
                         {poll?.app_id?.name || ""}
                      </Link>
-                     <p className="tracking-tight font-medium text-4xl">{poll.title}</p>
+                     <p className="text-4xl font-medium tracking-tight">{poll.title}</p>
                   </div>
 
-                  <div className="flex flex-row gap-5 items-end">
+                  <div className="flex flex-row items-end gap-5">
                      {/* <div className="flex flex-col items-end">
                      <p className="text-3xl font-medium text-neutral-900">34</p>
                      <p className="text-sm text-neutral-600 ">responses</p>
