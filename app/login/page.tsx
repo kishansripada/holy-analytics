@@ -6,7 +6,6 @@ import { AppWrapper } from "@/components/ui/app-wrapper";
 import { VStack } from "@/components/ui/stacks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-const defaultUrl = process.env.VERCEL_URL ? `https://${window.location.origin}/dashboard` : "http://localhost:3002";
 
 export default async function Login({ searchParams }: { searchParams: { message: string } }) {
    const cookieStore = cookies();
@@ -19,6 +18,9 @@ export default async function Login({ searchParams }: { searchParams: { message:
    }
    const signIn = async (formData: FormData) => {
       "use server";
+      const heads = headers();
+      const domain = heads.get("x-forwarded-host");
+
       const email = formData.get("email") as string;
 
       const cookieStore = cookies();
@@ -27,7 +29,7 @@ export default async function Login({ searchParams }: { searchParams: { message:
       const { data, error } = await supabase.auth.signInWithOtp({
          email,
          options: {
-            emailRedirectTo: `${defaultUrl}/auth/callback`,
+            emailRedirectTo: `${domain?.startsWith("localhost") ? "http" : "https"}://${domain}/auth/callback`,
          },
       });
    };
