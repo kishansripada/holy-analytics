@@ -11,8 +11,8 @@ export default async function Index() {
                   <p className="text-4xl">🙏🏽</p>
                   <div className=" text-3xl font-medium whitespace-nowrap ">holy user</div>
                   <div className="flex flex-row gap-5 items-end ml-4 text-neutral-500 text-sm  mb-1">
-                     <p>Pricing</p>
-                     <p>Features</p>
+                     {/* <p>Pricing</p>
+                     <p>Features</p> */}
                      <a target="_blank" href="https://holy-user-docs.super.site/">
                         Docs
                      </a>
