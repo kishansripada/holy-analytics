@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import styles from "./landing-page-styles.module.css";
+import dynamic from "next/dynamic";
+
+const Client = dynamic(() => import("./client"), {
+   ssr: false,
+});
 export default async function Index() {
    return (
       <div className="flex h-full w-full flex-1 flex-col items-center gap-20 overflow-hidden ">
@@ -38,9 +43,8 @@ export default async function Index() {
          </div>
          <div className={`${styles.blob} pointer-events-none`}></div>
          <div className={`${styles.blob2} pointer-events-none`}></div>
-         <div>
-            <p className="text-center text-lg text-neutral-500">Get to know your users with our suite of notifications</p>
-            <div className="flex w-full flex-row "></div>
+         <div className="">
+            <Client></Client>
          </div>
 
          <div className="mt-auto flex w-full flex-row gap-12 border-y border-neutral-300 px-16 py-16 text-center text-2xl text-neutral-800">
