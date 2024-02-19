@@ -7,8 +7,8 @@ import RemoteModal from "./remote-modal";
 const SAMPLE_ANNOUNCEMENT = {
    poll_data: {
       type: "announcement",
-      title: "Hey Cheerleaders!",
-      subtitle: "You can now change the height of a dancer off the ground",
+      title: "Hey [USER_SEGMENT_NAME]!",
+      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
       image_url: "https://i.imgur.com/VMe7jKe.png",
    },
 };
@@ -16,7 +16,7 @@ const SAMPLE_ANNOUNCEMENT = {
 const SAMPLE_YES_OR_NO = {
    poll_data: {
       type: "yesorno",
-      title: "Are you open to taking a 15 min zoom call to hear about how you use FORMI for cheer?",
+      title: "Are you open to taking a 15 min zoom call to learn about how you use [YOUR_APP_NAME]?",
       yesorno: {
          no_button: "No, thanks",
          yes_button: "Sure",
