@@ -34,12 +34,14 @@ export default async function Index() {
             </div>
          </nav>
 
-         <div className="flex flex-col ">
+         <div className="flex flex-col items-center ">
             {/* <p className="text-center text-neutral-500 text-lg">Get to know your users with</p> */}
             <div className="animate-in max-w-4xl text-center text-6xl tracking-tight">
-               <span className={`${styles.gradient} font-semibold`}>Beautiful</span>, in-app product announcements & notifications
+               In-app product announcements & notifications for <span className={`${styles.gradient} font-semibold`}>React</span> devs
             </div>
-            <p className="mt-5 text-center text-lg text-neutral-500">for React developers</p>
+            <p className="mt-5 max-w-2xl text-center text-lg text-neutral-500">
+               Instantly deliver beautiful pop-ups to segmented user groups to notify or get feedback from users. All with one React widget.
+            </p>
          </div>
          <div className={`${styles.blob} pointer-events-none`}></div>
          <div className={`${styles.blob2} pointer-events-none`}></div>
@@ -58,7 +60,6 @@ export default async function Index() {
             <p className="">
                "I want to ask all the <span className="font-bold">students</span> on my platform a quick question"
             </p>
-            <p className="">"No one replies to my shitty emails"</p>
          </div>
       </div>
    );

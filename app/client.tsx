@@ -9,7 +9,7 @@ const SAMPLE_ANNOUNCEMENT = {
       type: "announcement",
       title: "Hey [USER_SEGMENT_NAME]!",
       subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
-      image_url: "https://i.imgur.com/VMe7jKe.png",
+      image_url: "https://i.imgur.com/AbqHr71.png",
    },
 };
 
