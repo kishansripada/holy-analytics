@@ -41,7 +41,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
          .from("polls")
          .insert([
             {
-               ...(newNotificationType === "yesorno" ? SAMPLE_YESORNO : SAMPLE_ANNOUNCEMENT),
+               ...SAMPLE_ANNOUNCEMENT,
                title: newNotificationName,
                app_id: projectId,
             },
@@ -71,23 +71,23 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                   <div></div>
                   <Dialog>
                      <DialogTrigger>
-                        {" "}
-                        <Button>New notification</Button>
+                        <Button>New tip</Button>
                      </DialogTrigger>
 
                      <DialogContent>
                         <DialogHeader>
-                           <DialogTitle>New notification</DialogTitle>
+                           <DialogTitle>New tip</DialogTitle>
                            <div className="h-4"></div>
                            <Input
                               value={newNotificationName}
                               onChange={(e) => {
                                  setNewNotificationName(e.target.value);
                               }}
-                              placeholder="Notification name"
+                              placeholder="Name of tip"
                            />
                            <div className="h-3"></div>
                            <Select
+                              defaultValue="modal"
                               onValueChange={(e) => {
                                  setNewNotificationType(e);
                               }}
@@ -97,9 +97,9 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                               </SelectTrigger>
                               <SelectContent>
                                  <SelectGroup>
-                                    <SelectLabel>Notification types</SelectLabel>
-                                    <SelectItem value="yesorno">Yes or no question</SelectItem>
-                                    <SelectItem value="announcement">Modal announcement</SelectItem>
+                                    <SelectLabel>All we have so far :)</SelectLabel>
+                                    {/* <SelectItem value="yesorno">Yes or no question</SelectItem> */}
+                                    <SelectItem value="modal">Modal </SelectItem>
                                  </SelectGroup>
                               </SelectContent>
                            </Select>
@@ -154,25 +154,4 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
          </div>
       </div>
    );
-}
-
-function formatDate(date: Date): string {
-   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-   const suffixes = ["st", "nd", "rd", "th"];
-
-   const month = months[date.getMonth()];
-   const day = date.getDate();
-   let daySuffix = "th";
-   if (day <= 3) {
-      daySuffix = suffixes[day - 1];
-   }
-
-   const hours = date.getHours();
-   const minutes = date.getMinutes();
-   const ampm = hours >= 12 ? "PM" : "AM";
-   const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-
-   return `${month} ${day}${daySuffix} at ${formattedHours}:${formattedMinutes} ${ampm}`;
 }

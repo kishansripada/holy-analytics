@@ -1,6 +1,7 @@
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
+import { VStack } from "@/components/ui/stacks";
+// import { Toaster } from "@/components/ui/sonner";
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
 export const metadata = {
@@ -12,10 +13,8 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
    return (
       <html lang="en" className={GeistSans.className}>
-         <Toaster />
-
          <body className="bg-background text-foreground">
-            <main className="flex min-h-screen flex-col items-center">{children}</main>
+            <VStack className="min-h-screen items-center">{children}</VStack>
          </body>
       </html>
    );

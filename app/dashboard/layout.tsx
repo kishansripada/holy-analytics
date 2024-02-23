@@ -6,6 +6,7 @@ import Sidebar from "./_components/Sidebar";
 import { AppWrapper } from "@/components/ui/app-wrapper";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { HStack } from "@/components/ui/stacks";
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
 export const metadata = {
@@ -13,6 +14,7 @@ export const metadata = {
    title: "Dashboard | Holy User",
    description: "Dashboard for Holy User. Create and edit your notifications",
 };
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
    const cookiesStore = cookies();
    const supabase = createClient(cookiesStore);
@@ -27,10 +29,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
    return (
       <AppWrapper>
-         <div className="flex h-full w-screen flex-row overflow-hidden">
+         <HStack className="h-full w-screen items-start">
             <Sidebar user={user}></Sidebar>
             {children}
-         </div>
+         </HStack>
       </AppWrapper>
    );
 }

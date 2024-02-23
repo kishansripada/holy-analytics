@@ -32,21 +32,21 @@ export default function Client() {
    return (
       <>
          <div className="flex w-full flex-row items-center justify-between gap-10">
-            <Button
+            {/* <Button
                onClick={() => {
                   setNotificationOpen(true);
                }}
                variant={"outline"}
             >
                View Notification Example
-            </Button>
+            </Button> */}
             <Button
                onClick={() => {
                   setAnnouncementOpen(true);
                }}
                variant={"outline"}
             >
-               View Announcement Example
+               View Example
             </Button>
          </div>
 

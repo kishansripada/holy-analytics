@@ -38,60 +38,35 @@ export default function Client() {
    }
 
    return (
-      <AppWrapper
-         className={"flex h-screen w-full select-none flex-col items-center justify-center "}
-         style={
-            {
-               // backgroundImage: "linear-gradient(180deg, #3A2C34 0%, #22191E 51.04%, #231A1F 97.92%)",
-               // background: "linear-gradient(180deg, rgba(255, 0, 122, 0.15) 0%, rgba(188, 0, 0, 0.38) 100%)",
-            }
-         }
-      >
-         <VStack className="w-[330px] max-w-[330px] items-center gap-6">
-            <Link href={"/"}>
-               <p className="text-6xl">🙏🏽</p>
-            </Link>
-            <p className="w-full text-center  text-xl font-semibold">Log in to Holy User</p>
+      <AppWrapper className={"flex select-none flex-col items-center justify-center "}>
+         <VStack className="h-full w-[330px] max-w-[330px] items-center ">
+            <VStack className="h-full w-full items-center justify-center gap-6 ">
+               <Link href={"/"}>
+                  <p className="text-6xl">🙏🏽</p>
+               </Link>
+               <p className="w-full text-center  text-xl font-semibold">Log in to Holy User</p>
 
-            <VStack className="w-full gap-3">
-               <Button
-                  variant={"default"}
-                  onClick={() => {
-                     signInWithGoogle();
-                  }}
-                  className=""
-               >
-                  <p>Continue with Google</p>
-               </Button>
-               <Button
-                  variant={"outline"}
-                  onClick={() => {
-                     signInWithGithub();
-                  }}
-                  className=""
-               >
-                  <p>Continue with GitHub</p>
-               </Button>
-            </VStack>
-            {/* <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-               <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground" action={signIn}>
-                  <label className="text-md" htmlFor="email">
-                     Email
-                  </label>
-                  <input
-                     onChange={(event) => {
-                        setEmail(event.target.value);
+               <VStack className="w-full gap-3">
+                  <Button
+                     variant={"default"}
+                     onClick={() => {
+                        signInWithGoogle();
                      }}
-                     value={email}
-                     className="rounded-md px-4 py-2 bg-inherit border mb-6"
-                     name="email"
-                     placeholder="you@example.com"
-                     required
-                  />
-
-                  <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">Sign In</button>
-               </form>
-            </div> */}
+                     className=""
+                  >
+                     <p>Continue with Google</p>
+                  </Button>
+                  <Button
+                     variant={"outline"}
+                     onClick={() => {
+                        signInWithGithub();
+                     }}
+                     className=""
+                  >
+                     <p>Continue with GitHub</p>
+                  </Button>
+               </VStack>
+            </VStack>
          </VStack>
       </AppWrapper>
    );

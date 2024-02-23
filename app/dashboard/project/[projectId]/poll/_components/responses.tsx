@@ -92,7 +92,7 @@ export default function Responses({
       window.URL.revokeObjectURL(url);
    };
    return (
-      <div className="flex h-full w-full  flex-col  ">
+      <div className="flex h-full w-full  flex-col overflow-hidden ">
          <div className="flex flex-row items-center justify-between">
             <div className="bg-neutral-900 text-neutral-50 text-white"></div>
 
@@ -105,15 +105,15 @@ export default function Responses({
                Export CSV
             </Button>
          </div>
-         <div className="flex w-full flex-col">
+         <div className="flex w-full flex-col overflow-hidden">
             <div className="flex w-full flex-row justify-between font-semibold ">
                <p>user_id</p>
                <p>response_data</p>
             </div>
-            <div className="flex w-full flex-col items-start gap-5">
+            <div className="flex w-full flex-col items-start overflow-y-scroll">
                {responses.map((response) => {
                   return (
-                     <div key={response.id} className="flex w-full flex-row justify-between gap-1  border-y py-3">
+                     <div key={response.id} className="flex w-full flex-row justify-between border-t  py-4">
                         <p className="text-sm text-neutral-600">{response.user_id}</p>
                         <p className="text-sm text-neutral-600">{JSON.stringify(response.response_data)}</p>
                      </div>
