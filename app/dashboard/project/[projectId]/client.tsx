@@ -9,22 +9,22 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { poll } from "@/utils/types";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
+// const SAMPLE_YESORNO = {
+//    poll_data: {
+//       type: "yesorno",
+//       title: "Are you open to taking a 15 min zoom call to hear about how you use FORMI for cheer?",
+//       yesorno: {
+//          no_button: "No, thanks",
+//          yes_button: "Sure",
+//       },
+//       subtitle: "Just quickly want to learn how to make the app better for you guys",
+//    },
+// };
 
-const SAMPLE_YESORNO = {
+const SAMPLE_MODAL = {
    poll_data: {
-      type: "yesorno",
-      title: "Are you open to taking a 15 min zoom call to hear about how you use FORMI for cheer?",
-      yesorno: {
-         no_button: "No, thanks",
-         yes_button: "Sure",
-      },
-      subtitle: "Just quickly want to learn how to make the app better for you guys",
-   },
-};
-
-const SAMPLE_ANNOUNCEMENT = {
-   poll_data: {
-      type: "announcement",
+      type: "modal",
       title: "Hey Cheerleaders!",
       subtitle: "You can now adjust the height of performers in 3D",
       image_url: "https://upload.wikimedia.org/wikipedia/commons/6/6e/JU_Cheerleaders.jpg",
@@ -41,8 +41,9 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
          .from("polls")
          .insert([
             {
-               ...SAMPLE_ANNOUNCEMENT,
+               ...SAMPLE_MODAL,
                title: newNotificationName,
+               unique_id: newNotificationName.toLowerCase().replace(" ", "_"),
                app_id: projectId,
             },
          ])
@@ -123,27 +124,36 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                   <div className="flex w-full flex-col gap-5  ">
                      {polls?.map((poll) => {
                         return (
-                           <Link
-                              className="flex h-16 flex-col justify-center rounded-md  px-3 py-2 transition hover:bg-neutral-100 "
-                              href={`/dashboard/project/${projectId}/poll/${poll.id}`}
-                              key={poll.id}
-                           >
-                              <div className="flex w-full flex-row items-center justify-between">
-                                 <div className="flex flex-row items-center gap-3">
-                                    <p className="text-2xl font-medium tracking-tight"> {poll.title}</p>
-                                    {poll.active ? (
+                           <ContextMenu>
+                              <ContextMenuTrigger>
+                                 <Link
+                                    className="flex h-16 flex-col justify-center rounded-md  px-3 py-2 transition hover:bg-neutral-100 "
+                                    href={`/dashboard/project/${projectId}/poll/${poll.id}`}
+                                    key={poll.id}
+                                 >
+                                    <div className="flex w-full flex-row items-center justify-between">
+                                       <div className="flex flex-row items-center gap-3">
+                                          <p className="text-2xl font-medium tracking-tight"> {poll.title}</p>
+                                          {/* {poll.active ? (
                                        <span className="rounded-full bg-green-200 px-2 py-1 text-xs font-medium text-green-800">Live</span>
                                     ) : (
                                        <span className="rounded-full bg-yellow-200 px-2 py-1 text-xs font-medium text-yellow-900">Inactive</span>
-                                    )}
-                                 </div>
-
-                                 {/* <div className="flex flex-col items-end">
-                                 <p className="text-3xl font-medium text-neutral-900">34</p>
-                                 <p className="text-sm text-neutral-600 ">responses</p>
-                              </div> */}
-                              </div>
-                           </Link>
+                                    )} */}
+                                       </div>
+                                    </div>
+                                 </Link>
+                              </ContextMenuTrigger>
+                              <ContextMenuContent>
+                                 <ContextMenuItem
+                                    onClick={async () => {
+                                       await supabase.from("polls").delete().eq("id", poll.id);
+                                       router.refresh();
+                                    }}
+                                 >
+                                    Delete
+                                 </ContextMenuItem>
+                              </ContextMenuContent>
+                           </ContextMenu>
                         );
                      })}
                   </div>

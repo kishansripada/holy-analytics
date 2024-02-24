@@ -12,7 +12,7 @@ import { poll } from "@/utils/types";
 import Link from "next/link";
 import Responses from "../_components/responses";
 import { ArrowLeft, MoveLeft } from "lucide-react";
-import { VStack } from "@/components/ui/stacks";
+import { HStack, VStack } from "@/components/ui/stacks";
 
 export default function Client({
    poll: initialPoll,
@@ -35,12 +35,11 @@ export default function Client({
    const saved = pollDataSaved && conditionsSaved && testIdsSaved;
 
    return (
-      // <AppWrapper>
-      <div className="flex h-full w-full flex-col overflow-hidden px-16 py-7">
+      <VStack className="h-full w-full overflow-hidden px-16 py-7">
          <Tabs defaultValue="what" className="flex h-full w-full flex-col overflow-hidden ">
             <VStack className="max-h-full gap-10">
                <div className="">
-                  <div className="relative mb-5 flex flex-row items-center justify-center">
+                  <HStack className="relative mb-5  items-center justify-center">
                      {!saved ? <p className="absolute right-0 text-sm text-neutral-600">saving...</p> : null}
                      <Link
                         href={`/dashboard/project/${poll.app_id?.app_id}`}
@@ -54,8 +53,8 @@ export default function Client({
                         <TabsTrigger value="preview">Preview</TabsTrigger>
                         <TabsTrigger value="responses">Responses</TabsTrigger>
                      </TabsList>
-                  </div>
-                  <div className="flex flex-row items-end justify-between">
+                  </HStack>
+                  <HStack className="flex flex-row items-end justify-between">
                      <div>
                         <Link
                            href={`/dashboard/project/${poll.app_id?.app_id}`}
@@ -66,7 +65,10 @@ export default function Client({
                         <p className="text-4xl font-medium tracking-tight">{poll.title}</p>
                      </div>
 
-                     <div className="flex flex-row items-end gap-5">
+                     <VStack className=" items-end">
+                        {/* <p className="text-sm text-neutral-700"> </p> */}
+                        <p className="font-semibold"> ID: {poll.id}</p>
+
                         {/* {poll.active ? (
                            <Button
                               onClick={async () => {
@@ -91,8 +93,8 @@ export default function Client({
                               Go live
                            </Button>
                         )} */}
-                     </div>
-                  </div>
+                     </VStack>
+                  </HStack>
                </div>
                <TabsContent className=" h-full overflow-hidden" value="what">
                   <What setPoll={setPoll} poll={poll}></What>
@@ -108,7 +110,6 @@ export default function Client({
                </TabsContent>
             </VStack>
          </Tabs>
-      </div>
-      // </AppWrapper>
+      </VStack>
    );
 }

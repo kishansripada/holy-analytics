@@ -2,12 +2,71 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/utils/supabase/client";
 import { poll } from "@/utils/types";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 const RemoteWidget = dynamic(() => import("./remote-widget"), {
    ssr: false,
 });
 export default function What({ poll, setPoll }: { poll: poll; setPoll: Function }) {
+   const supabase = createClient();
+   const BASE_URL = "https://cmdpjhmqoqpkfwxqdekb.supabase.co/storage/v1/object/public/";
+   const [imageFile, setImageFile] = useState(null);
+   const [uploadStatus, setUploadStatus] = useState("idle");
+
+   const handlePaste = async (event) => {
+      const clipboardItems = event.clipboardData.items;
+      let blob = null;
+
+      for (let i = 0; i < clipboardItems.length; i++) {
+         if (clipboardItems[i].type.indexOf("image") === 0) {
+            blob = clipboardItems[i].getAsFile();
+         }
+      }
+
+      if (blob) {
+         setImageFile(blob);
+      }
+   };
+
+   useEffect(() => {
+      if (imageFile) {
+         setUploadStatus("uploading");
+         const upload = async () => {
+            const fileName = `${Date.now()}_${imageFile.name}`;
+            const { data, error } = await supabase.storage
+               .from("images")
+               .upload(`${(await supabase.auth.getUser()).data.user.id}/${fileName}`, imageFile);
+            if (error) return;
+            setPoll((poll) => {
+               return {
+                  ...poll,
+                  poll_data: {
+                     ...poll.poll_data,
+                     image_url: BASE_URL + data.fullPath,
+                  },
+               };
+            });
+            if (error) {
+               setUploadStatus("error");
+            } else {
+               setUploadStatus("success");
+               setImageFile(null); // Reset for next upload
+            }
+         };
+
+         upload();
+      }
+   }, [imageFile]);
+   useEffect(() => {
+      // Add paste event listener
+      window.addEventListener("paste", handlePaste);
+
+      // Cleanup function (remove the listener when the component unmounts)
+      return () => window.removeEventListener("paste", handlePaste);
+   }, []); // Empty dependency array: Execute the effect only once on mount
+
    return (
       <div className="flex h-full w-full flex-row  justify-between gap-20 ">
          <div className="flex w-1/2 flex-col  gap-6 pt-5">
@@ -41,7 +100,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             </div>
             <div className="flex flex-col gap-4">
                <div className="flex w-full flex-row justify-between">
-                  {poll.poll_data.type === "announcement" ? (
+                  {poll.poll_data.type === "modal" ? (
                      <div className="w-full">
                         <Label htmlFor="title">Image URL</Label>
                         <Input
