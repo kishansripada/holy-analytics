@@ -68,7 +68,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
    }, []); // Empty dependency array: Execute the effect only once on mount
 
    return (
-      <div className="flex h-full w-full flex-row  justify-between gap-20 ">
+      <div className="flex h-full w-full flex-row  justify-between gap-20 pl-1 ">
          <div className="flex w-1/2 flex-col  gap-6 pt-5">
             <div className="grid w-full items-center gap-1.5 ">
                <Label htmlFor="title">Title</Label>
@@ -98,85 +98,30 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                   placeholder="Subtitle"
                />
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 py-1 ">
                <div className="flex w-full flex-row justify-between">
-                  {poll.poll_data.type === "modal" ? (
-                     <div className="w-full">
-                        <Label htmlFor="title">Image URL</Label>
-                        <Input
-                           className="w-full"
-                           onChange={(e) => {
-                              //  console.log(e);
-                              setPoll((poll) => {
-                                 return {
-                                    ...poll,
-                                    poll_data: {
-                                       ...poll.poll_data,
-                                       image_url: e.target.value,
-                                    },
-                                 };
-                              });
-                           }}
-                           value={poll.poll_data.image_url}
-                           type="negative"
-                           id="negative"
-                           placeholder="No, thanks"
-                        />
-                     </div>
-                  ) : (
-                     <div>
-                        <div>
-                           <Label htmlFor="title">Negative text</Label>
-                           <Input
-                              className="w-full"
-                              onChange={(e) => {
-                                 //  console.log(e);
-                                 setPoll((poll) => {
-                                    return {
-                                       ...poll,
-                                       poll_data: {
-                                          ...poll.poll_data,
-                                          yesorno: {
-                                             ...poll.poll_data.yesorno,
-                                             no_button: e.target.value,
-                                          },
-                                       },
-                                    };
-                                 });
-                              }}
-                              value={poll.poll_data.yesorno.no_button}
-                              type="negative"
-                              id="negative"
-                              placeholder="No, thanks"
-                           />
-                        </div>
-                        <div>
-                           <Label htmlFor="title">Affirmative text</Label>
-                           <Input
-                              className="w-full"
-                              onChange={(e) => {
-                                 //  console.log(e);
-                                 setPoll((poll) => {
-                                    return {
-                                       ...poll,
-                                       poll_data: {
-                                          ...poll.poll_data,
-                                          yesorno: {
-                                             ...poll.poll_data.yesorno,
-                                             yes_button: e.target.value,
-                                          },
-                                       },
-                                    };
-                                 });
-                              }}
-                              value={poll.poll_data.yesorno.yes_button}
-                              type="affirmative"
-                              id="affirmative"
-                              placeholder="Sure"
-                           />
-                        </div>
-                     </div>
-                  )}
+                  <div className="w-full">
+                     <Label htmlFor="title">Image URL</Label>
+                     <Input
+                        className="w-full"
+                        onChange={(e) => {
+                           //  console.log(e);
+                           setPoll((poll) => {
+                              return {
+                                 ...poll,
+                                 poll_data: {
+                                    ...poll.poll_data,
+                                    image_url: e.target.value,
+                                 },
+                              };
+                           });
+                        }}
+                        value={poll.poll_data.image_url}
+                        type="negative"
+                        id="negative"
+                        placeholder="https://your-server.com/image.jpg"
+                     />
+                  </div>
                </div>
 
                {/* <div className="flex flex-row items-end w-full justify-between">

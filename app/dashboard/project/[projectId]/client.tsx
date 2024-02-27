@@ -24,7 +24,6 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } 
 
 const SAMPLE_MODAL = {
    poll_data: {
-      type: "modal",
       title: "Hey Cheerleaders!",
       subtitle: "You can now adjust the height of performers in 3D",
       image_url: "https://upload.wikimedia.org/wikipedia/commons/6/6e/JU_Cheerleaders.jpg",
@@ -34,17 +33,20 @@ const SAMPLE_MODAL = {
 export default function Client({ polls, projectId, project }: { polls: poll[]; projectId: string; project: any }) {
    const router = useRouter();
    const [newNotificationName, setNewNotificationName] = useState("");
-   const [newNotificationType, setNewNotificationType] = useState("");
+   const [newNotificationType, setNewNotificationType] = useState("modal");
    const newNotification = async () => {
       const supabase = createClient();
       const { data, error } = await supabase
          .from("polls")
          .insert([
             {
-               ...SAMPLE_MODAL,
                title: newNotificationName,
                unique_id: newNotificationName.toLowerCase().replace(" ", "_"),
                app_id: projectId,
+               poll_data: {
+                  ...SAMPLE_MODAL.poll_data,
+                  type: newNotificationType,
+               },
             },
          ])
          .select("*")
@@ -57,7 +59,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
    return (
       <div className="flex h-full w-full flex-row">
          <div className=" flex w-full flex-col">
-            <div className=" flex w-full flex-col justify-center px-7 py-5">
+            <div className=" flex h-20 w-full flex-col justify-center px-7">
                <p className="text-2xl font-bold tracking-tight">{project.name}</p>
                <p className="text-sm text-neutral-700">
                   <span className=" font-semibold">API Key:</span> <span>{projectId}</span>
@@ -88,7 +90,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                            />
                            <div className="h-3"></div>
                            <Select
-                              defaultValue="modal"
+                              // defaultValue="modal"
                               onValueChange={(e) => {
                                  setNewNotificationType(e);
                               }}
@@ -98,9 +100,10 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                               </SelectTrigger>
                               <SelectContent>
                                  <SelectGroup>
-                                    <SelectLabel>All we have so far :)</SelectLabel>
+                                    {/* <SelectLabel>All we have so far :)</SelectLabel> */}
                                     {/* <SelectItem value="yesorno">Yes or no question</SelectItem> */}
                                     <SelectItem value="modal">Modal </SelectItem>
+                                    <SelectItem value="notification">Notification</SelectItem>
                                  </SelectGroup>
                               </SelectContent>
                            </Select>

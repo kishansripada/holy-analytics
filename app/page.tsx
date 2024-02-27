@@ -37,7 +37,7 @@ export default async function Index() {
          <div className="flex flex-col items-center ">
             {/* <p className="text-center text-neutral-500 text-lg">Get to know your users with</p> */}
             <div className="animate-in max-w-4xl text-center text-6xl tracking-tight">
-               Hint your users how to use your <span className={`${styles.gradient} font-semibold`}>React</span> app
+               Give your users tips when they <span className={`${styles.gradient} font-semibold`}>need them</span>
             </div>
             <p className="mt-5 max-w-2xl text-center text-lg text-neutral-500">
                Deliver beautiful pop-ups & messages to segmented user groups to help them start using your software.

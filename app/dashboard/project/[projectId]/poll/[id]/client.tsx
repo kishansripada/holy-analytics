@@ -13,6 +13,7 @@ import Link from "next/link";
 import Responses from "../_components/responses";
 import { ArrowLeft, MoveLeft } from "lucide-react";
 import { HStack, VStack } from "@/components/ui/stacks";
+import Triggers from "../_components/triggers";
 
 export default function Client({
    poll: initialPoll,
@@ -31,8 +32,9 @@ export default function Client({
    const pollDataSaved = useUploadToSupabase("poll_data", poll.poll_data, poll.id, true);
    const conditionsSaved = useUploadToSupabase("conditions", poll.conditions, poll.id, true);
    const testIdsSaved = useUploadToSupabase("test_ids", poll.test_ids, poll.id, true);
+   const triggerScheduleSaved = useUploadToSupabase("trigger_schedule", poll.trigger_schedule, poll.id, true);
 
-   const saved = pollDataSaved && conditionsSaved && testIdsSaved;
+   const saved = pollDataSaved && conditionsSaved && testIdsSaved && triggerScheduleSaved;
 
    return (
       <VStack className="h-full w-full overflow-hidden px-16 py-7">
@@ -48,8 +50,9 @@ export default function Client({
                         <MoveLeft className="mr-2" /> Back to {poll?.app_id?.name || ""}
                      </Link>
                      <TabsList>
-                        <TabsTrigger value="what">Design it</TabsTrigger>
-                        <TabsTrigger value="who">Choose who sees it</TabsTrigger>
+                        <TabsTrigger value="what">Design</TabsTrigger>
+                        <TabsTrigger value="who">User segmentation</TabsTrigger>
+                        <TabsTrigger value="triggers">Triggers</TabsTrigger>
                         <TabsTrigger value="preview">Preview</TabsTrigger>
                         <TabsTrigger value="responses">Responses</TabsTrigger>
                      </TabsList>
@@ -62,7 +65,7 @@ export default function Client({
                         >
                            {poll?.app_id?.name || ""}
                         </Link>
-                        <p className="text-4xl font-medium tracking-tight">{poll.title}</p>
+                        <p className="text-3xl font-medium tracking-tight">{poll.title}</p>
                      </div>
 
                      <VStack className=" items-end">
@@ -107,6 +110,9 @@ export default function Client({
                </TabsContent>
                <TabsContent className="h-full" value="responses">
                   <Responses responses={responses} poll={poll} setPoll={setPoll} sampleData={sampleData}></Responses>
+               </TabsContent>
+               <TabsContent className="h-full" value="triggers">
+                  <Triggers responses={responses} poll={poll} setPoll={setPoll} sampleData={sampleData}></Triggers>
                </TabsContent>
             </VStack>
          </Tabs>

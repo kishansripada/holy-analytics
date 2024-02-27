@@ -103,7 +103,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
             })}
          </div>
          <div className="flex w-1/2 flex-col items-start gap-5 overflow-hidden">
-            <div>
+            <div className="w-full">
                <div className="flex w-full flex-row items-end justify-between py-2">
                   <p className="text-2xl font-medium tracking-tight">Test against sample users</p>
 
@@ -120,9 +120,6 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                   </Button>
                </div>
                <div className="mt-1 text-xs text-neutral-600">
-                  <p className="mb-1 text-sm text-neutral-600">
-                     We collect minimum of 10 and up to 50 sample users so that you have some test data to run conditions against
-                  </p>
                   <div className="flex flex-row justify-between">
                      <p className="mb-1 text-sm text-neutral-600">Rows highlighted in green pass all conditions</p>
                      {/* <p className="text-sm text-neutral-600 mb-1">
@@ -162,7 +159,7 @@ export default function Who({ poll, sampleData, setPoll }: { poll: poll; setPoll
                                     style={{
                                        backgroundColor: passesAllConditions ? "rgb(0 255 0 / 25%)" : "transparent",
                                     }}
-                                    className=" flex h-[40px] min-h-[40px] flex-col justify-center border-b border-r"
+                                    className=" flex h-[40px] min-h-[40px] flex-col justify-center border-b border-r px-2"
                                  >
                                     <div>{typeof value === "string" ? <span>{value}</span> : <span>{JSON.stringify(value)}</span>}</div>
                                  </div>

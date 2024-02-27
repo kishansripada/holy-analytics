@@ -5,7 +5,13 @@ import Script from "next/script";
 
 export default function RemoteWidget({ poll }: { poll: poll }) {
    const Widget =
-      poll.poll_data.type === "yesorno" ? (window as any).YesOrNo : poll.poll_data.type === "modal" ? (window as any).VerticalAnnouncement : <></>;
+      poll.poll_data.type === "notification" ? (
+         (window as any).Notification
+      ) : poll.poll_data.type === "modal" ? (
+         (window as any).VerticalAnnouncement
+      ) : (
+         <></>
+      );
    const Container = window.Container;
    return (
       <>

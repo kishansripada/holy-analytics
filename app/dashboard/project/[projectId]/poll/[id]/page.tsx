@@ -14,7 +14,7 @@ export default async function Index({ params: { id, projectId } }: { params: { i
    } = await supabase.auth.getUser();
 
    let getPoll = () => supabase.from("polls").select("*, app_id (name, app_id)").eq("id", id).single();
-   let getSampleData = () => supabase.from("sample_data").select("*").eq("app_id", projectId);
+   let getSampleData = () => supabase.from("sample_data").select("*").eq("app_id", projectId).limit(50);
    //  .eq("app_id", );
    let getResponses = () => supabase.from("responses").select("*").eq("poll_id", id);
 
