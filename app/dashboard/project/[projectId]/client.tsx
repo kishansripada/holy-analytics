@@ -5,22 +5,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { poll } from "@/utils/types";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
-// const SAMPLE_YESORNO = {
-//    poll_data: {
-//       type: "yesorno",
-//       title: "Are you open to taking a 15 min zoom call to hear about how you use FORMI for cheer?",
-//       yesorno: {
-//          no_button: "No, thanks",
-//          yes_button: "Sure",
-//       },
-//       subtitle: "Just quickly want to learn how to make the app better for you guys",
-//    },
-// };
+import debounce from "lodash.debounce";
+import { UploadInput } from "@/components/upload-input";
 
 const SAMPLE_MODAL = {
    poll_data: {
@@ -32,6 +23,9 @@ const SAMPLE_MODAL = {
 
 export default function Client({ polls, projectId, project }: { polls: poll[]; projectId: string; project: any }) {
    const router = useRouter();
+
+   const [projectName, setProjectName] = useState(project.name);
+
    const [newNotificationName, setNewNotificationName] = useState("");
    const [newNotificationType, setNewNotificationType] = useState("modal");
    const newNotification = async () => {
@@ -56,11 +50,24 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
    };
    const supabase = createClient();
 
+   const onUpdate = async (name: string) => {
+      await supabase.from("projects").update({ name }).eq("app_id", projectId);
+   };
+
    return (
       <div className="flex h-full w-full flex-row">
          <div className=" flex w-full flex-col">
             <div className=" flex h-20 w-full flex-col justify-center px-7">
-               <p className="text-2xl font-bold tracking-tight">{project.name}</p>
+               {/* <input
+                  className="w-min  py-1 text-2xl font-bold tracking-tight"
+                  value={project.name}
+                  onChange={(e) => {
+                     setProjectName(e.target.value);
+                  }}
+               /> */}
+
+               <UploadInput className="w-min  py-1 text-2xl font-bold tracking-tight" value={project.name} onUpdate={onUpdate} />
+
                <p className="text-sm text-neutral-700">
                   <span className=" font-semibold">API Key:</span> <span>{projectId}</span>
                </p>
@@ -74,19 +81,19 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                   <div></div>
                   <Dialog>
                      <DialogTrigger>
-                        <Button>New tip</Button>
+                        <Button>New message</Button>
                      </DialogTrigger>
 
                      <DialogContent>
                         <DialogHeader>
-                           <DialogTitle>New tip</DialogTitle>
+                           <DialogTitle>New message</DialogTitle>
                            <div className="h-4"></div>
                            <Input
                               value={newNotificationName}
                               onChange={(e) => {
                                  setNewNotificationName(e.target.value);
                               }}
-                              placeholder="Name of tip"
+                              placeholder="Name of message"
                            />
                            <div className="h-3"></div>
                            <Select
@@ -161,7 +168,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                      })}
                   </div>
                ) : (
-                  <p className="text-neutral-700">Start by making your first notification to your users</p>
+                  <p className="text-neutral-700">Start by making your first in-app message</p>
                )}
             </div>
          </div>

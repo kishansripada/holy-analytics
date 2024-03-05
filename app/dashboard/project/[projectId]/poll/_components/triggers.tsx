@@ -1,9 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { HStack, VStack } from "@/components/ui/stacks";
 import { Switch } from "@/components/ui/switch";
-import { createClient } from "@/utils/supabase/client";
 import { poll } from "@/utils/types";
 import dynamic from "next/dynamic";
 import Prism from "prismjs";
@@ -33,8 +31,8 @@ export default function Triggers({ poll, setPoll }: { poll: poll; setPoll: Funct
             <div>
                <p className="text-xl font-semibold text-neutral-900">Code trigger</p>
                <p className="text-sm text-neutral-700">
-                  Consider delaying tips for new features until the user has gotten a chance to try it a few times, like after 2-3 interactions.
-                  Remind longtime users of unused features, maybe after 200 interactions.
+                  Consider delaying tips (e.g. for a certain feature) until the user has gotten a chance to try it a few times, like after 2-3
+                  interactions. Remind longtime users of unused features, maybe after 200 interactions.
                </p>
             </div>
             <div className="flex w-full flex-col gap-2">

@@ -14,6 +14,7 @@ import Responses from "../_components/responses";
 import { ArrowLeft, MoveLeft } from "lucide-react";
 import { HStack, VStack } from "@/components/ui/stacks";
 import Triggers from "../_components/triggers";
+import { UploadInput } from "@/components/upload-input";
 
 export default function Client({
    poll: initialPoll,
@@ -35,7 +36,9 @@ export default function Client({
    const triggerScheduleSaved = useUploadToSupabase("trigger_schedule", poll.trigger_schedule, poll.id, true);
 
    const saved = pollDataSaved && conditionsSaved && testIdsSaved && triggerScheduleSaved;
-
+   const onUpdate = async (title: string) => {
+      await supabase.from("polls").update({ title }).eq("id", poll.id);
+   };
    return (
       <VStack className="h-full w-full overflow-hidden px-16 py-7">
          <Tabs defaultValue="what" className="flex h-full w-full flex-col overflow-hidden ">
@@ -65,7 +68,7 @@ export default function Client({
                         >
                            {poll?.app_id?.name || ""}
                         </Link>
-                        <p className="text-3xl font-medium tracking-tight">{poll.title}</p>
+                        <UploadInput className="w-min text-3xl font-medium tracking-tight" value={poll.title} onUpdate={onUpdate} />
                      </div>
 
                      <VStack className=" items-end">

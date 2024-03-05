@@ -8,12 +8,12 @@ import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { useState } from "react";
 import { HStack, VStack } from "@/components/ui/stacks";
-
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 export default function Client({ projects }: any) {
    const router = useRouter();
    const [newProjectName, setNewProjectName] = useState("");
+   const supabase = createClient();
    const newProject = async () => {
-      const supabase = createClient();
       const { data, error } = await supabase
          .from("projects")
          .insert([
@@ -73,25 +73,39 @@ export default function Client({ projects }: any) {
 
             {projects.length ? (
                <div className="grid w-full grid-cols-3 gap-x-20 gap-y-10 py-10">
-                  {projects?.map((project) => {
+                  {projects?.map((project: any) => {
                      return (
-                        <Link
-                           className="flex h-[70px] w-full flex-row items-center justify-between rounded-md border border-neutral-300 px-4 text-neutral-700 shadow-sm transition hover:bg-neutral-50"
-                           href={`dashboard/project/${project.app_id}`}
-                           key={project.app_id}
-                        >
-                           <div className="font-medium ">{project.name}</div>
-                           <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="h-6 w-6"
-                           >
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                           </svg>
-                        </Link>
+                        <ContextMenu>
+                           <ContextMenuTrigger>
+                              <Link
+                                 className="flex h-[70px] w-full flex-row items-center justify-between rounded-md border border-neutral-300 px-4 text-neutral-700 shadow-sm transition hover:bg-neutral-50"
+                                 href={`dashboard/project/${project.app_id}`}
+                                 key={project.app_id}
+                              >
+                                 <div className="font-medium ">{project.name}</div>
+                                 <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="h-6 w-6"
+                                 >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+                                 </svg>
+                              </Link>
+                           </ContextMenuTrigger>
+                           <ContextMenuContent>
+                              <ContextMenuItem
+                                 onClick={async () => {
+                                    await supabase.from("projects").delete().eq("app_id", project.app_id);
+                                    router.refresh();
+                                 }}
+                              >
+                                 Delete
+                              </ContextMenuItem>
+                           </ContextMenuContent>
+                        </ContextMenu>
                      );
                   })}
                </div>

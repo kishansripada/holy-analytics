@@ -18,7 +18,7 @@ export default function Sidebar({ user }: { user: User }) {
    return (
       <div className="flex h-full  w-[250px] min-w-[250px] flex-col gap-3 border-r border-neutral-200 px-4 py-8">
          <div className="flex flex-row items-center gap-3">
-            <img className="h-8 w-8 rounded-full" src={user?.user_metadata.avatar_url} alt="" />
+            <img referrerPolicy="no-referrer" className="h-8 w-8 rounded-full" src={user?.user_metadata.avatar_url} alt="" />
             <p className="text-sm text-neutral-700">{user?.user_metadata.full_name}</p>
          </div>
          <div className="flex flex-col gap-1">
