@@ -13,9 +13,9 @@ export default async function Index() {
             <div className="flex w-full max-w-7xl items-center justify-between p-3 text-sm">
                <div className="flex flex-row items-end gap-4">
                   {/* <div className="w-8 h-8 rotate-12 border-4 border-purple-500"></div> */}
-                  <p className="text-4xl">🙏🏽</p>
+                  {/* <p className="text-4xl">👽</p> */}
                   <div className="flex flex-row items-end">
-                     <div className=" mr-2 whitespace-nowrap text-3xl font-medium ">holy user</div>
+                     <div className=" mr-2 whitespace-nowrap text-3xl font-medium ">hyperuser</div>
                      <p className="mb-1 text-xs text-neutral-700">beta</p>
                   </div>
                   <div className="mb-1 ml-4 flex flex-row items-end gap-5 text-sm  text-neutral-500">
@@ -37,7 +37,8 @@ export default async function Index() {
          <div className="flex flex-col items-center ">
             {/* <p className="text-center text-neutral-500 text-lg">Get to know your users with</p> */}
             <div className="animate-in max-w-4xl text-center text-6xl tracking-tight">
-               Give your users tips when they <span className={`${styles.gradient} font-semibold`}>need them</span>
+               User onboarding & messaging for
+               <span className={`${styles.gradient} font-semibold`}> React</span> developers
             </div>
             <p className="mt-5 max-w-2xl text-center text-lg text-neutral-500">
                Deliver beautiful pop-ups & messages to segmented user groups to help them start using your software.
@@ -45,11 +46,14 @@ export default async function Index() {
          </div>
          <div className={`${styles.blob} pointer-events-none`}></div>
          <div className={`${styles.blob2} pointer-events-none`}></div>
-         <div className="">
+         <div className="flex flex-row gap-2">
+            <Link href={"/login"}>
+               <Button>Get started</Button>
+            </Link>
             <Client></Client>
          </div>
 
-         <div className="mt-auto flex w-full flex-row gap-12 border-y border-neutral-300 px-16 py-16 text-center text-2xl text-neutral-800">
+         {/* <div className="mt-auto flex w-full flex-row gap-12 border-y border-neutral-300 px-16 py-16 text-center text-2xl text-neutral-800">
             <p className="">
                "I need to get a user who does <span className="font-bold">hip hop</span> on a <span className="font-bold">zoom call</span> ASAP"
             </p>
@@ -60,7 +64,7 @@ export default async function Index() {
             <p className="">
                "I want to ask all the <span className="font-bold">students</span> on my platform a quick question"
             </p>
-         </div>
+         </div> */}
       </div>
    );
 }

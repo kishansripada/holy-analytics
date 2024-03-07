@@ -24,7 +24,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
    } = await supabase.auth.getUser();
 
    if (!user) {
-      redirect("login");
+      redirect("/login");
    }
 
    return (

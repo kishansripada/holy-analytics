@@ -79,7 +79,7 @@ export default function Client({ projects }: any) {
                            <ContextMenuTrigger>
                               <Link
                                  className="flex h-[70px] w-full flex-row items-center justify-between rounded-md border border-neutral-300 px-4 text-neutral-700 shadow-sm transition hover:bg-neutral-50"
-                                 href={`dashboard/project/${project.app_id}`}
+                                 href={`dashboard/${project.app_id}`}
                                  key={project.app_id}
                               >
                                  <div className="font-medium ">{project.name}</div>

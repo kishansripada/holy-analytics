@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash.debounce";
-
 import { createClient } from "@/utils/supabase/client";
+
 export const useUploadToSupabase = (dataKey: string, dataValue: any, danceId: string, enabled: boolean) => {
    const supabase = createClient();
    const [saved, setSaved] = useState(true);

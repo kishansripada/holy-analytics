@@ -10,8 +10,9 @@ import { useRouter } from "next/navigation";
 import { poll } from "@/utils/types";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
-import debounce from "lodash.debounce";
+
 import { UploadInput } from "@/components/upload-input";
+import { Badge } from "@/components/ui/badge";
 
 const SAMPLE_MODAL = {
    poll_data: {
@@ -46,7 +47,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
          .select("*")
          .single();
 
-      router.push(`/dashboard/project/${projectId}/poll/` + data.id);
+      router.push(`/dashboard/${projectId}/poll/` + data.id);
    };
    const supabase = createClient();
 
@@ -57,7 +58,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
    return (
       <div className="flex h-full w-full flex-row">
          <div className=" flex w-full flex-col">
-            <div className=" flex h-20 w-full flex-col justify-center px-7">
+            <div className="flex h-24 w-full flex-col justify-center px-7">
                {/* <input
                   className="w-min  py-1 text-2xl font-bold tracking-tight"
                   value={project.name}
@@ -66,10 +67,11 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                   }}
                /> */}
 
-               <UploadInput className="w-min  py-1 text-2xl font-bold tracking-tight" value={project.name} onUpdate={onUpdate} />
-
-               <p className="text-sm text-neutral-700">
-                  <span className=" font-semibold">API Key:</span> <span>{projectId}</span>
+               {/* <UploadInput className="w-full  py-1 text-2xl font-bold tracking-tight" value={project.name} onUpdate={onUpdate} /> */}
+               <p className="w-full  py-1 text-2xl font-bold tracking-tight">Messages</p>
+               <p className="text-sm text-neutral-600">
+                  Modals, notifications or tooltips. They can be assembled into an onboarding flow or displayed independently.
+                  {/* <span className=" font-semibold">API Key:</span> <span>{projectId}</span> */}
                </p>
                {/* <AuthButton /> */}
             </div>
@@ -109,7 +111,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                                  <SelectGroup>
                                     {/* <SelectLabel>All we have so far :)</SelectLabel> */}
                                     {/* <SelectItem value="yesorno">Yes or no question</SelectItem> */}
-                                    <SelectItem value="modal">Modal </SelectItem>
+                                    <SelectItem value="modal">Modal</SelectItem>
                                     <SelectItem value="notification">Notification</SelectItem>
                                  </SelectGroup>
                               </SelectContent>
@@ -138,17 +140,16 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                               <ContextMenuTrigger>
                                  <Link
                                     className="flex h-16 flex-col justify-center rounded-md  px-3 py-2 transition hover:bg-neutral-100 "
-                                    href={`/dashboard/project/${projectId}/poll/${poll.id}`}
+                                    href={`/dashboard/${projectId}/poll/${poll.id}`}
                                     key={poll.id}
                                  >
                                     <div className="flex w-full flex-row items-center justify-between">
-                                       <div className="flex flex-row items-center gap-3">
+                                       <div className="flex w-full flex-row items-center justify-between gap-3">
                                           <p className="text-2xl font-medium tracking-tight"> {poll.title}</p>
-                                          {/* {poll.active ? (
-                                       <span className="rounded-full bg-green-200 px-2 py-1 text-xs font-medium text-green-800">Live</span>
-                                    ) : (
-                                       <span className="rounded-full bg-yellow-200 px-2 py-1 text-xs font-medium text-yellow-900">Inactive</span>
-                                    )} */}
+                                          <Badge variant={"outline"} className="capitalize">
+                                             {poll.poll_data.type}
+                                          </Badge>
+                                          {/* <p className="text-sm text-neutral-700">ID: {poll.id}</p> */}
                                        </div>
                                     </div>
                                  </Link>

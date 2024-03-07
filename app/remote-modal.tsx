@@ -20,9 +20,9 @@ export default function RemoteModal({ poll, open, setOpen }: { poll: poll; open:
          <Script strategy="afterInteractive" type="module" src="https://holyuser-widget.vercel.app/holyuser.js"></Script>
          {typeof window !== "undefined" && Widget && Container && ModalWrapper ? (
             <ModalWrapper sendResponse={() => null} visible={open} setVisible={setOpen}>
-               <Container width={500}>
-                  <Widget sendResponse={() => null} poll={poll} />
-               </Container>
+               {/* <Container width={500}> */}
+               <Widget sendResponse={() => null} poll={poll} />
+               {/* </Container> */}
             </ModalWrapper>
          ) : null}
       </>

@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 import { poll } from "@/utils/types";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import RemoteWrapper from "./remote-wrapper";
 const RemoteWidget = dynamic(() => import("./remote-widget"), {
    ssr: false,
 });
@@ -14,7 +15,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
    const BASE_URL = "https://cmdpjhmqoqpkfwxqdekb.supabase.co/storage/v1/object/public/";
    const [imageFile, setImageFile] = useState(null);
    const [uploadStatus, setUploadStatus] = useState("idle");
-
+   const [previewOpen, setPreviewOpen] = useState(true);
    const handlePaste = async (event) => {
       const clipboardItems = event.clipboardData.items;
       let blob = null;
@@ -221,6 +222,11 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             {/* <div className=" overflow-hidden select-none  w-[500px] min-h-[200px] grid place-items-center rounded-lg border  dark:border-neutral-700 border-neutral-300"> */}
             {/* {typeof window !== "undefined" && YesNoComponent ? <YesNoComponent poll={poll}></YesNoComponent> : null} */}
             <RemoteWidget poll={poll}></RemoteWidget>
+            {/* {previewOpen && (
+               <RemoteWrapper poll={poll} open={previewOpen}>
+                  <RemoteWidget poll={poll}></RemoteWidget>
+               </RemoteWrapper>
+            )} */}
             {/* </div> */}
             {/* </div> */}
          </div>

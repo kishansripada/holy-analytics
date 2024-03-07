@@ -4,7 +4,7 @@ export type poll = {
    title?: string | null;
    user_id: string | null;
    active_until?: Date | null;
-   poll_data: Record<string, any> | null;
+   poll_data: Record<string, any>;
    time_delay_ms: number;
    active: boolean;
    conditions?: any[] | null;
