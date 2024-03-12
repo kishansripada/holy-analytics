@@ -5,10 +5,10 @@ export default async function Index({ params: { projectId } }: { params: { proje
    const cookieStore = cookies();
    const supabase = createClient(cookieStore);
 
-   const getAudiences = () => supabase.from("audiences").select("*").eq("app_id", projectId);
+   const getDeployments = () => supabase.from("deployments").select("*").eq("app_id", projectId);
    const getProject = () => supabase.from("projects").select("*").eq("app_id", projectId).single();
 
-   const [{ data: audiences }, { data: project }] = await Promise.all([getAudiences(), getProject()]);
+   const [{ data: deployments }, { data: project }] = await Promise.all([getDeployments(), getProject()]);
 
-   return <Client projectId={projectId} project={project} audiences={audiences}></Client>;
+   return <Client projectId={projectId} project={project} deployments={deployments}></Client>;
 }

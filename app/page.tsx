@@ -15,7 +15,10 @@ export default async function Index() {
                   {/* <div className="w-8 h-8 rotate-12 border-4 border-purple-500"></div> */}
                   {/* <p className="text-4xl">👽</p> */}
                   <div className="flex flex-row items-end">
-                     <div className=" mr-2 whitespace-nowrap text-3xl font-medium ">hyperuser</div>
+                     <div className=" mr-2 whitespace-nowrap text-3xl font-medium ">
+                        {" "}
+                        <span className="mr-2"></span> hyperuser
+                     </div>
                      <p className="mb-1 text-xs text-neutral-700">beta</p>
                   </div>
                   <div className="mb-1 ml-4 flex flex-row items-end gap-5 text-sm  text-neutral-500">
@@ -38,7 +41,7 @@ export default async function Index() {
             {/* <p className="text-center text-neutral-500 text-lg">Get to know your users with</p> */}
             <div className="animate-in max-w-4xl text-center text-6xl tracking-tight">
                User onboarding & messaging for
-               <span className={`${styles.gradient} font-semibold`}> React</span> developers
+               <span className={`${styles.gradient} font-semibold`}> developers</span>
             </div>
             <p className="mt-5 max-w-2xl text-center text-lg text-neutral-500">
                Deliver beautiful pop-ups & messages to segmented user groups to help them start using your software.

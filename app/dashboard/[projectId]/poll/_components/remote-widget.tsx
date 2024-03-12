@@ -7,13 +7,11 @@ export default function RemoteWidget({ poll }: { poll: poll }) {
    // console.log({ type: poll.poll_data.type });
 
    const Widget =
-      poll.poll_data.type === "notification" ? (
-         (window as any).DefaultNotification
-      ) : poll.poll_data.type === "modal" ? (
-         (window as any).DefaultModal
-      ) : (
-         <></>
-      );
+      poll.poll_data.type === "notification"
+         ? (window as any).DefaultNotification
+         : poll.poll_data.type === "modal"
+           ? (window as any).DefaultModal
+           : (window as any).DefaultPopover;
 
    console.log(Widget);
    // const Container = window.Container;

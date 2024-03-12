@@ -9,7 +9,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
    onUpdate: (value: string) => void; // Update function
 }
 
-const UploadInput = forwardRef<HTMLInputElement, InputProps>(({ className, debounceDelay = 500, onUpdate, ...props }, ref) => {
+const UploadInput = forwardRef<HTMLInputElement, InputProps>(({ className, debounceDelay = 500, onUpdate, onChange, ...props }, ref) => {
    const [value, setValue] = useState(props.value);
    const [saved, setSaved] = useState(true);
 
@@ -43,6 +43,7 @@ const UploadInput = forwardRef<HTMLInputElement, InputProps>(({ className, debou
          value={value} // Controlled component
          onChange={(e) => {
             setValue(e.target.value);
+            onChange(e.target.value);
          }}
          // size={props.size}
          // {...props}

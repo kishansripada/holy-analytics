@@ -6,7 +6,7 @@ import { redirect, usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 export default function Sidebar({ user }: { user: User }) {
-   // console.log(user);
+   console.log(user);
    const path = usePathname();
    const router = useRouter();
    const supabase = createClient();
@@ -14,20 +14,17 @@ export default function Sidebar({ user }: { user: User }) {
       await supabase.auth.signOut();
       return router.push("/login");
    };
+   const urlParts = path.split("/");
 
-   const currentURL = window.location.href;
-   const urlParts = currentURL.split("/");
-   console.log(urlParts.length === 5 && urlParts[3] === "dashboard");
-   const projectId = urlParts[4]; // Index 4 assuming the structure is always consistent
+   const projectId = path.split("/")[2];
+   console.log(projectId);
 
    return (
       <div className="flex h-full  w-[250px] min-w-[250px] flex-col gap-3 border-r border-neutral-200 px-4 py-5">
-         <div className="flex flex-row items-center gap-3">
-            <img referrerPolicy="no-referrer" className="h-8 w-8 rounded-full" src={user?.user_metadata.avatar_url} alt="" />
-            <p className="text-sm text-neutral-700">{user?.user_metadata.full_name}</p>
-         </div>
+         <p className="ml-2 text-2xl font-medium text-neutral-700">
+            👧🏻 <span className="ml-1">hyperuser</span>
+         </p>
          <div data-hyperuser="testing" className="flex h-full flex-col gap-1">
-            {/* FOR PROJECTS */}
             {path.includes("/dashboard/") ? (
                <>
                   <Link
@@ -46,7 +43,7 @@ export default function Sidebar({ user }: { user: User }) {
                   >
                      Audiences
                   </Link>
-                  {/* <div className="h-px w-full bg-neutral-200"></div> */}
+
                   <Link
                      href={`/dashboard/${projectId}/deployments`}
                      className={`w-full ${
@@ -55,7 +52,6 @@ export default function Sidebar({ user }: { user: User }) {
                   >
                      Deployments
                   </Link>
-                  {/* <div className="h-px w-full bg-neutral-300"></div> */}
                </>
             ) : null}
 
@@ -84,6 +80,10 @@ export default function Sidebar({ user }: { user: User }) {
                >
                   Sign out
                </button>
+               <div className="mt-3 flex flex-row items-center gap-3">
+                  <img referrerPolicy="no-referrer" className="h-8 w-8 rounded-full" src={user?.user_metadata.avatar_url} alt="" />
+                  <p className="text-sm text-neutral-700">{user?.user_metadata.full_name}</p>
+               </div>
             </div>
          </div>
       </div>

@@ -31,7 +31,7 @@ export const AppWrapper = ({ className, children, style, ...props }: { className
          </style>
          <div className="flex h-10 min-h-10 w-full flex-row items-center justify-center border-b border-neutral-300">
             <p className="text-xs text-neutral-700">
-               Holy User is in beta, please email kishansripada@formistudio.app with bugs reports & suggestions
+               Hyperuser is in beta, please email kishansripada@formistudio.app with bugs reports & suggestions
             </p>
          </div>
 

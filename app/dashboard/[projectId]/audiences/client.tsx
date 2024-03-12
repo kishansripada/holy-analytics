@@ -27,7 +27,7 @@ export default function Client({ audiences, projectId, project }: { audiences: a
 
    const [newAudienceName, setNewAudienceName] = useState("");
 
-   const newAudience = async () => {
+   const makeNewAudienceAndGoToIt = async () => {
       const supabase = createClient();
       const { data, error } = await supabase
          .from("audiences")
@@ -40,6 +40,7 @@ export default function Client({ audiences, projectId, project }: { audiences: a
                      id: "yolo",
                   },
                ],
+               app_id: projectId,
             },
          ])
          .select("*")
@@ -64,7 +65,7 @@ export default function Client({ audiences, projectId, project }: { audiences: a
                {/* <UploadInput className="w-full  py-1 text-2xl font-bold tracking-tight" value={project.name} onUpdate={onUpdate} /> */}
                <p className="w-full  py-1 text-2xl font-bold tracking-tight">Audiences</p>
                <p className="text-sm text-neutral-600">
-                  Audiences are groups of speciifc users targeted based on their attributes passed into the SDK.
+                  {`Audiences are combinations of conditional statements run against the user object. The audience "students" might contain "user.email.endsWith("edu")" & "user.age < 25"`}
                   {/* <span className=" font-semibold">API Key:</span> <span>{projectId}</span> */}
                </p>
                {/* <AuthButton /> */}
@@ -99,7 +100,7 @@ export default function Client({ audiences, projectId, project }: { audiences: a
 
                               <Button
                                  onClick={() => {
-                                    newAudience();
+                                    makeNewAudienceAndGoToIt();
                                  }}
                               >
                                  Create

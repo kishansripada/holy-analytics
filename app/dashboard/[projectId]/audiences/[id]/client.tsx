@@ -10,10 +10,10 @@ import { VStack } from "@/components/ui/stacks";
 import { UploadInput } from "@/components/upload-input";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import "prismjs/themes/prism-tomorrow.css";
+import "prismjs/themes/prism.css";
 import Prism from "prismjs";
 
-export default function Client({ audience: initialAudience, projectId }: { audience: any; projectId: string }) {
+export default function Client({ audience: initialAudience, projectId, sampleUsers }: { audience: any; projectId: string; sampleUsers: any }) {
    const [audience, setAudience] = useState(initialAudience);
    const supabase = createClient();
 
@@ -50,7 +50,7 @@ export default function Client({ audience: initialAudience, projectId }: { audie
                                     ...audience,
                                     conditions: [
                                        ...(audience.conditions || []),
-                                       { id: Math.random().toString(36).substring(7), condition_string: "" },
+                                       { id: Math.random().toString(36).substring(7), condition_string: "user" },
                                     ],
                                  };
                               });
@@ -79,15 +79,38 @@ export default function Client({ audience: initialAudience, projectId }: { audie
                      </a>
                      {audience.conditions.map((condition) => {
                         return (
-                           <div className="flex w-full flex-row items-center gap-1.5 ">
-                              {/* <pre className="language-javascript w-full"> */}
+                           <div className="relative flex w-full flex-row items-center gap-1.5 overflow-hidden px-1 py-1">
+                              <pre
+                                 style={{
+                                    paddingLeft: 17,
+                                    // paddingRight: 12,
+                                    backgroundColor: "transparent",
+                                    margin: 0,
+                                    fontFamily: "'__GeistSans_ac79ff', '__GeistSans_Fallback_ac79ff'",
+                                 }}
+                                 className="language-javascript pointer-events-none absolute left-0 top-0 flex  h-full w-full flex-col justify-center"
+                              >
+                                 <code
+                                    style={{
+                                       fontSize: 14,
+                                       lineHeight: "1rem",
+                                       padding: 0,
+                                       margin: 0,
+                                       backgroundColor: "transparent",
+                                       fontFamily: "'__GeistSans_ac79ff', '__GeistSans_Fallback_ac79ff'",
+                                    }}
+                                    className="  text-xs "
+                                 >
+                                    {condition.condition_string}
+                                 </code>
+                              </pre>
                               <Input
                                  style={{
                                     outlineColor: isValidJavaScriptCondition(condition.condition_string)
                                        ? "rgb(0 255 0 / 25%)"
                                        : "rgb(255 0 0 / 25%)",
                                  }}
-                                 className=" w-full"
+                                 className=" w-full overflow-scroll text-white caret-black"
                                  onChange={(e) => {
                                     //  console.log(e);
                                     setAudience((audience) => {
@@ -107,7 +130,7 @@ export default function Client({ audience: initialAudience, projectId }: { audie
                                  id="condition"
                                  placeholder={`e.g. user.selectedUses.includes("Cheer")`}
                               />
-                              {/* </pre> */}
+
                               <Button
                                  className="w-12 p-0"
                                  onClick={() => {
@@ -140,7 +163,7 @@ export default function Client({ audience: initialAudience, projectId }: { audie
                   <div className="flex w-1/2 flex-col items-start gap-5 overflow-hidden">
                      <div className="w-full">
                         <div className="flex w-full flex-row items-end justify-between py-2">
-                           <p className="text-2xl font-medium tracking-tight">Test against users</p>
+                           <p className="text-2xl font-medium tracking-tight">Check against sample</p>
                         </div>
                         <div className="mt-1 text-xs text-neutral-600">
                            <div className="flex flex-row justify-between">
@@ -153,19 +176,19 @@ export default function Client({ audience: initialAudience, projectId }: { audie
                            </div>
                         </div>
                      </div>
-                     {/* <div className="h-full w-full overflow-scroll rounded-md border border-neutral-300 text-xs">
-                        {sampleData.length ? (
+                     <div className="h-full w-full overflow-scroll rounded-md border border-neutral-300 text-xs">
+                        {sampleUsers.length ? (
                            <div className="flex flex-row   ">
-                              {[...new Set(sampleData.map((row) => Object.keys(row.user)).flat())].map((key) => (
-                                 <div className="flex min-w-[200px] flex-col">
-                                    <div className=" flex h-[40px] min-h-[40px] flex-col items-center justify-center border-b border-r font-semibold">
+                              {[...new Set(sampleUsers.map((row) => Object.keys(row.user)).flat())].map((key) => (
+                                 <div className="relative flex min-w-[200px] flex-col">
+                                    <div className="absolute top-0 flex h-[40px] min-h-[40px] w-full flex-col items-center justify-center border-b border-r bg-white font-semibold">
                                        {key}
                                     </div>
-                                    {sampleData.map((user) => {
+                                    {sampleUsers.map((user) => {
                                        let passesAllConditions = false;
                                        //   console.log();
                                        try {
-                                          const filterFns = poll.conditions.map((cond) => {
+                                          const filterFns = audience.conditions.map((cond) => {
                                              return new Function("user", `return ${cond.condition_string}`);
                                           });
 
@@ -199,8 +222,7 @@ export default function Client({ audience: initialAudience, projectId }: { audie
                               </p>
                            </div>
                         )}
-                        
-                     </div> */}
+                     </div>
                   </div>
                </div>
             </VStack>

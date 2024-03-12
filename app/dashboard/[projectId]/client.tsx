@@ -70,7 +70,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                {/* <UploadInput className="w-full  py-1 text-2xl font-bold tracking-tight" value={project.name} onUpdate={onUpdate} /> */}
                <p className="w-full  py-1 text-2xl font-bold tracking-tight">Messages</p>
                <p className="text-sm text-neutral-600">
-                  Modals, notifications or tooltips. They can be assembled into an onboarding flow or displayed independently.
+                  Modals, notifications or popovers. They can be assembled into an onboarding flow or displayed independently.
                   {/* <span className=" font-semibold">API Key:</span> <span>{projectId}</span> */}
                </p>
                {/* <AuthButton /> */}
@@ -113,6 +113,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
                                     {/* <SelectItem value="yesorno">Yes or no question</SelectItem> */}
                                     <SelectItem value="modal">Modal</SelectItem>
                                     <SelectItem value="notification">Notification</SelectItem>
+                                    <SelectItem value="popover">Popover</SelectItem>
                                  </SelectGroup>
                               </SelectContent>
                            </Select>

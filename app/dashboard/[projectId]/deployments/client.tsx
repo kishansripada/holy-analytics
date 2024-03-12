@@ -22,9 +22,9 @@ const SAMPLE_MODAL = {
    },
 };
 
-export default function Client({ audiences, projectId, project }: { audiences: any[]; projectId: string; project: any }) {
+export default function Client({ deployments, projectId, project }: { deployments: any[]; projectId: string; project: any }) {
    const router = useRouter();
-
+   console.log({ deployments });
    const [projectName, setProjectName] = useState(project.name);
 
    const [newNotificationName, setNewNotificationName] = useState("");
@@ -70,7 +70,7 @@ export default function Client({ audiences, projectId, project }: { audiences: a
                {/* <UploadInput className="w-full  py-1 text-2xl font-bold tracking-tight" value={project.name} onUpdate={onUpdate} /> */}
                <p className="w-full  py-1 text-2xl font-bold tracking-tight">Deployments</p>
                <p className="text-sm text-neutral-600">
-                  Combinations of messages, audiences and triggers that are deployed to your app.
+                  Combinations of messages, deployments and triggers that are deployed to your app.
                   {/* <span className=" font-semibold">API Key:</span> <span>{projectId}</span> */}
                </p>
                {/* <AuthButton /> */}
@@ -88,14 +88,14 @@ export default function Client({ audiences, projectId, project }: { audiences: a
 
                      <DialogContent>
                         <DialogHeader>
-                           <DialogTitle>New audience</DialogTitle>
+                           <DialogTitle>New deployment</DialogTitle>
                            <div className="h-4"></div>
                            <Input
                               value={newNotificationName}
                               onChange={(e) => {
                                  setNewNotificationName(e.target.value);
                               }}
-                              placeholder="Name of audience"
+                              placeholder="Name of deployment"
                            />
                            <div className="h-3"></div>
                            <Select
@@ -132,45 +132,121 @@ export default function Client({ audiences, projectId, project }: { audiences: a
                      </DialogContent>
                   </Dialog>
                </div>
-               {audiences.length ? (
+               {deployments.length ? (
                   <div className="flex w-full flex-col gap-5  ">
-                     {audiences?.map((audience) => {
+                     <ContextMenu>
+                        <ContextMenuTrigger>
+                           <div
+                              className="flex h-16 flex-col justify-center rounded-md  px-3 py-2 transition hover:bg-neutral-100 "
+                              // href={`/dashboard/${projectId}/deployments/${deployment.id}`}
+                           >
+                              <div className="flex w-full flex-row items-center justify-between">
+                                 <div className="flex flex-row items-center text-sm font-medium text-neutral-700">
+                                    <Link
+                                       href={"/"}
+                                       className="flex flex-row items-center gap-2 rounded-full  border border-blue-300 px-3 py-1 tracking-tight transition hover:bg-neutral-200  "
+                                    >
+                                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                                          <path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM1.49 15.326a.78.78 0 0 1-.358-.442 3 3 0 0 1 4.308-3.516 6.484 6.484 0 0 0-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 0 1-2.07-.655ZM16.44 15.98a4.97 4.97 0 0 0 2.07-.654.78.78 0 0 0 .357-.442 3 3 0 0 0-4.308-3.517 6.484 6.484 0 0 1 1.907 3.96 2.32 2.32 0 0 1-.026.654ZM18 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5.304 16.19a.844.844 0 0 1-.277-.71 5 5 0 0 1 9.947 0 .843.843 0 0 1-.277.71A6.975 6.975 0 0 1 10 18a6.974 6.974 0 0 1-4.696-1.81Z" />
+                                       </svg>
+                                       cheerleaders that signed up over a week ago
+                                    </Link>
+                                    <p className="mx-3">→</p>
+                                    <Link
+                                       href={"/"}
+                                       className="flex flex-row items-center gap-2 rounded-full border  border-green-300 px-3 py-1 tracking-tight transition hover:bg-neutral-200  "
+                                    >
+                                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                                          <path
+                                             fillRule="evenodd"
+                                             d="M6.28 5.22a.75.75 0 0 1 0 1.06L2.56 10l3.72 3.72a.75.75 0 0 1-1.06 1.06L.97 10.53a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Zm7.44 0a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L17.44 10l-3.72-3.72a.75.75 0 0 1 0-1.06ZM11.377 2.011a.75.75 0 0 1 .612.867l-2.5 14.5a.75.75 0 0 1-1.478-.255l2.5-14.5a.75.75 0 0 1 .866-.612Z"
+                                             clipRule="evenodd"
+                                          />
+                                       </svg>
+                                       Programmatic trigger
+                                    </Link>
+                                    <p className="mx-3">→</p>
+                                    <Link
+                                       href={"/"}
+                                       className="flex flex-row items-center gap-2 rounded-full border  border-pink-300 px-3 py-1 tracking-tight transition hover:bg-neutral-200  "
+                                    >
+                                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                                          <path
+                                             fillRule="evenodd"
+                                             d="M3.43 2.524A41.29 41.29 0 0 1 10 2c2.236 0 4.43.18 6.57.524 1.437.231 2.43 1.49 2.43 2.902v5.148c0 1.413-.993 2.67-2.43 2.902a41.102 41.102 0 0 1-3.55.414c-.28.02-.521.18-.643.413l-1.712 3.293a.75.75 0 0 1-1.33 0l-1.713-3.293a.783.783 0 0 0-.642-.413 41.108 41.108 0 0 1-3.55-.414C1.993 13.245 1 11.986 1 10.574V5.426c0-1.413.993-2.67 2.43-2.902Z"
+                                             clipRule="evenodd"
+                                          />
+                                       </svg>
+                                       press r to flip the stage
+                                    </Link>
+                                    <div className="h-px w-6 bg-pink-300"></div>
+
+                                    <Link
+                                       href={"/"}
+                                       className="flex flex-row items-center gap-2 rounded-full border  border-pink-300 px-3 py-1 tracking-tight transition hover:bg-neutral-200  "
+                                    >
+                                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                                          <path
+                                             fillRule="evenodd"
+                                             d="M3.43 2.524A41.29 41.29 0 0 1 10 2c2.236 0 4.43.18 6.57.524 1.437.231 2.43 1.49 2.43 2.902v5.148c0 1.413-.993 2.67-2.43 2.902a41.102 41.102 0 0 1-3.55.414c-.28.02-.521.18-.643.413l-1.712 3.293a.75.75 0 0 1-1.33 0l-1.713-3.293a.783.783 0 0 0-.642-.413 41.108 41.108 0 0 1-3.55-.414C1.993 13.245 1 11.986 1 10.574V5.426c0-1.413.993-2.67 2.43-2.902Z"
+                                             clipRule="evenodd"
+                                          />
+                                       </svg>
+                                       paste on another formation
+                                    </Link>
+                                 </div>
+
+                                 <Badge variant={"good"} color="#008205">
+                                    Live
+                                 </Badge>
+                                 {/* <Badge variant={"outline"} className="capitalize">
+                                             {poll.poll_data.type}
+                                          </Badge> */}
+                                 {/* <p className="text-sm text-neutral-700">ID: {poll.id}</p> */}
+                              </div>
+                           </div>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent>
+                           <ContextMenuItem
+                              onClick={async () => {
+                                 await supabase.from("deployments").delete().eq("id", deployment.id);
+                                 router.refresh();
+                              }}
+                           >
+                              Delete
+                           </ContextMenuItem>
+                        </ContextMenuContent>
+                     </ContextMenu>
+                     {deployments?.map((deployment) => {
                         return (
                            <ContextMenu>
                               <ContextMenuTrigger>
                                  <Link
                                     className="flex h-16 flex-col justify-center rounded-md  px-3 py-2 transition hover:bg-neutral-100 "
-                                    href={`/dashboard/${projectId}/audiences/${audience.id}`}
-                                    key={audience.id}
+                                    href={`/dashboard/${projectId}/deployments/${deployment.id}`}
+                                    key={deployment.id}
                                  >
                                     <div className="flex w-full flex-row items-center justify-between">
-                                       <div className="flex w-full flex-row items-center ">
-                                          <div className="flex flex-row items-center text-sm font-medium text-neutral-700">
-                                             <p className="rounded-full border border-pink-300 px-3 py-1  tracking-tight  ">
-                                                press r to flip the stage
-                                             </p>
-                                             <div className="h-px w-6 bg-pink-300"></div>
-                                             <p className="rounded-full border border-pink-300 px-3 py-1  tracking-tight">
-                                                paste on another formation
-                                             </p>
-                                             <p className="mx-3">→</p>
+                                       <div className="flex flex-row items-center text-sm font-medium text-neutral-700"></div>
 
-                                             <p className="rounded-full border border-blue-300 px-3 py-1  tracking-tight">
-                                                cheerleaders that signed up over a week ago
-                                             </p>
-                                          </div>
-                                          {/* <Badge variant={"outline"} className="capitalize">
+                                       {deployment.is_live ? (
+                                          <Badge variant={"good"} color="#008205">
+                                             Live
+                                          </Badge>
+                                       ) : (
+                                          <Badge variant={"destructive"}>Inactive</Badge>
+                                       )}
+                                       {/* <Badge variant={"outline"} className="capitalize">
                                              {poll.poll_data.type}
                                           </Badge> */}
-                                          {/* <p className="text-sm text-neutral-700">ID: {poll.id}</p> */}
-                                       </div>
+                                       {/* <p className="text-sm text-neutral-700">ID: {poll.id}</p> */}
                                     </div>
                                  </Link>
                               </ContextMenuTrigger>
                               <ContextMenuContent>
                                  <ContextMenuItem
                                     onClick={async () => {
-                                       await supabase.from("audiences").delete().eq("id", audience.id);
+                                       await supabase.from("deployments").delete().eq("id", deployment.id);
                                        router.refresh();
                                     }}
                                  >
