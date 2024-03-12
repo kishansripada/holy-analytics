@@ -1,18 +1,18 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import Link from "next/link";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useEffect, useMemo, useState } from "react";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { poll } from "@/utils/types";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
-
+import Link from "next/link";
 import { UploadInput } from "@/components/upload-input";
-import { Badge } from "@/components/ui/badge";
+import { createClient } from "@/utils/supabase/client";
+import { poll } from "@/utils/types";
+import { useRouter } from "next/navigation";
 
 const SAMPLE_MODAL = {
    poll_data: {
@@ -53,7 +53,7 @@ export default function Client({ audiences, projectId, project }: { audiences: a
    return (
       <div className="flex h-full w-full flex-row">
          <div className=" flex w-full flex-col">
-            <div className="flex h-24 w-full flex-col justify-center px-7">
+            <div className="flex min-h-24 w-full flex-col justify-center px-7">
                {/* <input
                   className="w-min  py-1 text-2xl font-bold tracking-tight"
                   value={project.name}

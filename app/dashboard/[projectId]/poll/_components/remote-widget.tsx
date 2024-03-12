@@ -13,7 +13,6 @@ export default function RemoteWidget({ poll }: { poll: poll }) {
            ? (window as any).DefaultModal
            : (window as any).DefaultPopover;
 
-   console.log(Widget);
    // const Container = window.Container;
    return (
       <>

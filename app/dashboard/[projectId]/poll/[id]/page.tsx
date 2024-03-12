@@ -1,9 +1,6 @@
-import Header from "@/components/Header";
+import Client from "./client";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import { Switch } from "@/components/ui/switch";
-import Client from "./client";
-import { Label } from "@/components/ui/label";
 
 export default async function Index({ params: { id, projectId } }: { params: { id: string; projectId: string } }) {
    const cookieStore = cookies();

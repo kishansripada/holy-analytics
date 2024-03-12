@@ -37,6 +37,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
             {
                title: newNotificationName,
                unique_id: newNotificationName.toLowerCase().replace(" ", "_"),
+               anchor: newNotificationName.toLowerCase().replace(" ", "_") + "_element",
                app_id: projectId,
                poll_data: {
                   ...SAMPLE_MODAL.poll_data,
@@ -58,7 +59,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
    return (
       <div className="flex h-full w-full flex-row">
          <div className=" flex w-full flex-col">
-            <div className="flex h-24 w-full flex-col justify-center px-7">
+            <div className="flex min-h-24 w-full flex-col justify-center px-7">
                {/* <input
                   className="w-min  py-1 text-2xl font-bold tracking-tight"
                   value={project.name}

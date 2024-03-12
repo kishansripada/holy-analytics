@@ -1,9 +1,6 @@
-import Header from "@/components/Header";
+import Client from "./client";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import { Switch } from "@/components/ui/switch";
-import Client from "./client";
-import { Label } from "@/components/ui/label";
 
 export default async function Index({ params: { id, projectId } }: { params: { id: string; projectId: string } }) {
    const cookieStore = cookies();
@@ -13,8 +10,9 @@ export default async function Index({ params: { id, projectId } }: { params: { i
       data: { user },
    } = await supabase.auth.getUser();
 
-   let getDeployment = () => supabase.from("deployments").select("*").eq("id", id).single();
+   const getDeployment = () => supabase.from("deployments").select("*").eq("id", id).single();
    const getProjectPolls = () => supabase.from("polls").select("*").eq("app_id", projectId);
+
    const [{ data: deployment }, { data: messages }] = await Promise.all([getDeployment(), getProjectPolls()]);
    // console.log({ deployment });
 

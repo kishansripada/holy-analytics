@@ -1,12 +1,13 @@
 "use client";
 
+import { redirect, usePathname } from "next/navigation";
+
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
-import { redirect, usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+
 export default function Sidebar({ user }: { user: User }) {
-   console.log(user);
    const path = usePathname();
    const router = useRouter();
    const supabase = createClient();

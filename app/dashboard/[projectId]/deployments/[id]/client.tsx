@@ -67,7 +67,7 @@ export default function Client({
       router.push(`/dashboard/${projectId}/audiences/` + data.id);
    };
    const onUpdate = async (name: string) => {
-      await supabase.from("audiences").update({ name }).eq("id", deployment.id);
+      await supabase.from("deployments").update({ name }).eq("id", deployment.id);
    };
 
    useEffect(() => {
@@ -82,7 +82,14 @@ export default function Client({
          <div className="flex w-full flex-row items-center justify-between">
             <div>
                <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500">Deployment</p>
-               <UploadInput className="  min-w-min text-2xl font-medium tracking-tight" value={deployment.name || "my first "} onUpdate={onUpdate} />
+               <UploadInput
+                  onChange={(val) => {
+                     setDeployment({ ...deployment, name: val });
+                  }}
+                  className="  min-w-min text-2xl font-medium tracking-tight"
+                  value={deployment.name || "my first "}
+                  onUpdate={onUpdate}
+               />
             </div>
 
             <div
@@ -245,25 +252,53 @@ export default function Client({
                            </DropdownMenuItem>
                         </DropdownMenuContent>
                      </DropdownMenu>
-                     <Sheet>
-                        <SheetTrigger className="w-min whitespace-nowrap">View code</SheetTrigger>
-                        <SheetContent>
-                           <SheetHeader>
-                              <SheetTitle>Code trigger</SheetTitle>
-                              <SheetDescription>
-                                 This action cannot be undone. This will permanently delete your account and remove your data from our servers.
-                              </SheetDescription>
-                           </SheetHeader>
-                           <div className="flex w-full flex-col gap-2">
-                              <p className="font-medium">Record a feature interaction</p>
-                              <div className="w-full overflow-scroll rounded-lg border border-neutral-300 bg-neutral-50 object-cover p-3 text-sm">
-                                 <pre className="w-full">
-                                    <code dangerouslySetInnerHTML={{ __html: html }} />
-                                 </pre>
-                              </div>
-                           </div>
-                        </SheetContent>
-                     </Sheet>
+
+                     <div className="flex flex-row items-center">
+                        Delay (ms)
+                        <Input
+                           // onChange={(e) => {
+                           //    setDeployment((deployment) => {
+                           //       return {
+                           //          ...deployment,
+                           //          data_tree: {
+                           //             ...deployment.data_tree,
+                           //             nodes: deployment.data_tree.nodes.map((nodex) => {
+                           //                if (nodex.id === node.id) {
+                           //                   return { ...nodex, programmatic_filter: e.target.value };
+                           //                }
+                           //                return nodex;
+                           //             }),
+                           //          },
+                           //       };
+                           //    });
+                           // }}
+                           className="mx-2 w-12"
+                        />
+                     </div>
+                     {deployment.data_tree.initialTrigger === "programmatic" ? (
+                        <>
+                           <div className="h-px w-full bg-neutral-300"></div>
+                           <Sheet>
+                              <SheetTrigger className="w-min whitespace-nowrap">View code</SheetTrigger>
+                              <SheetContent side={"bottom"}>
+                                 <SheetHeader>
+                                    <SheetTitle>Code trigger</SheetTitle>
+                                    <SheetDescription>
+                                       This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                                    </SheetDescription>
+                                 </SheetHeader>
+                                 <div className="flex w-full flex-col gap-2">
+                                    {/* <p className="font-medium">Record a feature interaction</p> */}
+                                    <div className="w-full overflow-scroll rounded-lg border border-neutral-300 bg-neutral-50 object-cover p-3 text-sm">
+                                       <pre className="w-full">
+                                          <code dangerouslySetInnerHTML={{ __html: html }} />
+                                       </pre>
+                                    </div>
+                                 </div>
+                              </SheetContent>
+                           </Sheet>
+                        </>
+                     ) : null}
                   </BoxWithPlus>
                </div>
             </div>
@@ -345,7 +380,7 @@ export default function Client({
                                           });
                                        }}
                                        className="mx-2 w-12"
-                                    />{" "}
+                                    />
                                     triggers
                                  </div>
                               ) : (

@@ -1,14 +1,16 @@
 "use client";
-import { createClient } from "@/utils/supabase/client";
-import { useCallback, useState } from "react";
-import What from "../_components/what";
-import { useUploadToSupabase } from "@/utils/supabase/hooks";
-import { poll } from "@/utils/types";
-import Link from "next/link";
-import { HStack, VStack } from "@/components/ui/stacks";
-import { UploadInput } from "@/components/upload-input";
 
+import { HStack, VStack } from "@/components/ui/stacks";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useCallback, useState } from "react";
+
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { UploadInput } from "@/components/upload-input";
+import What from "../_components/what";
+import { createClient } from "@/utils/supabase/client";
+import { poll } from "@/utils/types";
+import { useUploadToSupabase } from "@/utils/supabase/hooks";
 
 export default function Client({ poll: initialPoll }: { poll: poll }) {
    const [poll, setPoll] = useState(initialPoll);
@@ -17,8 +19,9 @@ export default function Client({ poll: initialPoll }: { poll: poll }) {
    const pollDataSaved = useUploadToSupabase("poll_data", poll.poll_data, poll.id, true);
    const conditionsSaved = useUploadToSupabase("conditions", poll.conditions, poll.id, true);
    const uniqueIdSaved = useUploadToSupabase("unique_id", poll.unique_id, poll.id, true);
+   const anchorSaved = useUploadToSupabase("anchor", poll.anchor, poll.id, true);
 
-   const saved = pollDataSaved && conditionsSaved && uniqueIdSaved;
+   const saved = pollDataSaved && conditionsSaved && uniqueIdSaved && anchorSaved;
 
    const onUpdate = useCallback(
       async (title: string) => {
@@ -63,6 +66,13 @@ export default function Client({ poll: initialPoll }: { poll: poll }) {
                   </div>
 
                   <HStack className=" items-center gap-3 p-1">
+                     <Input
+                        className="w-full"
+                        value={poll.unique_id}
+                        type="title"
+                        id="dom"
+                        // placeholder="Title"
+                     />
                      <Select
                         onValueChange={(value) => {
                            setPoll({
@@ -81,7 +91,6 @@ export default function Client({ poll: initialPoll }: { poll: poll }) {
                            <SelectItem value="popover">Popover</SelectItem>
                         </SelectContent>
                      </Select>
-                     <p className="whitespace-nowrap font-semibold"> ID: {poll.id}</p>
                   </HStack>
                </HStack>
             </div>

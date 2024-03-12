@@ -1,22 +1,25 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/client";
-import { poll } from "@/utils/types";
-import dynamic from "next/dynamic";
+import "prismjs/themes/prism-tomorrow.css";
+
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
 
-import Prism from "prismjs";
-import "prismjs/themes/prism-tomorrow.css";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Prism from "prismjs";
+import { Switch } from "@/components/ui/switch";
+import { createClient } from "@/utils/supabase/client";
+import dynamic from "next/dynamic";
+import { poll } from "@/utils/types";
+
 const RemoteWidget = dynamic(() => import("./remote-widget"), {
    ssr: false,
 });
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+
 export default function What({ poll, setPoll }: { poll: poll; setPoll: Function }) {
-   const code = `<div 
-   data-hyperuser="${poll.title?.split(" ").join("_")}">
+   const code = `<div data-hyperuser="${poll.anchor || "ELEMENT_ID"}">
    I'm the element your popover will attach to!
 </div>`;
 
@@ -82,47 +85,6 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
    return (
       <div className="flex h-full w-full flex-row  justify-between gap-20 pl-1 ">
          <div className="flex w-1/2 flex-col  gap-6 pt-5">
-            {poll.poll_data.type === "popover" && (
-               <div className="grid w-full items-center gap-1.5 ">
-                  <Label htmlFor="dom">Unique ID</Label>
-                  <div className="flex flex-row items-center gap-2">
-                     <Input
-                        className="w-full"
-                        // onChange={(e) => {
-                        //    setPoll({ ...poll, poll_data: { ...poll.poll_data, anchor: e.target.value } });
-                        // }}
-                        test={"test12"}
-                        value={poll.unique_id}
-                        type="title"
-                        id="dom"
-                        // placeholder="Title"
-                     />
-                     <Sheet>
-                        <SheetTrigger>
-                           {" "}
-                           <Button size={"sm"}>View code</Button>
-                        </SheetTrigger>
-                        <SheetContent>
-                           {/* <SheetHeader>
-      <SheetTitle>Are you absolutely sure?</SheetTitle>
-      <SheetDescription>
-        This action cannot be undone. This will permanently delete your account
-        and remove your data from our servers.
-      </SheetDescription>
-    </SheetHeader> */}
-                           <div className="flex w-full max-w-lg flex-col gap-2">
-                              <p className="font-medium">How to tell Hyperuser which element to attach to</p>
-                              <div className="h-36 w-full  rounded-lg border border-neutral-300 bg-neutral-50 p-3 text-sm">
-                                 <pre className=" pointer-events-auto select-text">
-                                    <code className="w-min" dangerouslySetInnerHTML={{ __html: html }} />
-                                 </pre>
-                              </div>
-                           </div>
-                        </SheetContent>
-                     </Sheet>
-                  </div>
-               </div>
-            )}
             <div className="grid w-full items-center gap-1.5 ">
                <Label htmlFor="title">Title</Label>
                <Input
@@ -151,10 +113,38 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                   placeholder="Subtitle"
                />
             </div>
-            <div className="flex flex-col gap-4 py-1 ">
-               <div className="flex w-full flex-row justify-between">
-                  <div className="w-full">
-                     <Label htmlFor="title">Image URL</Label>
+            {poll.poll_data.type === "modal" && (
+               <div className="grid w-full items-center gap-1.5">
+                  <Label htmlFor="title">Image URL</Label>
+                  <Input
+                     className="w-full"
+                     onChange={(e) => {
+                        //  console.log(e);
+                        setPoll((poll) => {
+                           return {
+                              ...poll,
+                              poll_data: {
+                                 ...poll.poll_data,
+                                 image_url: e.target.value,
+                              },
+                           };
+                        });
+                     }}
+                     value={poll.poll_data.image_url}
+                     type="negative"
+                     id="negative"
+                     placeholder="https://your-server.com/image.jpg"
+                  />
+               </div>
+            )}
+
+            {poll.poll_data.type === "popover" && (
+               <div className="grid w-full items-center gap-1.5">
+                  <Label htmlFor="title">Anchor ID</Label>
+                  <p className="text-sm text-neutral-700">
+                     Popovers attach to an HTML element on your website. Choose the ID you are going to add to your codebase.
+                  </p>
+                  <div className="flex flex-row gap-1.5 py-1">
                      <Input
                         className="w-full"
                         onChange={(e) => {
@@ -162,107 +152,51 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                            setPoll((poll) => {
                               return {
                                  ...poll,
-                                 poll_data: {
-                                    ...poll.poll_data,
-                                    image_url: e.target.value,
-                                 },
+                                 anchor: e.target.value,
                               };
                            });
                         }}
-                        value={poll.poll_data.image_url}
-                        type="negative"
-                        id="negative"
-                        placeholder="https://your-server.com/image.jpg"
+                        value={poll.anchor}
+                        placeholder="Anchor ID"
                      />
+                     <Sheet>
+                        <SheetTrigger>
+                           <Button variant={"outline"}>View code</Button>
+                        </SheetTrigger>
+                        <SheetContent side={"bottom"}>
+                           <div className="flex w-full  flex-row justify-center gap-2">
+                              <div className="flex flex-col gap-2">
+                                 <p className="font-medium">How to tell Hyperuser which element to attach to</p>
+                                 <div className="h-36 w-full  rounded-lg border border-neutral-300 bg-neutral-50 p-3 text-sm">
+                                    <pre className=" pointer-events-auto select-text">
+                                       <code className="w-min" dangerouslySetInnerHTML={{ __html: html }} />
+                                    </pre>
+                                 </div>
+                              </div>
+                           </div>
+                        </SheetContent>
+                     </Sheet>
                   </div>
                </div>
-
-               {/* <div className="flex flex-row items-end w-full justify-between">
-                  <Label htmlFor="title">Options</Label>
-                  <Button
-                     variant={"outline"}
-                     onClick={() => {
-                        setPoll((poll) => {
-                           return {
-                              ...poll,
-                              poll_data: {
-                                 ...poll.poll_data,
-                                 options: [
-                                    ...poll.poll_data.options,
-                                    {
-                                       id: Math.random().toString(36).substring(7),
-                                       title: "",
-                                    },
-                                 ],
-                              },
-                           };
+            )}
+            <div className="grid w-full items-center gap-1.5">
+               <div className="flex flex-row items-center justify-between">
+                  {" "}
+                  <Label htmlFor="title">Preview mode</Label>
+                  <Switch
+                     checked={poll.active}
+                     onCheckedChange={async (active) => {
+                        await supabase.from("polls").update({ active }).eq("id", poll.id);
+                        setPoll((poll: poll) => {
+                           return { ...poll, active };
                         });
                      }}
-                  >
-                     New option
-                  </Button>
-               </div> */}
-               {/* <div className="grid grid-cols-2 w-full gap-4">
-                  {poll.poll_data.options.map((option) => {
-                     return (
-                        <div className="flex flex-row w-full items-center gap-1.5 ">
-                           <Label htmlFor="title">Subtitle</Label>
-                           <Input
-                              className="w-full"
-                              onChange={(e) => {
-                                 //  console.log(e);
-                                 setPoll((poll) => {
-                                    return {
-                                       ...poll,
-                                       poll_data: {
-                                          ...poll.poll_data,
-                                          options: poll.poll_data.options.map((optionx) => {
-                                             if (optionx.id === option.id) {
-                                                return { ...optionx, title: e.target.value };
-                                             }
-                                             return optionx;
-                                          }),
-                                       },
-                                    };
-                                 });
-                              }}
-                              value={option.title}
-                              type="subtitle"
-                              id="option"
-                              placeholder="Subtitle"
-                           />
-                           <Button
-                              className="w-12 p-0"
-                              onClick={() => {
-                                 setPoll((poll) => {
-                                    return {
-                                       ...poll,
-                                       poll_data: {
-                                          ...poll.poll_data,
-                                          options: poll.poll_data.options.filter((optionx) => {
-                                             return optionx.id !== option.id;
-                                          }),
-                                       },
-                                    };
-                                 });
-                              }}
-                              variant={"outline"}
-                           >
-                              <svg
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 strokeWidth={1.5}
-                                 stroke="currentColor"
-                                 className="w-5 h-5 text-neutral-600"
-                              >
-                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                              </svg>
-                           </Button>
-                        </div>
-                     );
-                  })}
-               </div> */}
+                     id="preview"
+                  />
+               </div>
+               <p className="text-sm text-neutral-700">
+                  When enabled, we'll show this message on all development servers. You should probably turn this off after you are done previewing.
+               </p>
             </div>
          </div>
 
@@ -276,7 +210,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             </div>
             {/* <div className=" overflow-hidden select-none  w-[500px] min-h-[200px] grid place-items-center rounded-lg border  dark:border-neutral-700 border-neutral-300"> */}
             {/* {typeof window !== "undefined" && YesNoComponent ? <YesNoComponent poll={poll}></YesNoComponent> : null} */}
-            {/* <RemoteWidget poll={poll}></RemoteWidget> */}
+            <RemoteWidget poll={poll}></RemoteWidget>
             {/* {previewOpen && (
                <RemoteWrapper poll={poll} open={previewOpen}>
                   <RemoteWidget poll={poll}></RemoteWidget>
