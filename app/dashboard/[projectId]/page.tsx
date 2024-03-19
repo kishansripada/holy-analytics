@@ -1,6 +1,7 @@
+import Client from "./client";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import Client from "./client";
+
 export default async function Index({ params: { projectId } }: { params: { projectId: string } }) {
    const cookieStore = cookies();
    const supabase = createClient(cookieStore);

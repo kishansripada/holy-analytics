@@ -1,14 +1,16 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { HStack, VStack } from "@/components/ui/stacks";
+
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { useState } from "react";
-import { HStack, VStack } from "@/components/ui/stacks";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
+
 export default function Client({ projects }: any) {
    const router = useRouter();
    const [newProjectName, setNewProjectName] = useState("");

@@ -1,16 +1,7 @@
 "use client";
-import { createClient } from "@/utils/supabase/client";
-import { ReactComponentElement, ReactHTMLElement, useCallback, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Tabs } from "@/components/ui/tabs";
-// import { useUploadToSupabase } from "@/utils/supabase/hooks";
-import debounce from "lodash.debounce";
-import { poll } from "@/utils/types";
-import { VStack } from "@/components/ui/stacks";
-import { UploadInput } from "@/components/upload-input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import "prismjs/themes/prism-tomorrow.css";
-import Prism from "prismjs";
+
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -19,10 +10,21 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-
+import { ReactComponentElement, ReactHTMLElement, useCallback, useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Prism from "prismjs";
+import { Tabs } from "@/components/ui/tabs";
+import { UploadInput } from "@/components/upload-input";
+import { VStack } from "@/components/ui/stacks";
+import { createClient } from "@/utils/supabase/client";
+// import { useUploadToSupabase } from "@/utils/supabase/hooks";
+import debounce from "lodash.debounce";
+import { poll } from "@/utils/types";
+import { useRouter } from "next/navigation";
 
 export default function Client({
    deployment: initialDeployment,
@@ -35,12 +37,18 @@ export default function Client({
    audiences: any[];
    messages: any[];
 }) {
-   const code = `function useCoolFeature() {
-      window.holyTrigger("DEPLOYMENT_ID"); // Trigger a feature interaction using the tip ID
-  }`;
-   const html = Prism.highlight(code, Prism.languages.javascript, "javascript");
-
    const [deployment, setDeployment] = useState(initialDeployment);
+   const deploymentSaved = useUploadToSupabase("data_tree", deployment.data_tree, deployment.id, true);
+   const startDeploymentCode = `function useCoolFeature() {
+      window.holyTrigger("${deployment.id}"); // Trigger a feature interaction using the tip ID
+  }`;
+
+   const endDeploymentCode = `function stopDeployment() {
+   window.endHyperDeployment("${deployment.id}"); // Trigger a feature interaction using the tip ID
+}`;
+   const html = Prism.highlight(startDeploymentCode, Prism.languages.javascript, "javascript");
+   const html2 = Prism.highlight(endDeploymentCode, Prism.languages.javascript, "javascript");
+
    const supabase = createClient();
 
    const router = useRouter();
@@ -64,11 +72,15 @@ export default function Client({
          .select("*")
          .single();
 
-      router.push(`/dashboard/${projectId}/audiences/` + data.id);
+      router.push(`/dashboard/${projectId}/audiences/` + data.id + `?referer=/dashboard/${projectId}/deployments/${deployment.id}`);
    };
-   const onUpdate = async (name: string) => {
-      await supabase.from("deployments").update({ name }).eq("id", deployment.id);
-   };
+
+   const onUpdate = useCallback(
+      async (name: string) => {
+         await supabase.from("deployments").update({ name }).eq("id", deployment.id);
+      },
+      [deployment.id]
+   );
 
    useEffect(() => {
       const highlight = async () => {
@@ -91,20 +103,46 @@ export default function Client({
                   onUpdate={onUpdate}
                />
             </div>
+            <div className="flex flex-row items-center gap-2">
+               <Sheet>
+                  <SheetTrigger className="w-min whitespace-nowrap text-sm">End deployment early?</SheetTrigger>
+                  <SheetContent side={"bottom"}>
+                     <SheetHeader>
+                        <SheetTitle>End deployment with code</SheetTitle>
+                        <SheetDescription>
+                           This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                        </SheetDescription>
+                     </SheetHeader>
+                     <div className="flex w-full flex-col gap-2">
+                        {/* <p className="font-medium">Record a feature interaction</p> */}
+                        <div className="w-full overflow-scroll rounded-lg border border-neutral-300 bg-neutral-50 object-cover p-3 text-sm">
+                           <pre className="w-full">
+                              <code dangerouslySetInnerHTML={{ __html: html2 }} />
+                           </pre>
+                        </div>
+                     </div>
+                  </SheetContent>
+               </Sheet>
 
-            <div
-               onClick={async () => {
-                  await supabase.from("deployments").update({ is_live: !deployment.is_live }).eq("id", deployment.id);
-               }}
-            >
-               {deployment.is_live ? <Button variant={"destructive"}>Deactivate</Button> : <Button>Go Live</Button>}
+               <div
+                  onClick={async () => {
+                     const { data, error } = await supabase.from("deployments").update({ is_live: !deployment.is_live }).eq("id", deployment.id);
+                     if (!error) {
+                        setDeployment((deployment) => {
+                           return { ...deployment, is_live: !deployment.is_live };
+                        });
+                     }
+                  }}
+               >
+                  {deployment.is_live ? <Button variant={"destructive"}>Deactivate</Button> : <Button>Go Live</Button>}
+               </div>
             </div>
          </div>
 
-         <div className="flex h-full flex-row py-12">
-            <div className="relative flex h-full flex-col  items-start justify-center  px-3">
-               <div className="flex flex-col items-center gap-4 text-sm font-medium text-neutral-700">
-                  <p className=" text-sm font-semibold uppercase tracking-wide text-neutral-500">Audience</p>
+         <div className="flex h-full flex-row overflow-x-scroll py-12 ">
+            <div className="relative flex h-full flex-col  items-start justify-center">
+               <div className="relative flex flex-col items-center gap-4 text-sm font-medium text-neutral-700">
+                  <p className=" absolute -top-1 -translate-y-full text-sm font-semibold uppercase tracking-wide text-neutral-500">Audience</p>
                   <DropdownMenu>
                      <DropdownMenuTrigger>
                         <div className="flex flex-row items-center gap-2 rounded-full border  border-blue-300 px-3 py-1  transition hover:bg-neutral-200  ">
@@ -170,15 +208,15 @@ export default function Client({
                   </DropdownMenu>
                </div>
             </div>
-            <div className="flex h-full flex-col items-center justify-center px-6">
+            <div className="flex h-full flex-col items-center justify-center px-2">
                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                </svg>
             </div>
 
-            <div className="relative flex h-full  flex-col items-start justify-center  px-3">
-               <div className="flex flex-col items-center gap-4 text-sm font-medium text-neutral-700">
-                  <p className=" text-sm font-semibold uppercase tracking-wide text-neutral-500">Trigger</p>
+            <div className="relative flex h-full  flex-col items-start justify-center">
+               <div className="relative flex flex-col items-center gap-4 text-sm font-medium text-neutral-700">
+                  <p className=" absolute -top-1 -translate-y-full text-sm font-semibold uppercase tracking-wide text-neutral-500">Trigger</p>
 
                   <BoxWithPlus
                      messages={messages}
@@ -203,7 +241,7 @@ export default function Client({
                   >
                      <DropdownMenu>
                         <DropdownMenuTrigger>
-                           <div className="flex flex-row items-center gap-2 rounded-full border  border-green-300 px-3 py-1  transition hover:bg-neutral-200  ">
+                           <div className="flex w-min flex-row items-center gap-2 rounded-full border  border-green-300 px-3 py-1  transition hover:bg-neutral-200  ">
                               {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                               <path
                                  fillRule="evenodd"
@@ -256,23 +294,19 @@ export default function Client({
                      <div className="flex flex-row items-center">
                         Delay (ms)
                         <Input
-                           // onChange={(e) => {
-                           //    setDeployment((deployment) => {
-                           //       return {
-                           //          ...deployment,
-                           //          data_tree: {
-                           //             ...deployment.data_tree,
-                           //             nodes: deployment.data_tree.nodes.map((nodex) => {
-                           //                if (nodex.id === node.id) {
-                           //                   return { ...nodex, programmatic_filter: e.target.value };
-                           //                }
-                           //                return nodex;
-                           //             }),
-                           //          },
-                           //       };
-                           //    });
-                           // }}
-                           className="mx-2 w-12"
+                           value={deployment.data_tree.initialTriggerDelay || 0}
+                           onChange={(e) => {
+                              setDeployment((deployment) => {
+                                 return {
+                                    ...deployment,
+                                    data_tree: {
+                                       ...deployment.data_tree,
+                                       initialTriggerDelay: parseInt(e.target.value),
+                                    },
+                                 };
+                              });
+                           }}
+                           className="mx-2 w-16"
                         />
                      </div>
                      {deployment.data_tree.initialTrigger === "programmatic" ? (
@@ -302,95 +336,12 @@ export default function Client({
                   </BoxWithPlus>
                </div>
             </div>
-            <div className="flex h-full flex-col items-center justify-center px-6">
+            <div className="flex h-full flex-col items-center justify-center px-2">
                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                </svg>
             </div>
-            <div className="relative flex h-full  flex-col items-start justify-center">
-               <div className="flex flex-col items-start gap-4 text-sm font-medium text-neutral-700">
-                  {deployment.data_tree.nodes
-                     .filter((node) => node.parent_id === "initialTrigger")
-                     .map((node) => {
-                        const message = messages.find((message) => message.id === node.message_id);
-
-                        return (
-                           <BoxWithPlus messages={messages} canAdd={false}>
-                              <DropdownPill
-                                 type="message"
-                                 dropdownContent={
-                                    <>
-                                       {messages.map((message) => {
-                                          return (
-                                             <DropdownMenuItem
-                                                onClick={() => {
-                                                   setDeployment((deployment) => {
-                                                      return {
-                                                         ...deployment,
-                                                         data_tree: {
-                                                            ...deployment.data_tree,
-                                                            nodes: deployment.data_tree.nodes.map((nodex) => {
-                                                               if (nodex.id === node.id) {
-                                                                  return { ...nodex, message_id: message.id };
-                                                               }
-                                                               return nodex;
-                                                            }),
-                                                         },
-                                                      };
-                                                   });
-                                                }}
-                                             >
-                                                {message.title}
-                                             </DropdownMenuItem>
-                                          );
-                                       })}
-                                    </>
-                                 }
-                                 value={message.title}
-                                 valueIcon={
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-                                       <path
-                                          fillRule="evenodd"
-                                          d="M3.43 2.524A41.29 41.29 0 0 1 10 2c2.236 0 4.43.18 6.57.524 1.437.231 2.43 1.49 2.43 2.902v5.148c0 1.413-.993 2.67-2.43 2.902a41.102 41.102 0 0 1-3.55.414c-.28.02-.521.18-.643.413l-1.712 3.293a.75.75 0 0 1-1.33 0l-1.713-3.293a.783.783 0 0 0-.642-.413 41.108 41.108 0 0 1-3.55-.414C1.993 13.245 1 11.986 1 10.574V5.426c0-1.413.993-2.67 2.43-2.902Z"
-                                          clipRule="evenodd"
-                                       />
-                                    </svg>
-                                 }
-                              ></DropdownPill>
-
-                              {deployment.data_tree.initialTrigger === "programmatic" ? (
-                                 <div className="flex flex-row items-center text-sm">
-                                    After{" "}
-                                    <Input
-                                       value={deployment.data_tree.nodes.find((nodex) => nodex.id === node.id).programmatic_filter}
-                                       onChange={(e) => {
-                                          setDeployment((deployment) => {
-                                             return {
-                                                ...deployment,
-                                                data_tree: {
-                                                   ...deployment.data_tree,
-                                                   nodes: deployment.data_tree.nodes.map((nodex) => {
-                                                      if (nodex.id === node.id) {
-                                                         return { ...nodex, programmatic_filter: e.target.value };
-                                                      }
-                                                      return nodex;
-                                                   }),
-                                                },
-                                             };
-                                          });
-                                       }}
-                                       className="mx-2 w-12"
-                                    />
-                                    triggers
-                                 </div>
-                              ) : (
-                                 <></>
-                              )}
-                           </BoxWithPlus>
-                        );
-                     })}
-               </div>
-            </div>
+            <MessageLayer parentId={"initialTrigger"} deployment={deployment} messages={messages} setDeployment={setDeployment}></MessageLayer>
          </div>
       </VStack>
    );
@@ -398,7 +349,7 @@ export default function Client({
 
 const BoxWithPlus = ({ children, onPlus, canAdd, messages }) => {
    return (
-      <div className="relative flex flex-col justify-center gap-3 rounded-xl border border-neutral-300 px-5 py-3  ">
+      <div className="relative flex min-w-[320px] max-w-xs flex-col justify-center gap-3 rounded-xl border border-neutral-300 px-5 py-3  ">
          {canAdd && (
             <DropdownMenu>
                <DropdownMenuTrigger>
@@ -445,12 +396,12 @@ const DropdownPill = ({
       <DropdownMenu>
          <DropdownMenuTrigger>
             <div
-               className={`flex flex-row items-center gap-2 rounded-full border ${type === "message" ? "border-pink-300" : "border-blue-300"}  px-3 py-1  transition hover:bg-neutral-200  `}
+               className={`flex flex-row items-center gap-3 rounded-xl border ${type === "message" ? "border-pink-300" : "border-blue-300"}  px-3 py-1  transition hover:bg-neutral-200  `}
             >
                {valueIcon}
 
-               <p className="whitespace-nowrap">{value}</p>
-               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
+               <p className="text-left">{value}</p>
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 min-h-[20px] w-5  min-w-[20px]">
                   <path
                      fillRule="evenodd"
                      d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
@@ -461,5 +412,209 @@ const DropdownPill = ({
          </DropdownMenuTrigger>
          <DropdownMenuContent>{dropdownContent}</DropdownMenuContent>
       </DropdownMenu>
+   );
+};
+
+const useUploadToSupabase = (dataKey: string, dataValue: any, danceId: string, enabled: boolean) => {
+   const supabase = createClient();
+   const [saved, setSaved] = useState(true);
+   // If viewOnlyInitial is true, immediately exit from the hook
+
+   const upload = useCallback(
+      debounce(async (dataValue) => {
+         console.log(`uploading ${dataKey}`);
+         const { data, error } = await supabase
+            .from("deployments")
+            .update({ [dataKey]: dataValue })
+            .eq("id", danceId);
+         console.log({ data });
+         console.log({ error });
+         setSaved(true);
+      }, 2000),
+      [danceId]
+   );
+
+   useEffect(() => {
+      if (!enabled) return;
+
+      setSaved(false);
+      upload(dataValue);
+   }, [dataValue]);
+   return saved;
+};
+
+const MessageLayer = ({ deployment, messages, setDeployment, parentId }) => {
+   if (!deployment.data_tree.nodes.filter((node) => node.parent_id === parentId).length) return;
+   return (
+      <>
+         <div className="relative flex h-full  flex-col items-start justify-center">
+            <div className="flex flex-col items-start gap-4 text-sm font-medium text-neutral-700">
+               {deployment.data_tree.nodes
+                  .filter((node) => node.parent_id === parentId)
+                  .map((node) => {
+                     const message = messages.find((message) => message.id === node.message_id);
+
+                     return (
+                        <BoxWithPlus
+                           onPlus={(messageId) => {
+                              setDeployment({
+                                 ...deployment,
+                                 data_tree: {
+                                    ...deployment.data_tree,
+                                    nodes: [
+                                       ...deployment.data_tree.nodes,
+                                       {
+                                          id: Math.random().toString(36).substring(7),
+                                          parent_id: node.id,
+                                          message_id: messageId,
+                                       },
+                                    ],
+                                 },
+                              });
+                           }}
+                           messages={messages}
+                           canAdd={true}
+                        >
+                           <div className="flex flex-row items-end justify-between gap-2">
+                              <div className="flex flex-col gap-2">
+                                 <div className=" w-min rounded-full border border-neutral-300 px-2 py-1 text-xs text-neutral-700">
+                                    {message.poll_data.type}
+                                 </div>
+                                 <DropdownPill
+                                    type="message"
+                                    dropdownContent={
+                                       <>
+                                          {messages.map((message) => {
+                                             return (
+                                                <DropdownMenuItem
+                                                   onClick={() => {
+                                                      setDeployment((deployment) => {
+                                                         return {
+                                                            ...deployment,
+                                                            data_tree: {
+                                                               ...deployment.data_tree,
+                                                               nodes: deployment.data_tree.nodes.map((nodex) => {
+                                                                  if (nodex.id === node.id) {
+                                                                     return { ...nodex, message_id: message.id };
+                                                                  }
+                                                                  return nodex;
+                                                               }),
+                                                            },
+                                                         };
+                                                      });
+                                                   }}
+                                                >
+                                                   <div className="flex w-full flex-row items-center justify-between gap-4">
+                                                      <p> {message.title}</p>{" "}
+                                                      <div className="rounded-full border border-neutral-300 px-2 py-1 text-xs text-neutral-700">
+                                                         {message.poll_data.type}
+                                                      </div>
+                                                   </div>
+                                                </DropdownMenuItem>
+                                             );
+                                          })}
+                                       </>
+                                    }
+                                    value={message.title}
+                                    valueIcon={
+                                       <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 20 20"
+                                          fill="currentColor"
+                                          className="h-4 min-h-[16px] w-4 min-w-[16px]"
+                                       >
+                                          <path
+                                             fillRule="evenodd"
+                                             d="M3.43 2.524A41.29 41.29 0 0 1 10 2c2.236 0 4.43.18 6.57.524 1.437.231 2.43 1.49 2.43 2.902v5.148c0 1.413-.993 2.67-2.43 2.902a41.102 41.102 0 0 1-3.55.414c-.28.02-.521.18-.643.413l-1.712 3.293a.75.75 0 0 1-1.33 0l-1.713-3.293a.783.783 0 0 0-.642-.413 41.108 41.108 0 0 1-3.55-.414C1.993 13.245 1 11.986 1 10.574V5.426c0-1.413.993-2.67 2.43-2.902Z"
+                                             clipRule="evenodd"
+                                          />
+                                       </svg>
+                                    }
+                                 ></DropdownPill>
+
+                                 {deployment.data_tree.initialTrigger === "programmatic" ? (
+                                    <div className="flex flex-row items-center text-sm">
+                                       After{" "}
+                                       <Input
+                                          value={deployment.data_tree.nodes.find((nodex) => nodex.id === node.id).programmatic_filter}
+                                          onChange={(e) => {
+                                             setDeployment((deployment) => {
+                                                return {
+                                                   ...deployment,
+                                                   data_tree: {
+                                                      ...deployment.data_tree,
+                                                      nodes: deployment.data_tree.nodes.map((nodex) => {
+                                                         if (nodex.id === node.id) {
+                                                            return { ...nodex, programmatic_filter: e.target.value };
+                                                         }
+                                                         return nodex;
+                                                      }),
+                                                   },
+                                                };
+                                             });
+                                          }}
+                                          className="mx-2 w-12"
+                                       />
+                                       triggers
+                                    </div>
+                                 ) : (
+                                    <></>
+                                 )}
+                              </div>
+                              <DropdownMenu>
+                                 <DropdownMenuTrigger>
+                                    <button>
+                                       <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          strokeWidth={1.5}
+                                          stroke="currentColor"
+                                          className="h-6 w-6"
+                                       >
+                                          <path
+                                             strokeLinecap="round"
+                                             strokeLinejoin="round"
+                                             d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                                          />
+                                       </svg>
+                                    </button>
+                                 </DropdownMenuTrigger>
+                                 <DropdownMenuContent>
+                                    <DropdownMenuItem
+                                       onClick={() => {
+                                          setDeployment((deployment) => {
+                                             return {
+                                                ...deployment,
+                                                data_tree: {
+                                                   ...deployment.data_tree,
+                                                   nodes: deployment.data_tree.nodes.filter((nodex) => nodex.id !== node.id),
+                                                },
+                                             };
+                                          });
+                                       }}
+                                    >
+                                       Delete
+                                    </DropdownMenuItem>
+                                 </DropdownMenuContent>
+                              </DropdownMenu>
+                           </div>
+                        </BoxWithPlus>
+                     );
+                  })}
+            </div>
+         </div>
+         <div className="flex h-full flex-col items-center justify-center px-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+               <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+            </svg>
+         </div>
+         <MessageLayer
+            parentId={deployment.data_tree.nodes.filter((node) => node.parent_id === parentId)[0].id}
+            deployment={deployment}
+            messages={messages}
+            setDeployment={setDeployment}
+         ></MessageLayer>
+      </>
    );
 };

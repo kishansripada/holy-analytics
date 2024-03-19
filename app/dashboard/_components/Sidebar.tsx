@@ -1,7 +1,8 @@
 "use client";
 
-import { redirect, usePathname } from "next/navigation";
+import { redirect, usePathname, useSearchParams } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
@@ -20,11 +21,34 @@ export default function Sidebar({ user }: { user: User }) {
    const projectId = path.split("/")[2];
    console.log(projectId);
 
+   const searchParams = useSearchParams();
+   const referer = searchParams.get("referer");
+
    return (
       <div className="flex h-full  w-[250px] min-w-[250px] flex-col gap-3 border-r border-neutral-200 px-4 py-5">
-         <p className="ml-2 text-2xl font-medium text-neutral-700">
-            👧🏻 <span className="ml-1">hyperuser</span>
-         </p>
+         {referer && typeof referer === "string" ? (
+            <Link href={referer}>
+               <Button size={"sm"}>
+                  <div className="flex flex-row items-center gap-2">
+                     <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="h-6 w-6"
+                     >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+                     </svg>
+                     <p>Back to deployment</p>
+                  </div>
+               </Button>
+            </Link>
+         ) : (
+            <p className="ml-2 text-2xl font-medium text-neutral-700">
+               👧🏻 <span className="ml-1">hyperuser</span>
+            </p>
+         )}
          <div data-hyperuser="testing" className="flex h-full flex-col gap-1">
             {path.includes("/dashboard/") ? (
                <>

@@ -2,6 +2,7 @@ import { AppWrapper } from "@/components/ui/app-wrapper";
 import { GeistSans } from "geist/font/sans";
 import { HStack } from "@/components/ui/stacks";
 import Sidebar from "./_components/Sidebar";
+import StoreSettter from "./StoreSetter";
 // import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { cookies } from "next/headers";
@@ -27,12 +28,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       redirect("/login");
    }
 
+   const projectId = "c64bcec7-3e92-4e10-bbed-3a4fd551175d";
+
+   const getProjectPolls = () => supabase.from("polls").select("*").eq("app_id", projectId);
+   const getProject = () => supabase.from("projects").select("*").eq("app_id", projectId).single();
+
+   const [{ data: polls }, { data: project }] = await Promise.all([getProjectPolls(), getProject()]);
+
    return (
-      <AppWrapper>
-         <HStack className="h-full w-screen items-start">
-            <Sidebar user={user}></Sidebar>
-            {children}
-         </HStack>
-      </AppWrapper>
+      <>
+         <StoreSettter polls={polls} project={project} />
+         {children}
+      </>
    );
 }

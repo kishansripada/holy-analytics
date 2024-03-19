@@ -1,17 +1,22 @@
 "use client";
-import { createClient } from "@/utils/supabase/client";
+
+import "prismjs/themes/prism.css";
+
 import { useCallback, useEffect, useState } from "react";
+
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import Prism from "prismjs";
 import { Tabs } from "@/components/ui/tabs";
+import { UploadInput } from "@/components/upload-input";
+import { VStack } from "@/components/ui/stacks";
+import { createClient } from "@/utils/supabase/client";
 // import { useUploadToSupabase } from "@/utils/supabase/hooks";
 import debounce from "lodash.debounce";
 import { poll } from "@/utils/types";
-import { VStack } from "@/components/ui/stacks";
-import { UploadInput } from "@/components/upload-input";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import "prismjs/themes/prism.css";
-import Prism from "prismjs";
+import { useSearchParams } from "next/navigation";
 
 export default function Client({ audience: initialAudience, projectId, sampleUsers }: { audience: any; projectId: string; sampleUsers: any }) {
    const [audience, setAudience] = useState(initialAudience);
@@ -32,6 +37,28 @@ export default function Client({ audience: initialAudience, projectId, sampleUse
 
    return (
       <VStack className="h-full w-full overflow-hidden px-16 py-12">
+         {/* {referer && typeof referer === "string" ? (
+            <div className="fixed left-7 top-7 z-50 rounded-lg border border-neutral-300 bg-white p-4">
+               <Link href={referer}>
+                  <Button size={"sm"}>
+                     <div className="flex flex-row items-center gap-2">
+                        <svg
+                           xmlns="http://www.w3.org/2000/svg"
+                           fill="none"
+                           viewBox="0 0 24 24"
+                           strokeWidth={1.5}
+                           stroke="currentColor"
+                           className="h-6 w-6"
+                        >
+                           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+                        </svg>
+                        <p>Back to deployment</p>
+                     </div>
+                  </Button>
+               </Link>
+            </div>
+         ) : null} */}
+
          <Tabs defaultValue="what" className="flex h-full w-full flex-col overflow-hidden ">
             <VStack className="max-h-full gap-10">
                <div>

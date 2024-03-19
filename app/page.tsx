@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import styles from "./landing-page-styles.module.css";
 import dynamic from "next/dynamic";
+import styles from "./landing-page-styles.module.css";
 
 const Client = dynamic(() => import("./client"), {
    ssr: false,
 });
 export default async function Index() {
    return (
-      <div className="flex h-full w-full flex-1 flex-col items-center gap-20 overflow-hidden ">
-         <nav className="border-b-foreground/10 flex h-20 w-full justify-center border-b">
+      <div className="flex h-full w-full flex-1 flex-col items-center gap-16 overflow-hidden ">
+         <nav className="border-b-foreground/10 flex h-20 w-full justify-center border-b bg-white">
             <div className="flex w-full max-w-7xl items-center justify-between p-3 text-sm">
                <div className="flex flex-row items-end gap-4">
                   {/* <div className="w-8 h-8 rotate-12 border-4 border-purple-500"></div> */}
@@ -55,6 +55,24 @@ export default async function Index() {
             </Link>
             <Client></Client>
          </div>
+
+         <img src="/modal.jpg" className="absolute right-[-100px] top-[250px] -z-10 max-w-md" alt="" />
+
+         {/* <div className="mt-10 flex flex-row gap-16 px-36">
+            <div className="flex w-1/2 flex-col gap-5">
+               <p className="text-4xl">Gorgeous, pre-built React components to get you off the ground quickly</p>
+               <ul className=" flex flex-col gap-3 font-medium text-neutral-800">
+                  <p>Modals</p>
+                  <p>Popovers</p>
+                  <p>Slide-in notifications</p>
+               </ul>
+            </div>
+
+            <div className="flex w-1/2 flex-col items-end gap-6 text-2xl font-semibold text-neutral-700">
+               <img className="w-full" src="/formiModal.png" alt="" />
+               <p>formi.dance</p>
+            </div>
+         </div> */}
 
          {/* <div className="mt-auto flex w-full flex-row gap-12 border-y border-neutral-300 px-16 py-16 text-center text-2xl text-neutral-800">
             <p className="">

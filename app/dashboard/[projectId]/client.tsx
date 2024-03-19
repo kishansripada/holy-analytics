@@ -1,18 +1,18 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import Link from "next/link";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 import { poll } from "@/utils/types";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
-
-import { UploadInput } from "@/components/upload-input";
-import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useStore } from "./store";
 
 const SAMPLE_MODAL = {
    poll_data: {
@@ -24,6 +24,9 @@ const SAMPLE_MODAL = {
 
 export default function Client({ polls, projectId, project }: { polls: poll[]; projectId: string; project: any }) {
    const router = useRouter();
+
+   const { messages } = useStore();
+   console.log("messages", messages);
 
    const [projectName, setProjectName] = useState(project.name);
 

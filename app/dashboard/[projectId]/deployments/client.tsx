@@ -2,7 +2,7 @@
 
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,35 +22,39 @@ const SAMPLE_MODAL = {
 
 export default function Client({ deployments, projectId, project, messages, audiences }: { deployments: any[]; projectId: string; project: any }) {
    const router = useRouter();
-   console.log({ deployments });
 
-   const [newNotificationName, setNewNotificationName] = useState("");
-   const [newNotificationType, setNewNotificationType] = useState("modal");
-   const newNotification = async () => {
+   const [newDeploymentName, setNewDeploymentName] = useState("");
+   const [newDeploymentAudienceId, setNewDeploymentAudienceId] = useState("");
+   const newDeployment = async () => {
       const supabase = createClient();
       const { data, error } = await supabase
-         .from("polls")
+         .from("deployments")
          .insert([
             {
-               title: newNotificationName,
-               unique_id: newNotificationName.toLowerCase().replace(" ", "_"),
+               name: newDeploymentName,
+               // unique_id: newDeploymentName.toLowerCase().replace(" ", "_"),
                app_id: projectId,
-               poll_data: {
-                  ...SAMPLE_MODAL.poll_data,
-                  type: newNotificationType,
+               data_tree: {
+                  nodes: [
+                     {
+                        id: "newTrigger",
+                        parent_id: "initialTrigger",
+                        message_id: 24,
+                        programmatic_filter: "30",
+                     },
+                  ],
+                  initialTrigger: "programmatic",
+                  initialAudience: newDeploymentAudienceId,
+                  initialTriggerDelay: 0,
                },
             },
          ])
          .select("*")
          .single();
 
-      router.push(`/dashboard/${projectId}/poll/` + data.id);
+      router.push(`/dashboard/${projectId}/deployments/` + data.id);
    };
    const supabase = createClient();
-
-   const onUpdate = async (name: string) => {
-      await supabase.from("projects").update({ name }).eq("app_id", projectId);
-   };
 
    return (
       <div className="flex h-full w-full flex-row">
@@ -88,38 +92,40 @@ export default function Client({ deployments, projectId, project, messages, audi
                            <DialogTitle>New deployment</DialogTitle>
                            <div className="h-4"></div>
                            <Input
-                              value={newNotificationName}
+                              value={newDeploymentName}
                               onChange={(e) => {
-                                 setNewNotificationName(e.target.value);
+                                 setNewDeploymentName(e.target.value);
                               }}
                               placeholder="Name of deployment"
                            />
                            <div className="h-3"></div>
+
                            <Select
                               // defaultValue="modal"
                               onValueChange={(e) => {
-                                 setNewNotificationType(e);
+                                 setNewDeploymentAudienceId(e);
                               }}
                            >
                               <SelectTrigger className="">
-                                 <SelectValue placeholder="Type" />
+                                 <SelectValue placeholder="Audience" />
                               </SelectTrigger>
                               <SelectContent>
                                  <SelectGroup>
-                                    {/* <SelectLabel>All we have so far :)</SelectLabel> */}
-                                    {/* <SelectItem value="yesorno">Yes or no question</SelectItem> */}
-                                    <SelectItem value="modal">Modal</SelectItem>
-                                    <SelectItem value="notification">Notification</SelectItem>
+                                    {audiences.map((audience) => {
+                                       return <SelectItem value={audience.id}>{audience.name}</SelectItem>;
+                                    })}
                                  </SelectGroup>
+                                 <SelectSeparator></SelectSeparator>
+
+                                 <SelectItem value={"everyone"}>Everyone</SelectItem>
                               </SelectContent>
                            </Select>
-                           <div className="h-3"></div>
                            <div className="flex flex-row justify-between">
                               <div></div>
 
                               <Button
                                  onClick={() => {
-                                    newNotification();
+                                    newDeployment();
                                  }}
                               >
                                  Create
@@ -133,7 +139,7 @@ export default function Client({ deployments, projectId, project, messages, audi
                   <div className="flex w-full flex-col gap-5  ">
                      {deployments?.map((deployment) => {
                         const audience = audiences.find((audience) => audience.id === deployment.data_tree.initialAudience);
-                        const intialTrigger = deployment.data_tree.intitialTrigger === "programmatic" ? "Code trigger" : "On load";
+                        const intialTrigger = deployment.data_tree.initialTrigger === "programmatic" ? "Code trigger" : "On load";
                         const firstMessage = messages.find((message) => message.id === deployment.data_tree.nodes[0].message_id);
                         return (
                            <ContextMenu>
@@ -156,19 +162,16 @@ export default function Client({ deployments, projectId, project, messages, audi
                                     <div className="flex w-full flex-row items-center justify-between">
                                        <div className="flex flex-row items-center text-sm font-medium text-neutral-700">
                                           <Link
-                                             href={"/"}
+                                             href={`/dashboard/${projectId}/audiences/${audience?.id}`}
                                              className="flex flex-row items-center gap-2 rounded-full  border border-blue-300 px-3 py-1 tracking-tight transition hover:bg-neutral-200  "
                                           >
                                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                                                 <path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM1.49 15.326a.78.78 0 0 1-.358-.442 3 3 0 0 1 4.308-3.516 6.484 6.484 0 0 0-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 0 1-2.07-.655ZM16.44 15.98a4.97 4.97 0 0 0 2.07-.654.78.78 0 0 0 .357-.442 3 3 0 0 0-4.308-3.517 6.484 6.484 0 0 1 1.907 3.96 2.32 2.32 0 0 1-.026.654ZM18 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5.304 16.19a.844.844 0 0 1-.277-.71 5 5 0 0 1 9.947 0 .843.843 0 0 1-.277.71A6.975 6.975 0 0 1 10 18a6.974 6.974 0 0 1-4.696-1.81Z" />
                                              </svg>
-                                             {audience.name}
+                                             {audience?.name || "Everyone"}
                                           </Link>
                                           <p className="mx-3">→</p>
-                                          <Link
-                                             href={"/"}
-                                             className="flex flex-row items-center gap-2 rounded-full border  border-green-300 px-3 py-1 tracking-tight transition hover:bg-neutral-200  "
-                                          >
+                                          <div className="flex flex-row items-center gap-2 rounded-full border  border-green-300 px-3 py-1 tracking-tight transition hover:bg-neutral-200  ">
                                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                                                 <path
                                                    fillRule="evenodd"
@@ -177,11 +180,11 @@ export default function Client({ deployments, projectId, project, messages, audi
                                                 />
                                              </svg>
                                              {intialTrigger}
-                                          </Link>
+                                          </div>
                                           <p className="mx-3">→</p>
 
                                           <Link
-                                             href={"/"}
+                                             href={`/dashboard/${projectId}/poll/${firstMessage.id}`}
                                              className="flex flex-row items-center gap-2 rounded-full border  border-pink-300 px-3 py-1 tracking-tight transition hover:bg-neutral-200  "
                                           >
                                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
