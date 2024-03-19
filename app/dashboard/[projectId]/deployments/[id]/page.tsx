@@ -12,41 +12,12 @@ export default async function Index({ params: { id, projectId } }: { params: { i
 
    const getDeployment = () => supabase.from("deployments").select("*").eq("id", id).single();
    const getProjectPolls = () => supabase.from("polls").select("*").eq("app_id", projectId);
+   const getEvents = () => supabase.from("events").select("*").eq("app_id", projectId);
 
-   const [{ data: deployment }, { data: messages }] = await Promise.all([getDeployment(), getProjectPolls()]);
-   // console.log({ deployment });
-
-   // const deployment2 = {
-   //    id: "361c86ac-48eb-43ff-b4a4-37b27adab398",
-   //    is_live: false,
-   //    data_tree: {
-   //       initialTrigger: "page_load",
-   //       initialAudience: 1,
-   //       nodes: [
-   //          {
-   //             id: "2ndskf8",
-   //             programmatic_filter: 1,
-   //             message_id: 31,
-   //             parent_id: "initialTrigger",
-   //          },
-   //          {
-   //             id: "2ndskf8",
-   //             programmatic_filter: 5,
-   //             message_id: 28,
-   //             parent_id: "initialTrigger",
-   //          },
-   //          {
-   //             id: "dskjfh38",
-
-   //             message_id: 32,
-   //             parent_id: "2ndskf8",
-   //          },
-   //       ],
-   //    },
-   // };
+   const [{ data: deployment }, { data: messages }, { data: events }] = await Promise.all([getDeployment(), getProjectPolls(), getEvents()]);
 
    const getAudiences = () => supabase.from("audiences").select("*").eq("app_id", projectId);
    const { data: audiences } = await getAudiences();
    //    .eq("id", id).single();
-   return <Client deployment={deployment} messages={messages} audiences={audiences} projectId={projectId}></Client>;
+   return <Client deployment={deployment} events={events} messages={messages} audiences={audiences} projectId={projectId}></Client>;
 }

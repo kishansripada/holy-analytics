@@ -6,6 +6,9 @@ interface Store {
 }
 
 export const useStore = create<Store>((set) => ({
-   message: [],
+   messages: [],
    setMessages: (messages) => set({ messages }),
+
+   project: {},
+   setProject: (project) => set({ project }),
 }));

@@ -71,7 +71,7 @@ export default function Client({ deployments, projectId, project, messages, audi
                {/* <UploadInput className="w-full  py-1 text-2xl font-bold tracking-tight" value={project.name} onUpdate={onUpdate} /> */}
                <p className="w-full  py-1 text-2xl font-bold tracking-tight">Deployments</p>
                <p className="text-sm text-neutral-600">
-                  Combinations of messages, deployments and triggers that are deployed to your app.
+                  Combinations of messages, deployments and events that are deployed to your app.
                   {/* <span className=" font-semibold">API Key:</span> <span>{projectId}</span> */}
                </p>
                {/* <AuthButton /> */}

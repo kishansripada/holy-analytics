@@ -22,11 +22,13 @@ const SAMPLE_MODAL = {
    },
 };
 
-export default function Client({ polls, projectId, project }: { polls: poll[]; projectId: string; project: any }) {
+export default function Client({}: { polls: poll[]; projectId: string; project: any }) {
+   // polls, projectId, project
    const router = useRouter();
 
-   const { messages } = useStore();
-   console.log("messages", messages);
+   const { messages: polls, project } = useStore();
+   const projectId = project.id;
+   // console.log("messages", messages);
 
    const [projectName, setProjectName] = useState(project.name);
 
@@ -58,6 +60,7 @@ export default function Client({ polls, projectId, project }: { polls: poll[]; p
    const onUpdate = async (name: string) => {
       await supabase.from("projects").update({ name }).eq("app_id", projectId);
    };
+   if (!polls.length) return <div>loading...</div>;
 
    return (
       <div className="flex h-full w-full flex-row">

@@ -68,6 +68,14 @@ export default function Sidebar({ user }: { user: User }) {
                   >
                      Audiences
                   </Link>
+                  <Link
+                     href={`/dashboard/${projectId}/events`}
+                     className={`w-full ${
+                        path.includes("events") ? "bg-neutral-100" : ""
+                     }  rounded-md px-2 py-2 text-sm text-neutral-800 hover:bg-neutral-100`}
+                  >
+                     Events
+                  </Link>
 
                   <Link
                      href={`/dashboard/${projectId}/deployments`}

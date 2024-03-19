@@ -16,6 +16,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import Prism from "prismjs";
 import { Tabs } from "@/components/ui/tabs";
 import { UploadInput } from "@/components/upload-input";
@@ -31,11 +32,13 @@ export default function Client({
    projectId,
    audiences,
    messages,
+   events,
 }: {
    deployment: any;
    projectId: string;
    audiences: any[];
    messages: any[];
+   events: any[];
 }) {
    const [deployment, setDeployment] = useState(initialDeployment);
    const deploymentSaved = useUploadToSupabase("data_tree", deployment.data_tree, deployment.id, true);
@@ -208,15 +211,11 @@ export default function Client({
                   </DropdownMenu>
                </div>
             </div>
-            <div className="flex h-full flex-col items-center justify-center px-2">
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-               </svg>
-            </div>
+            <SpacerArrow />
 
             <div className="relative flex h-full  flex-col items-start justify-center">
                <div className="relative flex flex-col items-center gap-4 text-sm font-medium text-neutral-700">
-                  <p className=" absolute -top-1 -translate-y-full text-sm font-semibold uppercase tracking-wide text-neutral-500">Trigger</p>
+                  <p className=" absolute -top-1 -translate-y-full text-sm font-semibold uppercase tracking-wide text-neutral-500">Event Trigger</p>
 
                   <BoxWithPlus
                      messages={messages}
@@ -270,23 +269,42 @@ export default function Client({
                            </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
+                           {events.map((event) => {
+                              return (
+                                 <DropdownMenuItem
+                                    onClick={() => {
+                                       setDeployment((deployment) => {
+                                          return {
+                                             ...deployment,
+                                             data_tree: {
+                                                ...deployment.data_tree,
+                                                initialTrigger: "event",
+                                                initialTriggerEvent: event.id,
+                                             },
+                                          };
+                                       });
+                                    }}
+                                 >
+                                    {event.name}
+                                 </DropdownMenuItem>
+                              );
+                           })}
+                           <DropdownMenuSeparator> </DropdownMenuSeparator>
                            <DropdownMenuItem
                               onClick={() => {
                                  setDeployment((deployment) => {
-                                    return { ...deployment, data_tree: { ...deployment.data_tree, initialTrigger: "programmatic" } };
+                                    return {
+                                       ...deployment,
+                                       data_tree: {
+                                          ...deployment.data_tree,
+                                          initialTrigger: "page_load",
+                                          initialTriggerEvent: "lol",
+                                       },
+                                    };
                                  });
                               }}
                            >
-                              Code trigger
-                           </DropdownMenuItem>
-                           <DropdownMenuItem
-                              onClick={() => {
-                                 setDeployment((deployment) => {
-                                    return { ...deployment, data_tree: { ...deployment.data_tree, initialTrigger: "page_load" } };
-                                 });
-                              }}
-                           >
-                              On page load
+                              Page load
                            </DropdownMenuItem>
                         </DropdownMenuContent>
                      </DropdownMenu>
@@ -336,12 +354,14 @@ export default function Client({
                   </BoxWithPlus>
                </div>
             </div>
-            <div className="flex h-full flex-col items-center justify-center px-2">
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-               </svg>
-            </div>
-            <MessageLayer parentId={"initialTrigger"} deployment={deployment} messages={messages} setDeployment={setDeployment}></MessageLayer>
+            <SpacerArrow />
+            <MessageLayer
+               projectId={projectId}
+               parentId={"initialTrigger"}
+               deployment={deployment}
+               messages={messages}
+               setDeployment={setDeployment}
+            ></MessageLayer>
          </div>
       </VStack>
    );
@@ -377,6 +397,16 @@ const BoxWithPlus = ({ children, onPlus, canAdd, messages }) => {
             </DropdownMenu>
          )}
          {children}
+      </div>
+   );
+};
+
+const SpacerArrow = () => {
+   return (
+      <div className="flex h-full flex-col items-center justify-center px-4">
+         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+         </svg>
       </div>
    );
 };
@@ -443,7 +473,7 @@ const useUploadToSupabase = (dataKey: string, dataValue: any, danceId: string, e
    return saved;
 };
 
-const MessageLayer = ({ deployment, messages, setDeployment, parentId }) => {
+const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId }) => {
    if (!deployment.data_tree.nodes.filter((node) => node.parent_id === parentId).length) return;
    return (
       <>
@@ -476,10 +506,11 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId }) => {
                            canAdd={true}
                         >
                            <div className="flex flex-row items-end justify-between gap-2">
-                              <div className="flex flex-col gap-2">
+                              <div className="flex w-full flex-col gap-2">
                                  <div className=" w-min rounded-full border border-neutral-300 px-2 py-1 text-xs text-neutral-700">
                                     {message.poll_data.type}
                                  </div>
+
                                  <DropdownPill
                                     type="message"
                                     dropdownContent={
@@ -561,43 +592,63 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId }) => {
                                     <></>
                                  )}
                               </div>
-                              <DropdownMenu>
-                                 <DropdownMenuTrigger>
-                                    <button>
-                                       <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          strokeWidth={1.5}
-                                          stroke="currentColor"
-                                          className="h-6 w-6"
-                                       >
-                                          <path
-                                             strokeLinecap="round"
-                                             strokeLinejoin="round"
-                                             d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                                          />
-                                       </svg>
-                                    </button>
-                                 </DropdownMenuTrigger>
-                                 <DropdownMenuContent>
-                                    <DropdownMenuItem
-                                       onClick={() => {
-                                          setDeployment((deployment) => {
-                                             return {
-                                                ...deployment,
-                                                data_tree: {
-                                                   ...deployment.data_tree,
-                                                   nodes: deployment.data_tree.nodes.filter((nodex) => nodex.id !== node.id),
-                                                },
-                                             };
-                                          });
-                                       }}
+
+                              <div className="flex h-full flex-col justify-between">
+                                 <Link href={`/dashboard/${projectId}/poll/${message.id}`}>
+                                    <svg
+                                       xmlns="http://www.w3.org/2000/svg"
+                                       fill="none"
+                                       viewBox="0 0 24 24"
+                                       strokeWidth={1.5}
+                                       stroke="currentColor"
+                                       className="h-6 w-6"
                                     >
-                                       Delete
-                                    </DropdownMenuItem>
-                                 </DropdownMenuContent>
-                              </DropdownMenu>
+                                       <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                                       />
+                                    </svg>
+                                 </Link>
+
+                                 <DropdownMenu>
+                                    <DropdownMenuTrigger>
+                                       <button>
+                                          <svg
+                                             xmlns="http://www.w3.org/2000/svg"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             strokeWidth={1.5}
+                                             stroke="currentColor"
+                                             className="h-6 w-6"
+                                          >
+                                             <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                                             />
+                                          </svg>
+                                       </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                       <DropdownMenuItem
+                                          onClick={() => {
+                                             setDeployment((deployment) => {
+                                                return {
+                                                   ...deployment,
+                                                   data_tree: {
+                                                      ...deployment.data_tree,
+                                                      nodes: deployment.data_tree.nodes.filter((nodex) => nodex.id !== node.id),
+                                                   },
+                                                };
+                                             });
+                                          }}
+                                       >
+                                          Delete
+                                       </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                 </DropdownMenu>
+                              </div>
                            </div>
                         </BoxWithPlus>
                      );
@@ -614,6 +665,7 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId }) => {
             deployment={deployment}
             messages={messages}
             setDeployment={setDeployment}
+            projectId={projectId}
          ></MessageLayer>
       </>
    );
