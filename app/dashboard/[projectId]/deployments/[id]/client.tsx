@@ -43,7 +43,7 @@ export default function Client({
    const [deployment, setDeployment] = useState(initialDeployment);
    const deploymentSaved = useUploadToSupabase("data_tree", deployment.data_tree, deployment.id, true);
    const startDeploymentCode = `function useCoolFeature() {
-      window.holyTrigger("${deployment.id}"); // Trigger a feature interaction using the tip ID
+      window.captureEvent("${deployment.id}"); // Trigger a feature interaction using the tip ID
   }`;
 
    const endDeploymentCode = `function stopDeployment() {
@@ -240,14 +240,7 @@ export default function Client({
                   >
                      <DropdownMenu>
                         <DropdownMenuTrigger>
-                           <div className="flex w-min flex-row items-center gap-2 rounded-full border  border-green-300 px-3 py-1  transition hover:bg-neutral-200  ">
-                              {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-                              <path
-                                 fillRule="evenodd"
-                                 d="M6.28 5.22a.75.75 0 0 1 0 1.06L2.56 10l3.72 3.72a.75.75 0 0 1-1.06 1.06L.97 10.53a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Zm7.44 0a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L17.44 10l-3.72-3.72a.75.75 0 0 1 0-1.06ZM11.377 2.011a.75.75 0 0 1 .612.867l-2.5 14.5a.75.75 0 0 1-1.478-.255l2.5-14.5a.75.75 0 0 1 .866-.612Z"
-                                 clipRule="evenodd"
-                              />
-                           </svg> */}
+                           <div className="flex w-min flex-row items-center gap-2 rounded-lg border  border-green-300 px-3 py-1  transition hover:bg-neutral-200  ">
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
                                  <path
                                     fillRule="evenodd"
@@ -256,8 +249,10 @@ export default function Client({
                                  />
                               </svg>
 
-                              <p className="whitespace-nowrap">
-                                 {deployment.data_tree.initialTrigger === "programmatic" ? "Code trigger" : "Page load"}
+                              <p className="text-left">
+                                 {deployment.data_tree.initialTrigger === "event"
+                                    ? events.find((event) => event.id === deployment.data_tree.initialTriggerEvent).name
+                                    : "Page load"}
                               </p>
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
                                  <path
@@ -298,7 +293,6 @@ export default function Client({
                                        data_tree: {
                                           ...deployment.data_tree,
                                           initialTrigger: "page_load",
-                                          initialTriggerEvent: "lol",
                                        },
                                     };
                                  });
@@ -327,7 +321,7 @@ export default function Client({
                            className="mx-2 w-16"
                         />
                      </div>
-                     {deployment.data_tree.initialTrigger === "programmatic" ? (
+                     {deployment.data_tree.initialTrigger !== "page_load" ? (
                         <>
                            <div className="h-px w-full bg-neutral-300"></div>
                            <Sheet>

@@ -90,7 +90,7 @@ export default function Sidebar({ user }: { user: User }) {
 
             <div className="mt-auto flex flex-col">
                <Link
-                  href={"/dashboard/docs"}
+                  href={`/dashboard/${projectId}/docs`}
                   className={`w-full ${
                      path === "/dashboard/docs" ? "bg-neutral-100" : ""
                   }  rounded-md px-2 py-2 text-sm text-neutral-800 hover:bg-neutral-100`}
