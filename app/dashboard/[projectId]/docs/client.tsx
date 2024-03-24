@@ -9,14 +9,19 @@ import "prismjs/components/prism-tsx";
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { HStack, VStack } from "@/components/ui/stacks";
 
-export default function Client({ deployments, projectId }: { deployments: any[]; projectId: string }) {
+export default function Client({ deployments, projectId, events, polls }: { deployments: any[]; projectId: string; events: any[]; polls: any[] }) {
+   const [framework, setFramework] = useState("react");
+   const anchors = polls.map((poll) => poll.anchor).filter((anchor) => anchor);
+   const router = useRouter();
    useEffect(() => {
       const highlight = async () => {
          await Prism.highlightAll(); // <--- prepare Prism
       };
       highlight(); // <--- call the async function
-   }, [deployments]); // <--- run when post updates
+   }, [deployments, framework]); // <--- run when post updates
 
    const nextScriptString = `import Script from "next/script";
 import hyperuser from "../utils/hyperuser";
@@ -39,6 +44,20 @@ import hyperuser from "../utils/hyperuser";
    />;
    `;
 
+   const reactScript = `<script type="module" src="https://widget.holyuser.com/holyuser.js"></script>`;
+   const reactConsume = `  useEffect(() => {
+      hyperuser.initialize({
+         userId: "<user_id>",
+         apiKey: "<api_key>",
+         darkMode: false,
+         user: {
+            displayName: "<user_display_name>",
+            email: "<user_email>",
+            isProUser: false,
+         },
+      });
+   }, []);`;
+
    return (
       <div className="h-screen overflow-y-scroll">
          <div>
@@ -48,50 +67,95 @@ import hyperuser from "../utils/hyperuser";
                <p className="text-2xl font-semibold">Generating types (important!)</p>
                <div className="h-2"></div>
                <p className="text-sm text-neutral-700">
-                  Copy and paste this code somwhere in your codebase, this exports the hyperuser object you will use. It also includes types for all
-                  the events and deployments in your project.``
+                  Copy and paste this code to some utils file in your codebase, this exports the hyperuser object you will use. It also includes types
+                  for all the events and deployments in your project.``
                </p>
                <div className="h-5"></div>
 
                <CodeFile
-                  language="javascript"
-                  code={buildUtilsFile(deployments.map((deployment) => deployment.id))}
+                  language="typescript"
+                  code={buildUtilsFile(
+                     deployments.map((deployment) => deployment.id),
+                     events.map((event) => event.unique_id),
+                     anchors
+                  )
+                     .replace(/(\r\n|\n|\r)/gm, "")
+                     .replace(/\s+/g, " ")}
                   fileName={"/utils/hyperuser.ts"}
                ></CodeFile>
                <div className="h-10"></div>
 
-               <p className="text-2xl font-semibold">Consuming</p>
-               <div className="h-2"></div>
-               <p className="text-sm text-neutral-700">
-                  Copy and paste this code somwhere in your codebase, this exports the hyperuser object you will use. It also includes types for all
-                  the events and deployments in your project.``
-               </p>
+               <HStack className="justify-between p-1">
+                  <VStack>
+                     <p className="text-2xl font-semibold">Consuming</p>
+                     <div className="h-2"></div>
+                     <p className="text-sm text-neutral-700">
+                        You can import the hyperuser object anywhere in your codebase from the utils file to start deployments and track events.
+                     </p>
+                  </VStack>
+                  <Select
+                     onValueChange={(value) => {
+                        setFramework(value);
+                     }}
+                     value={framework}
+                  >
+                     <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="React" />
+                     </SelectTrigger>
+                     <SelectContent>
+                        <SelectGroup>
+                           <SelectItem value="nextjs">Next.js</SelectItem>
+                           <SelectItem value="react">React</SelectItem>
+                        </SelectGroup>
+                     </SelectContent>
+                  </Select>
+               </HStack>
                <div className="h-5"></div>
-               <CodeFile language="tsx" code={nextScriptString} fileName={"/someClientFile.tsx"}></CodeFile>
+               {framework === "nextjs" ? (
+                  <CodeFile language="tsx" code={nextScriptString} fileName={"/someClientFile.tsx"}></CodeFile>
+               ) : (
+                  <>
+                     <div className="flex flex-col gap-4">
+                        <CodeFile language="tsx" code={reactScript} fileName={"/index.html"}></CodeFile>
+                        <CodeFile language="tsx" code={reactConsume} fileName={"/someClientFile.tsx"}></CodeFile>
+                     </div>
+                  </>
+               )}
             </div>
          </div>
       </div>
    );
 }
 
-const buildUtilsFile = (deploymentIds: string[]) => {
-   return `export interface EmbedProps {
+const buildUtilsFile = (deploymentIds: string[], eventIds: string[], anchors: string[]) => {
+   return `
+   declare module "react" {
+      interface HTMLAttributes<T> extends DOMAttributes<T> {
+         "data-hyperuser"?:
+            | ${anchors.map((anchor) => `"${anchor}"`).join(" | ")}
+            | null;
+      }
+   }
+   
+   export interface EmbedProps {
       disabled?: boolean;
       darkMode?: boolean;
       userId: string;
       apiKey: string;
       user: any;
    }
-   const eventIds = ["a410e280-e9b1-48a2-ab1f-3d2b885bca74", "94acab08-45be-4b91-a95b-0fe6b705dabc"] as const;
+   const eventIds = [${eventIds.map((id) => `"${id}"`).join(", ")}] as const;
    type EventId = (typeof eventIds)[number];
    const deploymentIds = [${deploymentIds.map((id) => `"${id}"`).join(", ")}] as const;
    type DeploymentId = (typeof deploymentIds)[number];
    type Hyperuser = {
       initialize(params: EmbedProps): void;
-      track(eventName: EventId): void;
+      startDeployment(deploymentId: DeploymentId): void;
       /** * Starts a new deployment with the specified deployment ID. * @param deploymentId - The unique identifier of the deployment. */ startDeployment(
          deploymentId: DeploymentId
       ): void;
+   
+      trackEvent(eventId: EventId, data?: any): void;
    };
    const errorBoundary = (functionToExcecute: Function) => {
       if (typeof window !== "undefined" && (window as any).hyperuser) {
@@ -110,8 +174,11 @@ const buildUtilsFile = (deploymentIds: string[]) => {
       startDeployment(deploymentId: string) {
          return errorBoundary((window as any)?.hyperuser?.startDeployment(deploymentId));
       }
-      track(eventId: EventId) {
-         return;
+      trackEvent(eventId: EventId, data?: any) {
+         return errorBoundary((window as any)?.hyperuser?.trackEvent(eventId, data));
+      }
+      nextStep(deploymentId: DeploymentId, eventId: EventId) {
+         return errorBoundary((window as any)?.hyperuser?.nextStep(deploymentId, eventId));
       }
    }
    export default new hyperuser();
