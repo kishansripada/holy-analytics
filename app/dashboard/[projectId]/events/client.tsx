@@ -16,26 +16,23 @@ export default function Client({ events, projectId, project }: { events: any[]; 
 
    const [newEventName, setNewEventName] = useState("");
 
-   const makeNeweventAndGoToIt = async () => {
+   const makeNewEventAndGoToIt = async () => {
       const supabase = createClient();
       const { data, error } = await supabase
          .from("events")
          .insert([
             {
                name: newEventName,
-               conditions: [
-                  {
-                     condition_string: "",
-                     id: "yolo",
-                  },
-               ],
+               unique_id: newEventName.split(" ").join("_").toLowerCase().trim(),
                app_id: projectId,
             },
          ])
          .select("*")
          .single();
 
-      router.push(`/dashboard/${projectId}/events/` + data.id);
+      router.refresh();
+
+      // router.push(`/dashboard/${projectId}/events/` + data.id);
    };
    const supabase = createClient();
 
@@ -77,7 +74,7 @@ export default function Client({ events, projectId, project }: { events: any[]; 
 
                               <Button
                                  onClick={() => {
-                                    makeNeweventAndGoToIt();
+                                    makeNewEventAndGoToIt();
                                  }}
                               >
                                  Create
@@ -106,10 +103,15 @@ export default function Client({ events, projectId, project }: { events: any[]; 
                                              <p className="text-nuetral-700 text-xs font-medium tracking-wide">EVENT ID</p>
                                              <div
                                                 className={
-                                                   "border-input ring-offset-background focus-within:ring-ring flex h-10 items-center rounded-md border bg-white pl-3 text-sm focus-within:ring-1 focus-within:ring-offset-2"
+                                                   "flex h-10 items-center rounded-md border border-input bg-white pl-3 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring focus-within:ring-offset-2"
                                                 }
                                              >
-                                                <button className="rounded-md p-1 transition hover:bg-neutral-100">
+                                                <button
+                                                   onClick={() => {
+                                                      navigator.clipboard.writeText(event.unique_id);
+                                                   }}
+                                                   className="rounded-md p-1 transition hover:bg-neutral-100"
+                                                >
                                                    <svg
                                                       xmlns="http://www.w3.org/2000/svg"
                                                       fill="none"
@@ -131,7 +133,7 @@ export default function Client({ events, projectId, project }: { events: any[]; 
                                                    //  {...props}
 
                                                    //  ref={ref}
-                                                   className="placeholder:text-muted-foreground w-full p-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                   className="w-full p-2 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                                 />
                                              </div>
                                           </div>

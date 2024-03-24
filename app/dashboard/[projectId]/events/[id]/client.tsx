@@ -6,26 +6,22 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import Prism from "prismjs";
 import { Tabs } from "@/components/ui/tabs";
 import { UploadInput } from "@/components/upload-input";
 import { VStack } from "@/components/ui/stacks";
 import { createClient } from "@/utils/supabase/client";
-// import { useUploadToSupabase } from "@/utils/supabase/hooks";
 import debounce from "lodash.debounce";
 import { poll } from "@/utils/types";
-import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
 
-export default function Client({ audience: initialAudience, projectId, sampleUsers }: { audience: any; projectId: string; sampleUsers: any }) {
-   const [audience, setAudience] = useState(initialAudience);
+export default function Client({ event: initialEvent }: { event: any }) {
+   const [event, setEvent] = useState(initialEvent);
    const supabase = createClient();
 
    // const audienceSaved = useUploadToSupabase("audiences", "conditions", audience.conditions, audience.id, true);
 
    const onUpdate = async (name: string) => {
-      await supabase.from("audiences").update({ name }).eq("id", audience.id);
+      await supabase.from("audiences").update({ name }).eq("id", event.id);
    };
 
    useEffect(() => {
@@ -33,7 +29,7 @@ export default function Client({ audience: initialAudience, projectId, sampleUse
          await Prism.highlightAll(); // <--- prepare Prism
       };
       highlight(); // <--- call the async function
-   }, [audience]); // <--- run when post updates
+   }, [event]); // <--- run when post updates
 
    return (
       <VStack className="h-full w-full overflow-hidden px-16 py-12">
@@ -63,7 +59,7 @@ export default function Client({ audience: initialAudience, projectId, sampleUse
             <VStack className="max-h-full gap-10">
                <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500">Audience</p>
-                  <UploadInput className="  min-w-min text-2xl font-medium tracking-tight" value={audience.name} onUpdate={onUpdate} />
+                  <UploadInput className="  min-w-min text-2xl font-medium tracking-tight" value={event.name} onUpdate={onUpdate} />
                </div>
                <div className="flex h-full w-full flex-row justify-between  gap-20 ">
                   <div className="flex w-1/2 flex-col items-start gap-3 p-1">
@@ -72,7 +68,7 @@ export default function Client({ audience: initialAudience, projectId, sampleUse
 
                         <Button
                            onClick={async () => {
-                              setAudience((audience: poll) => {
+                              setEvent((audience: poll) => {
                                  return {
                                     ...audience,
                                     conditions: [
@@ -104,7 +100,7 @@ export default function Client({ audience: initialAudience, projectId, sampleUse
                      <a href="https://holy-user-docs.super.site/" className="mb-1 text-sm text-neutral-600">
                         View docs
                      </a>
-                     {audience.conditions.map((condition) => {
+                     {event.conditions.map((condition) => {
                         return (
                            <div className="relative flex w-full flex-row items-center gap-1.5 overflow-hidden px-1 py-1">
                               <pre
@@ -140,7 +136,7 @@ export default function Client({ audience: initialAudience, projectId, sampleUse
                                  className=" w-full overflow-scroll text-white caret-black"
                                  onChange={(e) => {
                                     //  console.log(e);
-                                    setAudience((audience) => {
+                                    setEvent((audience) => {
                                        return {
                                           ...audience,
                                           conditions: audience.conditions.map((conditionx) => {
@@ -161,7 +157,7 @@ export default function Client({ audience: initialAudience, projectId, sampleUse
                               <Button
                                  className="w-12 p-0"
                                  onClick={() => {
-                                    setAudience((audience: any) => {
+                                    setEvent((audience: any) => {
                                        return {
                                           ...audience,
                                           conditions: audience.conditions.filter((conditionx) => {
@@ -215,7 +211,7 @@ export default function Client({ audience: initialAudience, projectId, sampleUse
                                        let passesAllConditions = false;
                                        //   console.log();
                                        try {
-                                          const filterFns = audience.conditions.map((cond) => {
+                                          const filterFns = event.conditions.map((cond) => {
                                              return new Function("user", `return ${cond.condition_string}`);
                                           });
 

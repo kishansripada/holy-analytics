@@ -13,11 +13,10 @@ export default async function Index({ params: { id, projectId } }: { params: { i
       data: { user },
    } = await supabase.auth.getUser();
 
-   let getAudience = () => supabase.from("audiences").select("*, app_id (name, app_id)").eq("id", id).single();
-   let getSampleUsers = () => supabase.from("sample_data").select("*").eq("app_id", projectId).limit(50);
+   let getEvent = () => supabase.from("events").select("*, app_id (name, app_id)").eq("id", id).single();
 
-   const [{ data: audience }, { data: sampleUsers }] = await Promise.all([getAudience(), getSampleUsers()]);
-   console.log({ sampleUsers });
+   const [{ data: event }] = await Promise.all([getEvent()]);
+
    //    .eq("id", id).single();
-   return <Client audience={audience} sampleUsers={sampleUsers} projectId={projectId}></Client>;
+   return <Client event={event} projectId={projectId}></Client>;
 }

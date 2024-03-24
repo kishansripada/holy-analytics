@@ -9,7 +9,7 @@ export default async function Index({ params: { projectId } }: { params: { proje
    // const getProjectPolls = () => supabase.from("polls").select("*").eq("app_id", projectId);
    // const getProject = () => supabase.from("projects").select("*").eq("app_id", projectId).single();
 
-   // const [{ data: polls }, { data: project }] = await Promise.all([getProjectPolls(), getProject()]);
-   // projectId={projectId} project={project} polls={polls || []}
-   return <Client></Client>;
+   // const [{ data: polls }, { data: project }] = await Promise.all([ getProject()]);
+   //  project={project} polls={polls || []}
+   return <Client projectId={projectId}></Client>;
 }

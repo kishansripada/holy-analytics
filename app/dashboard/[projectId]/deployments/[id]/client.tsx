@@ -20,12 +20,13 @@ import Link from "next/link";
 import Prism from "prismjs";
 import { Tabs } from "@/components/ui/tabs";
 import { UploadInput } from "@/components/upload-input";
-import { VStack } from "@/components/ui/stacks";
+import { HStack, VStack } from "@/components/ui/stacks";
 import { createClient } from "@/utils/supabase/client";
 // import { useUploadToSupabase } from "@/utils/supabase/hooks";
 import debounce from "lodash.debounce";
 import { poll } from "@/utils/types";
 import { useRouter } from "next/navigation";
+import { generateNanoId } from "@/utils/nanoId";
 
 export default function Client({
    deployment: initialDeployment,
@@ -42,9 +43,11 @@ export default function Client({
 }) {
    const [deployment, setDeployment] = useState(initialDeployment);
    const deploymentSaved = useUploadToSupabase("data_tree", deployment.data_tree, deployment.id, true);
-   const startDeploymentCode = `function useCoolFeature() {
-      window.captureEvent("${deployment.id}"); // Trigger a feature interaction using the tip ID
-  }`;
+
+   const initialTriggerEvent = events.find((event) => event.id === deployment.data_tree.initialTriggerEvent);
+
+   const startDeploymentCode = `// Used to start deployment: ${deployment.slug}
+hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
 
    const endDeploymentCode = `function stopDeployment() {
    window.endHyperDeployment("${deployment.id}"); // Trigger a feature interaction using the tip ID
@@ -227,8 +230,7 @@ export default function Client({
                               nodes: [
                                  ...deployment.data_tree.nodes,
                                  {
-                                    id: "newTrigger",
-
+                                    id: generateNanoId(),
                                     parent_id: "initialTrigger",
                                     message_id: messageId,
                                  },
@@ -240,7 +242,7 @@ export default function Client({
                   >
                      <DropdownMenu>
                         <DropdownMenuTrigger>
-                           <div className="flex w-min flex-row items-center gap-2 rounded-lg border  border-green-300 px-3 py-1  transition hover:bg-neutral-200  ">
+                           <div className="flex w-full flex-row items-center gap-2 rounded-lg border  border-green-300 px-3 py-1  transition hover:bg-neutral-200  ">
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
                                  <path
                                     fillRule="evenodd"
@@ -488,7 +490,7 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                                     nodes: [
                                        ...deployment.data_tree.nodes,
                                        {
-                                          id: Math.random().toString(36).substring(7),
+                                          id: generateNanoId(),
                                           parent_id: node.id,
                                           message_id: messageId,
                                        },
@@ -499,12 +501,52 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                            messages={messages}
                            canAdd={true}
                         >
+                           <HStack className="items-center justify-between">
+                              <div className=" h-min w-min whitespace-nowrap rounded-full border border-neutral-300 px-2 py-1 text-xs text-neutral-700">
+                                 {message.poll_data.type}
+                              </div>
+                              <div className="flex w-32  flex-shrink flex-col items-start p-1">
+                                 <p className="text-nuetral-700 text-xs font-medium tracking-wide">STEP ID</p>
+                                 <div
+                                    className={
+                                       "flex w-full  items-center rounded-md border border-input bg-white pl-3 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring focus-within:ring-offset-2"
+                                    }
+                                 >
+                                    <button
+                                       onClick={() => {
+                                          navigator.clipboard.writeText(node.id);
+                                       }}
+                                       className="rounded-md p-1 transition hover:bg-neutral-100"
+                                    >
+                                       <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          strokeWidth={1.5}
+                                          stroke="currentColor"
+                                          className="h-4 w-4"
+                                       >
+                                          <path
+                                             strokeLinecap="round"
+                                             strokeLinejoin="round"
+                                             d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
+                                          />
+                                       </svg>
+                                    </button>
+
+                                    <input
+                                       value={node.id}
+                                       //  {...props}
+
+                                       //  ref={ref}
+                                       className="w-full px-2 py-1 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                    />
+                                 </div>
+                              </div>
+                           </HStack>
+
                            <div className="flex flex-row items-end justify-between gap-2">
                               <div className="flex w-full flex-col gap-2">
-                                 <div className=" w-min rounded-full border border-neutral-300 px-2 py-1 text-xs text-neutral-700">
-                                    {message.poll_data.type}
-                                 </div>
-
                                  <DropdownPill
                                     type="message"
                                     dropdownContent={
@@ -557,7 +599,7 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                                     }
                                  ></DropdownPill>
 
-                                 {deployment.data_tree.initialTrigger === "programmatic" ? (
+                                 {deployment.data_tree.initialTrigger !== "page_load" ? (
                                     <div className="flex flex-row items-center text-sm">
                                        After{" "}
                                        <Input

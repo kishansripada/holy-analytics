@@ -45,7 +45,9 @@ import hyperuser from "../utils/hyperuser";
    `;
 
    const reactScript = `<script type="module" src="https://widget.holyuser.com/holyuser.js"></script>`;
-   const reactConsume = `  useEffect(() => {
+   const reactConsume = `import hyperuser from "../utils/hyperuser";
+   
+useEffect(() => {
       hyperuser.initialize({
          userId: "<user_id>",
          apiKey: "<api_key>",
@@ -64,7 +66,7 @@ import hyperuser from "../utils/hyperuser";
             <div className=" h-full px-24 py-24">
                <p className="text-4xl font-semibold">Installation</p>
                <div className="h-5"></div>
-               <p className="text-2xl font-semibold">Generating types (important!)</p>
+               <p className="text-2xl font-semibold">Helper file (important!)</p>
                <div className="h-2"></div>
                <p className="text-sm text-neutral-700">
                   Copy and paste this code to some utils file in your codebase, this exports the hyperuser object you will use. It also includes types

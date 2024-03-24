@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { createClient } from "@/utils/supabase/client";
 import dynamic from "next/dynamic";
 import { poll } from "@/utils/types";
+import { Textarea } from "@/components/ui/textarea";
 
 const RemoteWidget = dynamic(() => import("./remote-widget"), {
    ssr: false,

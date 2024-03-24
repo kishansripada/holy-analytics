@@ -22,12 +22,12 @@ const SAMPLE_MODAL = {
    },
 };
 
-export default function Client({}: { polls: poll[]; projectId: string; project: any }) {
+export default function Client({ projectId }: { polls: poll[]; projectId: string; project: any }) {
    // polls, projectId, project
    const router = useRouter();
 
    const { messages: polls, project } = useStore();
-   const projectId = project.id;
+   // const projectId = project.id;
    // console.log("messages", messages);
 
    const [projectName, setProjectName] = useState(project.name);
@@ -35,6 +35,7 @@ export default function Client({}: { polls: poll[]; projectId: string; project: 
    const [newNotificationName, setNewNotificationName] = useState("");
    const [newNotificationType, setNewNotificationType] = useState("modal");
    const newNotification = async () => {
+      // console.log(projectId);
       const supabase = createClient();
       const { data, error } = await supabase
          .from("polls")

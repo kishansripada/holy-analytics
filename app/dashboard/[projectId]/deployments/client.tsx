@@ -139,8 +139,9 @@ export default function Client({ deployments, projectId, project, messages, audi
                   <div className="flex w-full flex-col gap-5  ">
                      {deployments?.map((deployment) => {
                         const audience = audiences.find((audience) => audience.id === deployment.data_tree.initialAudience);
-                        const intialTrigger = deployment.data_tree.initialTrigger === "programmatic" ? "Code trigger" : "On load";
+                        const intialTrigger = deployment.data_tree.initialTrigger !== "page_load" ? "Code trigger" : "On load";
                         const firstMessage = messages.find((message) => message.id === deployment.data_tree.nodes[0].message_id);
+
                         return (
                            <ContextMenu>
                               <ContextMenuTrigger>
