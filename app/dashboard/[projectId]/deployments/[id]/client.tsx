@@ -1,6 +1,10 @@
 "use client";
-
 import "prismjs/themes/prism-tomorrow.css";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import Prism from "prismjs";
 
 import {
    DropdownMenu,
@@ -10,68 +14,71 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-   Command,
-   CommandDialog,
-   CommandEmpty,
-   CommandGroup,
-   CommandInput,
-   CommandItem,
-   CommandList,
-   CommandSeparator,
-   CommandShortcut,
-} from "@/components/ui/command";
-
+import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { ReactComponentElement, ReactHTMLElement, useCallback, useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import Prism from "prismjs";
-import { Tabs } from "@/components/ui/tabs";
 import { UploadInput } from "@/components/upload-input";
 import { HStack, VStack } from "@/components/ui/stacks";
+import { codeToHtml } from "shiki";
 import { createClient } from "@/utils/supabase/client";
-// import { useUploadToSupabase } from "@/utils/supabase/hooks";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import debounce from "lodash.debounce";
-import { poll } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import { generateNanoId } from "@/utils/nanoId";
-import { DropdownPill } from "./_components/DropdownPill";
-import { Badge } from "@/components/ui/badge";
 import { Anchor } from "lucide-react";
+import { DropdownPill } from "./_components/DropdownPill";
+import { BoxWithPlus } from "./_components/BoxWithPlus";
+import { Label } from "@/components/ui/label";
+import { CopyInput } from "./_components/CopyInput";
+import { Shiki } from "@/components/ui/shiki";
+import RemoteWidget from "../../poll/_components/remote-widget";
+import { useStore } from "../../store";
 
 export default function Client({
-   deployment: initialDeployment,
-   projectId,
-   audiences,
-   messages,
-   events,
+   // deployment: initialDeployment,
+   // projectId,
+   // audiences,
+   // messages,
+   // events,
+   deploymentId,
 }: {
-   deployment: any;
-   projectId: string;
-   audiences: any[];
-   messages: any[];
-   events: any[];
+   // deployment: any;
+   // projectId: string;
+   // audiences: any[];
+   // messages: any[];
+   // events: any[];
 }) {
+   const { deployments, audiences, project, messages, events } = useStore();
+
+   const deployment = deployments.find((deployment) => deployment.id === deploymentId);
+
+   const projectId = project.id;
+
    const [messageSelect, setOpen] = useState<{ parentId?: string; current?: string } | false>(false);
 
-   const [deployment, setDeployment] = useState(initialDeployment);
-   const deploymentSaved = useUploadToSupabase("data_tree", deployment.data_tree, deployment.id, true);
+   const [s, setDeployment] = useState(deployment);
+   // const deploymentSaved = useUploadToSupabase("data_tree", deployment.data_tree, deployment.id, true);
 
-   const initialTriggerEvent = events.find((event) => event.id === deployment.data_tree.initialTriggerEvent);
+   const initialTriggerEvent = events.find((event) => event.id === deployment?.data_tree?.initialTriggerEvent);
 
-   const startDeploymentCode = `// Used to start deployment: ${deployment.slug}
+   const startDeploymentCode = `// Used to start deployment: ${deployment?.slug}
 hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
 
    const endDeploymentCode = `function stopDeployment() {
-   window.endHyperDeployment("${deployment.id}"); // Trigger a feature interaction using the tip ID
+   window.endHyperDeployment("${deployment?.id}"); // Trigger a feature interaction using the tip ID
 }`;
    const html = Prism.highlight(startDeploymentCode, Prism.languages.javascript, "javascript");
    const html2 = Prism.highlight(endDeploymentCode, Prism.languages.javascript, "javascript");
+   useEffect(() => {
+      const highlight = async () => {
+         await Prism.highlightAll(); // <--- prepare Prism
+      };
+      highlight(); // <--- call the async function
+   }, []); // <--- run when post updates
 
    const supabase = createClient();
 
@@ -103,7 +110,7 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
       async (name: string) => {
          await supabase.from("deployments").update({ name }).eq("id", deployment.id);
       },
-      [deployment.id]
+      [deployment?.id]
    );
 
    useEffect(() => {
@@ -112,10 +119,10 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
       };
       highlight(); // <--- call the async function
    }, [deployment]); // <--- run when post updates
-
+   if (!deployments.length) return <div>loading...</div>;
    return (
       <VStack className="h-full w-full overflow-hidden px-16 py-12">
-         <CommandDialog open={messageSelect} onOpenChange={setOpen}>
+         <CommandDialog open={Boolean(messageSelect)} onOpenChange={setOpen}>
             <CommandInput placeholder="Search for a message" />
             <CommandList>
                <CommandEmpty>No results found.</CommandEmpty>
@@ -125,6 +132,7 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                         <CommandItem
                            value={message.id}
                            onSelect={(value) => {
+                              if (!messageSelect) return;
                               if (messageSelect.current) {
                                  setDeployment({
                                     ...deployment,
@@ -434,24 +442,6 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
    );
 }
 
-const BoxWithPlus = ({ children, onPlus, canAdd }) => {
-   return (
-      <div className="relative flex min-w-[320px] max-w-xs flex-col justify-center gap-3 rounded-xl border border-neutral-300 px-5 py-3  ">
-         {canAdd && (
-            <button
-               onClick={onPlus}
-               className=" absolute right-0 top-1/2 grid h-7 w-7 -translate-y-1/2 translate-x-1/2  place-items-center rounded-full border border-neutral-300 bg-white transition hover:bg-neutral-100"
-            >
-               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-                  <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-               </svg>
-            </button>
-         )}
-         {children}
-      </div>
-   );
-};
-
 const SpacerArrow = () => {
    return (
       <div className="flex h-full flex-col items-center justify-center px-4">
@@ -472,60 +462,114 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                   .filter((node) => node.parent_id === parentId)
                   .map((node) => {
                      const message = messages.find((message) => message.id === node.message_id);
+                     // const code = `hyperuser.nextStep("${deployment.id}", "${node.id}")`; // input code
+                     // const endDeploymentCode = codeToHtml(code, {
+                     //    lang: "javascript",
+                     //    theme: "vitesse-dark",
+                     // }).then((r) => r);
 
                      return (
                         <BoxWithPlus onPlus={() => setOpen({ parentId: node.id })} canAdd={true}>
                            <HStack className="items-center justify-between">
-                              <TooltipProvider>
-                                 <Tooltip>
-                                    <TooltipTrigger asChild>
-                                       <Anchor className="h-4 w-4" />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                       <p>{`data-hyperuser="${message.anchor}"`}</p>
-                                    </TooltipContent>
-                                 </Tooltip>
-                              </TooltipProvider>
+                              <div className="flex h-full flex-row items-center justify-between gap-2">
+                                 <Sheet>
+                                    <SheetTrigger asChild>
+                                       <button>
+                                          <svg
+                                             xmlns="http://www.w3.org/2000/svg"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             strokeWidth={1.5}
+                                             stroke="currentColor"
+                                             className="h-6 w-6"
+                                          >
+                                             <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                                             />
+                                          </svg>
+                                       </button>
+                                    </SheetTrigger>
+                                    <SheetContent>
+                                       <div className="flex h-full flex-col">
+                                          <SheetTitle>{message.title}</SheetTitle>
+                                          <div className="mt-2 flex flex-col items-center justify-between gap-2">
+                                             <CopyInput className="w-full" value={node.id} title={"step id"}></CopyInput>
+                                             {message.poll_data.type === "popover" ? (
+                                                <CopyInput
+                                                   className="w-full"
+                                                   value={`data-hyperuser="${message.anchor}"`}
+                                                   title={"anchor tag"}
+                                                ></CopyInput>
+                                             ) : null}
+                                          </div>
+                                          <p className="mt-6 font-semibold text-neutral-700">Trigger next step</p>
+                                          <Shiki code={`hyperuser.nextStep("${deployment.id}", "${node.id}")`} theme="vitesse-dark"></Shiki>
+                                          <div className="mt-auto">
+                                             <RemoteWidget poll={message}></RemoteWidget>
+                                          </div>
+                                          {/* <SheetDescription>Make changes to your profile here. Click save when you're done.</SheetDescription> */}
+                                       </div>
+                                       {/* <div className="grid gap-4 py-4">
+                                          <div className="grid grid-cols-4 items-center gap-4">
+                                             <Label htmlFor="name" className="text-right">
+                                                Name
+                                             </Label>
+                                             <Input id="name" value="Pedro Duarte" className="col-span-3" />
+                                          </div>
+                                          <div className="grid grid-cols-4 items-center gap-4">
+                                             <Label htmlFor="username" className="text-right">
+                                                Username
+                                             </Label>
+                                             <Input id="username" value="@peduarte" className="col-span-3" />
+                                          </div>
+                                       </div> */}
+                                       {/* <SheetFooter>
+                                          <SheetClose asChild>
+                                             <Button type="submit">Save changes</Button>
+                                          </SheetClose>
+                                       </SheetFooter> */}
+                                    </SheetContent>
+                                 </Sheet>
 
-                              {/* <p className="">{message.anchor}</p> */}
-
-                              <div className="flex w-32  flex-shrink flex-col items-start p-1">
-                                 <p className="text-nuetral-700 text-xs font-medium tracking-wide">STEP ID</p>
-                                 <div
-                                    className={
-                                       "flex w-full  items-center rounded-md border border-input bg-white pl-3 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring focus-within:ring-offset-2"
-                                    }
-                                 >
-                                    <button
-                                       onClick={() => {
-                                          navigator.clipboard.writeText(node.id);
-                                       }}
-                                       className="rounded-md p-1 transition hover:bg-neutral-100"
-                                    >
-                                       <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          strokeWidth={1.5}
-                                          stroke="currentColor"
-                                          className="h-4 w-4"
+                                 <DropdownMenu>
+                                    <DropdownMenuTrigger>
+                                       <button>
+                                          <svg
+                                             xmlns="http://www.w3.org/2000/svg"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             strokeWidth={1.5}
+                                             stroke="currentColor"
+                                             className="h-6 w-6"
+                                          >
+                                             <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                                             />
+                                          </svg>
+                                       </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                       <DropdownMenuItem
+                                          onClick={() => {
+                                             setDeployment((deployment) => {
+                                                return {
+                                                   ...deployment,
+                                                   data_tree: {
+                                                      ...deployment.data_tree,
+                                                      nodes: deployment.data_tree.nodes.filter((nodex) => nodex.id !== node.id),
+                                                   },
+                                                };
+                                             });
+                                          }}
                                        >
-                                          <path
-                                             strokeLinecap="round"
-                                             strokeLinejoin="round"
-                                             d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
-                                          />
-                                       </svg>
-                                    </button>
-
-                                    <input
-                                       value={node.id}
-                                       //  {...props}
-
-                                       //  ref={ref}
-                                       className="w-full px-2 py-1 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                                    />
-                                 </div>
+                                          Delete
+                                       </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                 </DropdownMenu>
                               </div>
                            </HStack>
 
@@ -565,63 +609,6 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                                  ) : (
                                     <></>
                                  )}
-                              </div>
-
-                              <div className="flex h-full flex-col justify-between">
-                                 <Link href={`/dashboard/${projectId}/poll/${message.id}`}>
-                                    <svg
-                                       xmlns="http://www.w3.org/2000/svg"
-                                       fill="none"
-                                       viewBox="0 0 24 24"
-                                       strokeWidth={1.5}
-                                       stroke="currentColor"
-                                       className="h-6 w-6"
-                                    >
-                                       <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                                       />
-                                    </svg>
-                                 </Link>
-
-                                 <DropdownMenu>
-                                    <DropdownMenuTrigger>
-                                       <button>
-                                          <svg
-                                             xmlns="http://www.w3.org/2000/svg"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             strokeWidth={1.5}
-                                             stroke="currentColor"
-                                             className="h-6 w-6"
-                                          >
-                                             <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                                             />
-                                          </svg>
-                                       </button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                       <DropdownMenuItem
-                                          onClick={() => {
-                                             setDeployment((deployment) => {
-                                                return {
-                                                   ...deployment,
-                                                   data_tree: {
-                                                      ...deployment.data_tree,
-                                                      nodes: deployment.data_tree.nodes.filter((nodex) => nodex.id !== node.id),
-                                                   },
-                                                };
-                                             });
-                                          }}
-                                       >
-                                          Delete
-                                       </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                 </DropdownMenu>
                               </div>
                            </div>
                         </BoxWithPlus>

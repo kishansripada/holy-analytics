@@ -16,7 +16,7 @@ export default function RemoteWidget({ poll }: { poll: poll }) {
    // const Container = window.Container;
    return (
       <>
-         <Script strategy="afterInteractive" type="module" src="https://widget.holyuser.com/holyuser.js"></Script>
+         <Script strategy="afterInteractive" type="module" src="https://static.hyperuser.dev/main.js"></Script>
          {typeof window !== "undefined" && Widget ? (
             // <Container>
             // <></>
