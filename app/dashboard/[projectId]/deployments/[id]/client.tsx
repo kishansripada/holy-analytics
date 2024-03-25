@@ -10,6 +10,19 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+   Command,
+   CommandDialog,
+   CommandEmpty,
+   CommandGroup,
+   CommandInput,
+   CommandItem,
+   CommandList,
+   CommandSeparator,
+   CommandShortcut,
+} from "@/components/ui/command";
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ReactComponentElement, ReactHTMLElement, useCallback, useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -27,6 +40,9 @@ import debounce from "lodash.debounce";
 import { poll } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import { generateNanoId } from "@/utils/nanoId";
+import { DropdownPill } from "./_components/DropdownPill";
+import { Badge } from "@/components/ui/badge";
+import { Anchor } from "lucide-react";
 
 export default function Client({
    deployment: initialDeployment,
@@ -41,6 +57,8 @@ export default function Client({
    messages: any[];
    events: any[];
 }) {
+   const [messageSelect, setOpen] = useState<{ parentId?: string; current?: string } | false>(false);
+
    const [deployment, setDeployment] = useState(initialDeployment);
    const deploymentSaved = useUploadToSupabase("data_tree", deployment.data_tree, deployment.id, true);
 
@@ -69,7 +87,7 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                conditions: [
                   {
                      condition_string: "",
-                     id: "yolo",
+                     id: generateNanoId(),
                   },
                ],
                app_id: projectId,
@@ -97,6 +115,57 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
 
    return (
       <VStack className="h-full w-full overflow-hidden px-16 py-12">
+         <CommandDialog open={messageSelect} onOpenChange={setOpen}>
+            <CommandInput placeholder="Search for a message" />
+            <CommandList>
+               <CommandEmpty>No results found.</CommandEmpty>
+               <CommandGroup heading={"Recent messages"}>
+                  {messages.map((message) => {
+                     return (
+                        <CommandItem
+                           value={message.id}
+                           onSelect={(value) => {
+                              if (messageSelect.current) {
+                                 setDeployment({
+                                    ...deployment,
+                                    data_tree: {
+                                       ...deployment.data_tree,
+                                       nodes: deployment.data_tree.nodes.map((node) => {
+                                          if (node.id === messageSelect) {
+                                             return { ...node, message_id: message.id };
+                                          }
+                                          return node;
+                                       }),
+                                    },
+                                 });
+                              }
+                              if (messageSelect.parentId) {
+                                 setDeployment({
+                                    ...deployment,
+                                    data_tree: {
+                                       ...deployment.data_tree,
+                                       nodes: [
+                                          ...deployment.data_tree.nodes,
+                                          { id: generateNanoId(), parent_id: messageSelect.parentId, message_id: message.id },
+                                       ],
+                                    },
+                                 });
+                              }
+
+                              setOpen(false);
+                           }}
+                        >
+                           {message.title}
+                           <Badge variant={"secondary"} className=" ml-auto">
+                              <p className="capitalize">{message.poll_data.type}</p>
+                           </Badge>
+                        </CommandItem>
+                     );
+                  })}
+               </CommandGroup>
+            </CommandList>
+         </CommandDialog>
+
          <div className="flex w-full flex-row items-center justify-between">
             <div>
                <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500">Deployment</p>
@@ -352,6 +421,8 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
             </div>
             <SpacerArrow />
             <MessageLayer
+               open={messageSelect}
+               setOpen={setOpen}
                projectId={projectId}
                parentId={"initialTrigger"}
                deployment={deployment}
@@ -363,34 +434,18 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
    );
 }
 
-const BoxWithPlus = ({ children, onPlus, canAdd, messages }) => {
+const BoxWithPlus = ({ children, onPlus, canAdd }) => {
    return (
       <div className="relative flex min-w-[320px] max-w-xs flex-col justify-center gap-3 rounded-xl border border-neutral-300 px-5 py-3  ">
          {canAdd && (
-            <DropdownMenu>
-               <DropdownMenuTrigger>
-                  <button className=" absolute right-0 top-1/2 grid h-7 w-7 -translate-y-1/2 translate-x-1/2  place-items-center rounded-full border border-neutral-300 bg-white transition hover:bg-neutral-100">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-                        <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-                     </svg>
-                  </button>
-               </DropdownMenuTrigger>
-               <DropdownMenuContent data-side="right" className=" absolute top-10 w-96">
-                  <DropdownMenuLabel>Choose a message </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {messages.map((message) => {
-                     return (
-                        <DropdownMenuItem
-                           onClick={() => {
-                              onPlus(message.id);
-                           }}
-                        >
-                           {message.title}
-                        </DropdownMenuItem>
-                     );
-                  })}
-               </DropdownMenuContent>
-            </DropdownMenu>
+            <button
+               onClick={onPlus}
+               className=" absolute right-0 top-1/2 grid h-7 w-7 -translate-y-1/2 translate-x-1/2  place-items-center rounded-full border border-neutral-300 bg-white transition hover:bg-neutral-100"
+            >
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
+                  <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+               </svg>
+            </button>
          )}
          {children}
       </div>
@@ -407,69 +462,7 @@ const SpacerArrow = () => {
    );
 };
 
-const DropdownPill = ({
-   value,
-   valueIcon,
-   type,
-   dropdownContent,
-}: {
-   value: string;
-   type: "audience" | "trigger" | "message";
-   valueIcon: ReactHTMLElement;
-   dropdownContent: ReactHTMLElement;
-}) => {
-   return (
-      <DropdownMenu>
-         <DropdownMenuTrigger>
-            <div
-               className={`flex flex-row items-center gap-3 rounded-xl border ${type === "message" ? "border-pink-300" : "border-blue-300"}  px-3 py-1  transition hover:bg-neutral-200  `}
-            >
-               {valueIcon}
-
-               <p className="text-left">{value}</p>
-               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 min-h-[20px] w-5  min-w-[20px]">
-                  <path
-                     fillRule="evenodd"
-                     d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                     clipRule="evenodd"
-                  />
-               </svg>
-            </div>
-         </DropdownMenuTrigger>
-         <DropdownMenuContent>{dropdownContent}</DropdownMenuContent>
-      </DropdownMenu>
-   );
-};
-
-const useUploadToSupabase = (dataKey: string, dataValue: any, danceId: string, enabled: boolean) => {
-   const supabase = createClient();
-   const [saved, setSaved] = useState(true);
-   // If viewOnlyInitial is true, immediately exit from the hook
-
-   const upload = useCallback(
-      debounce(async (dataValue) => {
-         console.log(`uploading ${dataKey}`);
-         const { data, error } = await supabase
-            .from("deployments")
-            .update({ [dataKey]: dataValue })
-            .eq("id", danceId);
-         console.log({ data });
-         console.log({ error });
-         setSaved(true);
-      }, 2000),
-      [danceId]
-   );
-
-   useEffect(() => {
-      if (!enabled) return;
-
-      setSaved(false);
-      upload(dataValue);
-   }, [dataValue]);
-   return saved;
-};
-
-const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId }) => {
+const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId, open, setOpen }) => {
    if (!deployment.data_tree.nodes.filter((node) => node.parent_id === parentId).length) return;
    return (
       <>
@@ -481,30 +474,21 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                      const message = messages.find((message) => message.id === node.message_id);
 
                      return (
-                        <BoxWithPlus
-                           onPlus={(messageId) => {
-                              setDeployment({
-                                 ...deployment,
-                                 data_tree: {
-                                    ...deployment.data_tree,
-                                    nodes: [
-                                       ...deployment.data_tree.nodes,
-                                       {
-                                          id: generateNanoId(),
-                                          parent_id: node.id,
-                                          message_id: messageId,
-                                       },
-                                    ],
-                                 },
-                              });
-                           }}
-                           messages={messages}
-                           canAdd={true}
-                        >
+                        <BoxWithPlus onPlus={() => setOpen({ parentId: node.id })} canAdd={true}>
                            <HStack className="items-center justify-between">
-                              <div className=" h-min w-min whitespace-nowrap rounded-full border border-neutral-300 px-2 py-1 text-xs text-neutral-700">
-                                 {message.poll_data.type}
-                              </div>
+                              <TooltipProvider>
+                                 <Tooltip>
+                                    <TooltipTrigger asChild>
+                                       <Anchor className="h-4 w-4" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       <p>{`data-hyperuser="${message.anchor}"`}</p>
+                                    </TooltipContent>
+                                 </Tooltip>
+                              </TooltipProvider>
+
+                              {/* <p className="">{message.anchor}</p> */}
+
                               <div className="flex w-32  flex-shrink flex-col items-start p-1">
                                  <p className="text-nuetral-700 text-xs font-medium tracking-wide">STEP ID</p>
                                  <div
@@ -549,55 +533,9 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                               <div className="flex w-full flex-col gap-2">
                                  <DropdownPill
                                     type="message"
-                                    dropdownContent={
-                                       <>
-                                          {messages.map((message) => {
-                                             return (
-                                                <DropdownMenuItem
-                                                   onClick={() => {
-                                                      setDeployment((deployment) => {
-                                                         return {
-                                                            ...deployment,
-                                                            data_tree: {
-                                                               ...deployment.data_tree,
-                                                               nodes: deployment.data_tree.nodes.map((nodex) => {
-                                                                  if (nodex.id === node.id) {
-                                                                     return { ...nodex, message_id: message.id };
-                                                                  }
-                                                                  return nodex;
-                                                               }),
-                                                            },
-                                                         };
-                                                      });
-                                                   }}
-                                                >
-                                                   <div className="flex w-full flex-row items-center justify-between gap-4">
-                                                      <p> {message.title}</p>{" "}
-                                                      <div className="rounded-full border border-neutral-300 px-2 py-1 text-xs text-neutral-700">
-                                                         {message.poll_data.type}
-                                                      </div>
-                                                   </div>
-                                                </DropdownMenuItem>
-                                             );
-                                          })}
-                                       </>
-                                    }
+                                    onClick={() => setOpen((open: boolean) => (open ? false : { current: node.id }))}
                                     value={message.title}
-                                    valueIcon={
-                                       <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          viewBox="0 0 20 20"
-                                          fill="currentColor"
-                                          className="h-4 min-h-[16px] w-4 min-w-[16px]"
-                                       >
-                                          <path
-                                             fillRule="evenodd"
-                                             d="M3.43 2.524A41.29 41.29 0 0 1 10 2c2.236 0 4.43.18 6.57.524 1.437.231 2.43 1.49 2.43 2.902v5.148c0 1.413-.993 2.67-2.43 2.902a41.102 41.102 0 0 1-3.55.414c-.28.02-.521.18-.643.413l-1.712 3.293a.75.75 0 0 1-1.33 0l-1.713-3.293a.783.783 0 0 0-.642-.413 41.108 41.108 0 0 1-3.55-.414C1.993 13.245 1 11.986 1 10.574V5.426c0-1.413.993-2.67 2.43-2.902Z"
-                                             clipRule="evenodd"
-                                          />
-                                       </svg>
-                                    }
-                                 ></DropdownPill>
+                                 />
 
                                  {deployment.data_tree.initialTrigger !== "page_load" ? (
                                     <div className="flex flex-row items-center text-sm">
@@ -697,6 +635,8 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
             </svg>
          </div>
          <MessageLayer
+            open={open}
+            setOpen={setOpen}
             parentId={deployment.data_tree.nodes.filter((node) => node.parent_id === parentId)[0].id}
             deployment={deployment}
             messages={messages}
@@ -705,4 +645,32 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
          ></MessageLayer>
       </>
    );
+};
+
+const useUploadToSupabase = (dataKey: string, dataValue: any, danceId: string, enabled: boolean) => {
+   const supabase = createClient();
+   const [saved, setSaved] = useState(true);
+   // If viewOnlyInitial is true, immediately exit from the hook
+
+   const upload = useCallback(
+      debounce(async (dataValue) => {
+         console.log(`uploading ${dataKey}`);
+         const { data, error } = await supabase
+            .from("deployments")
+            .update({ [dataKey]: dataValue })
+            .eq("id", danceId);
+         console.log({ data });
+         console.log({ error });
+         setSaved(true);
+      }, 2000),
+      [danceId]
+   );
+
+   useEffect(() => {
+      if (!enabled) return;
+
+      setSaved(false);
+      upload(dataValue);
+   }, [dataValue]);
+   return saved;
 };

@@ -43,7 +43,7 @@ export default function Client({ projectId }: { polls: poll[]; projectId: string
             {
                title: newNotificationName,
                unique_id: newNotificationName.toLowerCase().replace(" ", "_"),
-               anchor: newNotificationName.toLowerCase().replace(" ", "_") + "_element",
+               anchor: newNotificationName.toLowerCase().replace(/ /g, "_") + "_element",
                app_id: projectId,
                poll_data: {
                   ...SAMPLE_MODAL.poll_data,
