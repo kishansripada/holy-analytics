@@ -29,19 +29,18 @@ import hyperuser from "../utils/hyperuser";
    <Script
      src="https://static.hyperuser.dev/main.js"
      onLoad={() => {
-       hyperuser.initialize({
-         disabled: !isDesktop,
-         userId: "unique-user-id", // this must be unique to the user
-         apiKey: "${projectId}",
+      hyperuser.initialize({
+         userId: "<user_id>",
+         apiKey: "<api_key>",
+         darkMode: false,
          user: {
-           email: "johnnyappleseed@hyperuser.com",
-           created_at: userData?.created_at,
-            // other user data
+            displayName: "<user_display_name>",
+            email: "<user_email>",
+            isProUser: false,
          },
-       });
+      });
      }}
- 
-   />;
+   />
    `;
 
    const reactScript = `<script src="https://static.hyperuser.dev/main.js"></script>`;

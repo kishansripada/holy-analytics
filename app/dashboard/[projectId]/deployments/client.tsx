@@ -15,6 +15,7 @@ import { useStore } from "../store";
 import { timeSince } from "@/utils/timeSince";
 
 export default function Client({ projectId, deployments, messages, audiences, project }: {}) {
+   console.log({ deployments });
    const router = useRouter();
 
    const [newDeploymentName, setNewDeploymentName] = useState("");
@@ -33,7 +34,7 @@ export default function Client({ projectId, deployments, messages, audiences, pr
                      {
                         id: "newTrigger",
                         parent_id: "initialTrigger",
-                        message_id: 24,
+                        message_id: messages[0].id,
                         programmatic_filter: "30",
                      },
                   ],

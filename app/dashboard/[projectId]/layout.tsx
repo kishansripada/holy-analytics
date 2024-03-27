@@ -23,28 +23,28 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       redirect("/login");
    }
 
-   const projectId = "c64bcec7-3e92-4e10-bbed-3a4fd551175d";
+   // const projectId = "c64bcec7-3e92-4e10-bbed-3a4fd551175d";
 
-   const getProject = () => supabase.from("projects").select("*").eq("app_id", projectId).single();
+   // const getProject = () => supabase.from("projects").select("*").eq("app_id", projectId).single();
 
-   const getDeployments = () => supabase.from("deployments").select("*").eq("app_id", projectId);
-   const getProjectPolls = () => supabase.from("polls").select("*").eq("app_id", projectId);
-   const getEvents = () => supabase.from("events").select("*").eq("app_id", projectId);
-   const getAudiences = () => supabase.from("audiences").select("*").eq("app_id", projectId);
+   // const getDeployments = () => supabase.from("deployments").select("*").eq("app_id", projectId);
+   // const getProjectPolls = () => supabase.from("polls").select("*").eq("app_id", projectId);
+   // const getEvents = () => supabase.from("events").select("*").eq("app_id", projectId);
+   // const getAudiences = () => supabase.from("audiences").select("*").eq("app_id", projectId);
 
-   const [{ data: polls }, { data: project }, { data: deployments }, { data: events }, { data: audiences }] = await Promise.all([
-      getProjectPolls(),
-      getProject(),
-      getDeployments(),
-      getEvents(),
-      getAudiences(),
-   ]);
+   // const [{ data: polls }, { data: project }, { data: deployments }, { data: events }, { data: audiences }] = await Promise.all([
+   //    getProjectPolls(),
+   //    getProject(),
+   //    getDeployments(),
+   //    getEvents(),
+   //    getAudiences(),
+   // ]);
 
-   console.log("called layout");
+   // console.log("called layout");
 
    return (
       <>
-         <StoreSettter polls={polls} project={project} deployments={deployments} events={events} audiences={audiences} />
+         {/* <StoreSettter polls={polls} project={project} deployments={deployments} events={events} audiences={audiences} /> */}
          {children}
       </>
    );

@@ -12,47 +12,44 @@ import { createClient } from "@/utils/supabase/client";
 import { poll } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useStore } from "./store";
 
-const SAMPLE_MODAL = {
-   poll_data: {
-      title: "Hey Cheerleaders!",
-      subtitle: "You can now adjust the height of performers in 3D",
-      image_url: "https://upload.wikimedia.org/wikipedia/commons/6/6e/JU_Cheerleaders.jpg",
-   },
+const defaultMarkdown = {
+   popover: `#Feedback is always appreciated
+We promise we'll reply in 24 hours, sometimes much faster :)
+<Button />`,
+   notification: `#Woah that's all the dancers
+You can also press ⌘A to select all the dancers at once`,
+   modal: `#Feedback is always appreciated
+We promise we'll reply in 24 hours, sometimes much faster :)
+<Button />`,
 };
 
-export default function Client({ projectId }: { polls: poll[]; projectId: string; project: any }) {
-   // polls, projectId, project
+export default function Client({ projectId, messages, project }: { messages: poll[]; projectId: string; project: any }) {
    const router = useRouter();
-
-   const { messages: polls, project } = useStore();
-   // const projectId = project.id;
-   // console.log("messages", messages);
 
    const [projectName, setProjectName] = useState(project.name);
 
    const [newNotificationName, setNewNotificationName] = useState("");
    const [newNotificationType, setNewNotificationType] = useState("modal");
    const newNotification = async () => {
-      // console.log(projectId);
       const supabase = createClient();
       const { data, error } = await supabase
          .from("polls")
          .insert([
             {
                title: newNotificationName,
-               unique_id: newNotificationName.toLowerCase().replace(" ", "_"),
                anchor: newNotificationName.toLowerCase().replace(/ /g, "_") + "_element",
+               markdown: defaultMarkdown[newNotificationType || "popover"],
                app_id: projectId,
                poll_data: {
-                  ...SAMPLE_MODAL.poll_data,
                   type: newNotificationType,
                },
             },
          ])
          .select("*")
          .single();
+      // console.log({ data });
+      // console.log({ error });
 
       router.push(`/dashboard/${projectId}/poll/` + data.id);
    };
@@ -61,7 +58,6 @@ export default function Client({ projectId }: { polls: poll[]; projectId: string
    const onUpdate = async (name: string) => {
       await supabase.from("projects").update({ name }).eq("app_id", projectId);
    };
-   if (!polls.length) return <div>loading...</div>;
 
    return (
       <div className="flex h-full w-full flex-row">
@@ -141,41 +137,43 @@ export default function Client({ projectId }: { polls: poll[]; projectId: string
                      </DialogContent>
                   </Dialog>
                </div>
-               {polls.length ? (
+               {messages.length ? (
                   <div className="flex w-full flex-col gap-5  ">
-                     {polls?.map((poll) => {
-                        return (
-                           <ContextMenu>
-                              <ContextMenuTrigger>
-                                 <Link
-                                    className="flex h-16 flex-col justify-center rounded-md  px-3 py-2 transition hover:bg-neutral-100 "
-                                    href={`/dashboard/${projectId}/poll/${poll.id}`}
-                                    key={poll.id}
-                                 >
-                                    <div className="flex w-full flex-row items-center justify-between">
-                                       <div className="flex w-full flex-row items-center justify-between gap-3">
-                                          <p className="text-2xl font-medium tracking-tight"> {poll.title}</p>
-                                          <Badge variant={"outline"} className="capitalize">
-                                             {poll.poll_data.type}
-                                          </Badge>
-                                          {/* <p className="text-sm text-neutral-700">ID: {poll.id}</p> */}
+                     {messages
+                        ?.sort((a, b) => new Date(b.last_edited).getTime() - new Date(a.last_edited).getTime())
+                        .map((poll) => {
+                           return (
+                              <ContextMenu>
+                                 <ContextMenuTrigger>
+                                    <Link
+                                       className="flex h-16 flex-col justify-center rounded-md  px-3 py-2 transition hover:bg-neutral-100 "
+                                       href={`/dashboard/${projectId}/poll/${poll.id}`}
+                                       key={poll.id}
+                                    >
+                                       <div className="flex w-full flex-row items-center justify-between">
+                                          <div className="flex w-full flex-row items-center justify-between gap-3">
+                                             <p className="text-2xl font-medium tracking-tight"> {poll.title}</p>
+                                             <Badge variant={"outline"} className="capitalize">
+                                                {poll.poll_data.type}
+                                             </Badge>
+                                             {/* <p className="text-sm text-neutral-700">ID: {poll.id}</p> */}
+                                          </div>
                                        </div>
-                                    </div>
-                                 </Link>
-                              </ContextMenuTrigger>
-                              <ContextMenuContent>
-                                 <ContextMenuItem
-                                    onClick={async () => {
-                                       await supabase.from("polls").delete().eq("id", poll.id);
-                                       router.refresh();
-                                    }}
-                                 >
-                                    Delete
-                                 </ContextMenuItem>
-                              </ContextMenuContent>
-                           </ContextMenu>
-                        );
-                     })}
+                                    </Link>
+                                 </ContextMenuTrigger>
+                                 <ContextMenuContent>
+                                    <ContextMenuItem
+                                       onClick={async () => {
+                                          const test = await supabase.from("messages").delete().eq("id", poll.id);
+                                          router.refresh();
+                                       }}
+                                    >
+                                       Delete
+                                    </ContextMenuItem>
+                                 </ContextMenuContent>
+                              </ContextMenu>
+                           );
+                        })}
                   </div>
                ) : (
                   <p className="text-neutral-700">Start by making your first in-app message</p>

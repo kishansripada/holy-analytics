@@ -216,9 +216,9 @@ export default function What({ poll, setPoll, upload }: { poll: poll; setPoll: F
          <div className="flex h-full w-1/2 flex-col justify-start gap-4">
             <div className="flex w-full flex-row items-end justify-between  rounded-xl">
                <p className="text-xl font-semibold text-neutral-600">Live preview</p>
-               <Button variant={"link"} size={"sm"}>
+               {/* <Button variant={"link"} size={"sm"}>
                   New deployment from message
-               </Button>
+               </Button> */}
             </div>
 
             <RemoteWidget poll={poll}></RemoteWidget>
