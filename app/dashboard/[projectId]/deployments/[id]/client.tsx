@@ -313,26 +313,7 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                <div className="relative flex flex-col items-center gap-4 text-sm font-medium text-neutral-700">
                   <p className=" absolute -top-1 -translate-y-full text-sm font-semibold uppercase tracking-wide text-neutral-500">Event Trigger</p>
 
-                  <BoxWithPlus
-                     messages={messages}
-                     onPlus={(messageId) => {
-                        setDeployment({
-                           ...deployment,
-                           data_tree: {
-                              ...deployment.data_tree,
-                              nodes: [
-                                 ...deployment.data_tree.nodes,
-                                 {
-                                    id: generateNanoId(),
-                                    parent_id: "initialTrigger",
-                                    message_id: messageId,
-                                 },
-                              ],
-                           },
-                        });
-                     }}
-                     canAdd={true}
-                  >
+                  <BoxWithPlus messages={messages} onPlus={() => setOpen({ parentId: "initialTrigger" })} canAdd={true}>
                      <DropdownMenu>
                         <DropdownMenuTrigger>
                            <div className="flex w-full flex-row items-center gap-2 rounded-lg border  border-green-300 px-3 py-1  transition hover:bg-neutral-200  ">
