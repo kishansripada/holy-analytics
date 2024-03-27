@@ -65,7 +65,7 @@ useEffect(() => {
             <div className=" h-full px-24 py-24">
                <p className="text-4xl font-semibold">Installation</p>
 
-               <p className="mt-1 text-xs text-neutral-600">API Key: {projectId}</p>
+               <p className="text-neutral-600\ mt-1 text-xs">API Key: {projectId}</p>
                <div className="h-5"></div>
                <p className="text-2xl font-semibold">Helper file (important!)</p>
                <div className="h-2"></div>
@@ -136,7 +136,7 @@ const buildUtilsFile = (deploymentIds: string[], eventIds: string[], anchors: st
       interface HTMLAttributes<T> extends DOMAttributes<T> {
          "data-hyperuser"?:
             | ${anchors.map((anchor) => `"${anchor}"`).join(" | ")}
-            | null;
+            ${anchors.length ? "|" : ""} null;
       }
    }
    
