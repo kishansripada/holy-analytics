@@ -19,7 +19,7 @@ const RemoteWidget = dynamic(() => import("./remote-widget"), {
    ssr: false,
 });
 
-export default function What({ poll, setPoll }: { poll: poll; setPoll: Function }) {
+export default function What({ poll, setPoll, upload }: { poll: poll; setPoll: Function }) {
    const code = `<div data-hyperuser="${poll.anchor || "ELEMENT_ID"}">
    I'm the element your popover will attach to!
 </div>`;
@@ -30,7 +30,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
    const BASE_URL = "https://cmdpjhmqoqpkfwxqdekb.supabase.co/storage/v1/object/public/";
    const [imageFile, setImageFile] = useState(null);
    const [uploadStatus, setUploadStatus] = useState("idle");
-   const [previewOpen, setPreviewOpen] = useState(true);
+
    const handlePaste = async (event) => {
       const clipboardItems = event.clipboardData.items;
       let blob = null;
@@ -86,7 +86,19 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
    return (
       <div className="flex h-full w-full flex-row  justify-between gap-20 pl-1 ">
          <div className="flex w-1/2 flex-col  gap-6 pt-5">
-            <div className="grid w-full items-center gap-1.5 ">
+            <Textarea
+               value={poll.markdown}
+               onChange={(e) => {
+                  setPoll((poll) => {
+                     return {
+                        ...poll,
+                        markdown: e.target.value,
+                     };
+                  });
+                  upload("polls", poll.id, poll);
+               }}
+            ></Textarea>
+            {/* <div className="grid w-full items-center gap-1.5 ">
                <Label htmlFor="title">Title</Label>
                <Input
                   className="w-full"
@@ -113,8 +125,8 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                   id="subtitle"
                   placeholder="Subtitle"
                />
-            </div>
-            {poll.poll_data.type === "modal" && (
+            </div> */}
+            {/* {poll.poll_data.type === "modal" && (
                <div className="grid w-full items-center gap-1.5">
                   <Label htmlFor="title">Image URL</Label>
                   <Input
@@ -137,7 +149,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                      placeholder="https://your-server.com/image.jpg"
                   />
                </div>
-            )}
+            )} */}
 
             {poll.poll_data.type === "popover" && (
                <div className="grid w-full items-center gap-1.5">
@@ -156,6 +168,7 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
                                  anchor: e.target.value,
                               };
                            });
+                           upload("polls", poll.id, poll);
                         }}
                         value={poll.anchor}
                         placeholder="Anchor ID"
@@ -182,15 +195,14 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
             )}
             <div className="grid w-full items-center gap-1.5">
                <div className="flex flex-row items-center justify-between">
-                  {" "}
                   <Label htmlFor="title">Preview mode</Label>
                   <Switch
                      checked={poll.active}
                      onCheckedChange={async (active) => {
-                        await supabase.from("polls").update({ active }).eq("id", poll.id);
                         setPoll((poll: poll) => {
                            return { ...poll, active };
                         });
+                        upload("polls", poll.id, poll);
                      }}
                      id="preview"
                   />
@@ -202,23 +214,14 @@ export default function What({ poll, setPoll }: { poll: poll; setPoll: Function 
          </div>
 
          <div className="flex h-full w-1/2 flex-col justify-start gap-4">
-            {/* <div className=" "> */}
             <div className="flex w-full flex-row items-end justify-between  rounded-xl">
                <p className="text-xl font-semibold text-neutral-600">Live preview</p>
                <Button variant={"link"} size={"sm"}>
                   New deployment from message
                </Button>
             </div>
-            {/* <div className=" overflow-hidden select-none  w-[500px] min-h-[200px] grid place-items-center rounded-lg border  dark:border-neutral-700 border-neutral-300"> */}
-            {/* {typeof window !== "undefined" && YesNoComponent ? <YesNoComponent poll={poll}></YesNoComponent> : null} */}
+
             <RemoteWidget poll={poll}></RemoteWidget>
-            {/* {previewOpen && (
-               <RemoteWrapper poll={poll} open={previewOpen}>
-                  <RemoteWidget poll={poll}></RemoteWidget>
-               </RemoteWrapper>
-            )} */}
-            {/* </div> */}
-            {/* </div> */}
          </div>
       </div>
    );

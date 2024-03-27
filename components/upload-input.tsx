@@ -33,7 +33,7 @@ const UploadInput = forwardRef<HTMLInputElement, InputProps>(({ className, debou
    return (
       <input
          className={cn(
-            "border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10  rounded-md py-2  text-sm transition-[padding] file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border focus:px-3 focus-visible:outline-none focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            "flex h-10 rounded-md border-input bg-background py-2 text-sm  ring-offset-background transition-[padding]  file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:border focus:px-3 focus-visible:outline-none focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             className
          )}
          style={{
@@ -43,7 +43,7 @@ const UploadInput = forwardRef<HTMLInputElement, InputProps>(({ className, debou
          value={value} // Controlled component
          onChange={(e) => {
             setValue(e.target.value);
-            onChange(e.target.value);
+            // onChange(e.target.value);
          }}
          // size={props.size}
          // {...props}

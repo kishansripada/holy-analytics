@@ -10,18 +10,22 @@ import { UploadInput } from "@/components/upload-input";
 import What from "../_components/what";
 import { createClient } from "@/utils/supabase/client";
 import { poll } from "@/utils/types";
-import { useUploadToSupabase } from "@/utils/supabase/hooks";
+import { useUploadRowToSupabase, useUploadToSupabase } from "@/utils/supabase/hooks";
+import Saving from "@/app/dashboard/_components/Saving";
 
 export default function Client({ poll: initialPoll }: { poll: poll }) {
    const [poll, setPoll] = useState(initialPoll);
    const supabase = createClient();
 
-   const pollDataSaved = useUploadToSupabase("poll_data", poll.poll_data, poll.id, true);
-   const conditionsSaved = useUploadToSupabase("conditions", poll.conditions, poll.id, true);
-   const uniqueIdSaved = useUploadToSupabase("unique_id", poll.unique_id, poll.id, true);
-   const anchorSaved = useUploadToSupabase("anchor", poll.anchor, poll.id, true);
+   // const pollDataSaved = useUploadToSupabase("poll_data", poll.poll_data, poll.id, true);
+   // const conditionsSaved = useUploadToSupabase("conditions", poll.conditions, poll.id, true);
+   // const uniqueIdSaved = useUploadToSupabase("unique_id", poll.unique_id, poll.id, true);
+   // const anchorSaved = useUploadToSupabase("anchor", poll.anchor, poll.id, true);
+   // const markdownSaved = useUploadToSupabase("markdown", poll.markdown, poll.id, true);
 
-   const saved = pollDataSaved && conditionsSaved && uniqueIdSaved && anchorSaved;
+   // const saved = pollDataSaved && conditionsSaved && uniqueIdSaved && anchorSaved && markdownSaved;
+   // console.log("saved", saved);
+   const [upload, pollSaved] = useUploadRowToSupabase();
 
    const onUpdate = useCallback(
       async (title: string) => {
@@ -30,20 +34,15 @@ export default function Client({ poll: initialPoll }: { poll: poll }) {
       [poll.id]
    ); // Dependency: poll.id
 
-   const onChange = async (title: string) => {
-      setPoll((poll) => {
-         return { ...poll, title, unique_id: title.split(" ").join("_").toLowerCase() };
-      });
-   };
-
    return (
       <VStack className="h-full w-full overflow-hidden px-16 py-7">
+         <Saving saved={pollSaved}></Saving>
          {/* <Tabs defaultValue="what" className="flex h-full w-full flex-col overflow-hidden "> */}
          <VStack className="max-h-full gap-10">
             <div className="">
-               <HStack className="relative mb-5  items-center justify-center">
+               {/* <HStack className="relative mb-5  items-center justify-center">
                   {!saved ? <p className="absolute right-0 text-sm text-neutral-600">saving...</p> : null}
-               </HStack>
+               </HStack> */}
                <HStack className="flex flex-row items-end justify-between">
                   <div className="">
                      <HStack className="w-min items-center">
@@ -59,26 +58,19 @@ export default function Client({ poll: initialPoll }: { poll: poll }) {
                            className=" box-border w-fit text-2xl font-medium tracking-tight"
                            value={poll.title}
                            onUpdate={onUpdate}
-                           onChange={onChange}
                            // size={poll.title.size || 0}
                         />
                      </HStack>
                   </div>
 
                   <HStack className=" items-center gap-3 p-1">
-                     <Input
-                        className="w-full"
-                        value={poll.unique_id}
-                        type="title"
-                        id="dom"
-                        // placeholder="Title"
-                     />
                      <Select
                         onValueChange={(value) => {
                            setPoll({
                               ...poll,
                               poll_data: { ...poll.poll_data, type: value },
                            });
+                           upload("polls", poll.id, poll);
                         }}
                         value={poll.poll_data.type}
                      >
@@ -94,11 +86,9 @@ export default function Client({ poll: initialPoll }: { poll: poll }) {
                   </HStack>
                </HStack>
             </div>
-            {/* <TabsContent className=" h-full overflow-hidden" value="what"> */}
-            <What setPoll={setPoll} poll={poll}></What>
-            {/* </TabsContent> */}
+
+            <What upload={upload} setPoll={setPoll} poll={poll}></What>
          </VStack>
-         {/* </Tabs> */}
       </VStack>
    );
 }

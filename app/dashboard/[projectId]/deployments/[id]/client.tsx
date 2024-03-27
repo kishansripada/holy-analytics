@@ -37,31 +37,51 @@ import { CopyInput } from "./_components/CopyInput";
 import { Shiki } from "@/components/ui/shiki";
 import RemoteWidget from "../../poll/_components/remote-widget";
 import { useStore } from "../../store";
+import { Textarea } from "@/components/ui/textarea";
+import { useUploadCallToSupabase, useUploadRowToSupabase, useUploadToSupabaseFunction } from "@/utils/supabase/hooks";
+import Saving from "@/app/dashboard/_components/Saving";
 
 export default function Client({
-   // deployment: initialDeployment,
-   // projectId,
-   // audiences,
-   // messages,
-   // events,
    deploymentId,
-}: {
-   // deployment: any;
-   // projectId: string;
-   // audiences: any[];
-   // messages: any[];
-   // events: any[];
-}) {
-   const { deployments, audiences, project, messages, events } = useStore();
+   deployment: initialDeployment,
+   audiences,
+   messages: initialMessages,
+   projects,
+   projectId,
+   events,
+}: {}) {
+   const [uploadPropertyToSupabase, propertySaved] = useUploadCallToSupabase();
+   const [uploadRowToSupabase, rowSaved] = useUploadRowToSupabase();
+   const [deployment, setDeployment2] = useState(initialDeployment);
+   const [messages, setMessages] = useState(initialMessages);
 
-   const deployment = deployments.find((deployment) => deployment.id === deploymentId);
+   const setDeployment = (changedDeployment) => {
+      uploadRowToSupabase("deployments", changedDeployment.id, changedDeployment);
+      setDeployment2(changedDeployment);
+      // setDeployments(
+      //    deployments.map((d) => {
+      //       if (d.id === deploymentId) {
+      //          return changedDeployment;
+      //       }
+      //       return d;
+      //    })
+      // );
+   };
 
-   const projectId = project.id;
+   const setMessage = (messageId, newMessage) => {
+      uploadPropertyToSupabase("polls", "markdown", newMessage.markdown, newMessage.id);
+
+      setMessages(
+         messages.map((message) => {
+            if (message.id === messageId) {
+               return newMessage;
+            }
+            return message;
+         })
+      );
+   };
 
    const [messageSelect, setOpen] = useState<{ parentId?: string; current?: string } | false>(false);
-
-   const [s, setDeployment] = useState(deployment);
-   // const deploymentSaved = useUploadToSupabase("data_tree", deployment.data_tree, deployment.id, true);
 
    const initialTriggerEvent = events.find((event) => event.id === deployment?.data_tree?.initialTriggerEvent);
 
@@ -119,50 +139,49 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
       };
       highlight(); // <--- call the async function
    }, [deployment]); // <--- run when post updates
-   if (!deployments.length) return <div>loading...</div>;
+
    return (
       <VStack className="h-full w-full overflow-hidden px-16 py-12">
+         <Saving saved={propertySaved && rowSaved}></Saving>
          <CommandDialog open={Boolean(messageSelect)} onOpenChange={setOpen}>
             <CommandInput placeholder="Search for a message" />
             <CommandList>
                <CommandEmpty>No results found.</CommandEmpty>
                <CommandGroup heading={"Recent messages"}>
                   {messages.map((message) => {
-                     return (
-                        <CommandItem
-                           value={message.id}
-                           onSelect={(value) => {
-                              if (!messageSelect) return;
-                              if (messageSelect.current) {
-                                 setDeployment({
-                                    ...deployment,
-                                    data_tree: {
-                                       ...deployment.data_tree,
-                                       nodes: deployment.data_tree.nodes.map((node) => {
-                                          if (node.id === messageSelect) {
-                                             return { ...node, message_id: message.id };
-                                          }
-                                          return node;
-                                       }),
-                                    },
-                                 });
-                              }
-                              if (messageSelect.parentId) {
-                                 setDeployment({
-                                    ...deployment,
-                                    data_tree: {
-                                       ...deployment.data_tree,
-                                       nodes: [
-                                          ...deployment.data_tree.nodes,
-                                          { id: generateNanoId(), parent_id: messageSelect.parentId, message_id: message.id },
-                                       ],
-                                    },
-                                 });
-                              }
+                     const onSelect = (value) => {
+                        if (!messageSelect) return;
+                        if (messageSelect.current) {
+                           setDeployment({
+                              ...deployment,
+                              data_tree: {
+                                 ...deployment.data_tree,
+                                 nodes: deployment.data_tree.nodes.map((node) => {
+                                    if (node.id === messageSelect.current) {
+                                       return { ...node, message_id: message.id };
+                                    }
+                                    return node;
+                                 }),
+                              },
+                           });
+                        }
+                        if (messageSelect.parentId) {
+                           setDeployment({
+                              ...deployment,
+                              data_tree: {
+                                 ...deployment.data_tree,
+                                 nodes: [
+                                    ...deployment.data_tree.nodes,
+                                    { id: generateNanoId(), parent_id: messageSelect.parentId, message_id: message.id },
+                                 ],
+                              },
+                           });
+                        }
 
-                              setOpen(false);
-                           }}
-                        >
+                        setOpen(false);
+                     };
+                     return (
+                        <CommandItem key={message.id} value={message.id} onSelect={onSelect}>
                            {message.title}
                            <Badge variant={"secondary"} className=" ml-auto">
                               <p className="capitalize">{message.poll_data.type}</p>
@@ -211,9 +230,7 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                   onClick={async () => {
                      const { data, error } = await supabase.from("deployments").update({ is_live: !deployment.is_live }).eq("id", deployment.id);
                      if (!error) {
-                        setDeployment((deployment) => {
-                           return { ...deployment, is_live: !deployment.is_live };
-                        });
+                        setDeployment({ ...deployment, is_live: !deployment.is_live });
                      }
                   }}
                >
@@ -254,8 +271,9 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                                  return (
                                     <DropdownMenuItem
                                        onClick={() => {
-                                          setDeployment((deployment) => {
-                                             return { ...deployment, data_tree: { ...deployment.data_tree, initialAudience: audience.id } };
+                                          setDeployment({
+                                             ...deployment,
+                                             data_tree: { ...deployment.data_tree, initialAudience: audience.id },
                                           });
                                        }}
                                     >
@@ -268,9 +286,7 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                         ) : null}
                         <DropdownMenuItem
                            onClick={() => {
-                              setDeployment((deployment) => {
-                                 return { ...deployment, data_tree: { ...deployment.data_tree, initialAudience: "everyone" } };
-                              });
+                              setDeployment({ ...deployment, data_tree: { ...deployment.data_tree, initialAudience: "everyone" } });
                            }}
                         >
                            Everyone
@@ -347,15 +363,13 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                               return (
                                  <DropdownMenuItem
                                     onClick={() => {
-                                       setDeployment((deployment) => {
-                                          return {
-                                             ...deployment,
-                                             data_tree: {
-                                                ...deployment.data_tree,
-                                                initialTrigger: "event",
-                                                initialTriggerEvent: event.id,
-                                             },
-                                          };
+                                       setDeployment({
+                                          ...deployment,
+                                          data_tree: {
+                                             ...deployment.data_tree,
+                                             initialTrigger: "event",
+                                             initialTriggerEvent: event.id,
+                                          },
                                        });
                                     }}
                                  >
@@ -366,14 +380,12 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                            <DropdownMenuSeparator> </DropdownMenuSeparator>
                            <DropdownMenuItem
                               onClick={() => {
-                                 setDeployment((deployment) => {
-                                    return {
-                                       ...deployment,
-                                       data_tree: {
-                                          ...deployment.data_tree,
-                                          initialTrigger: "page_load",
-                                       },
-                                    };
+                                 setDeployment({
+                                    ...deployment,
+                                    data_tree: {
+                                       ...deployment.data_tree,
+                                       initialTrigger: "page_load",
+                                    },
                                  });
                               }}
                            >
@@ -387,14 +399,12 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                         <Input
                            value={deployment.data_tree.initialTriggerDelay || 0}
                            onChange={(e) => {
-                              setDeployment((deployment) => {
-                                 return {
-                                    ...deployment,
-                                    data_tree: {
-                                       ...deployment.data_tree,
-                                       initialTriggerDelay: parseInt(e.target.value),
-                                    },
-                                 };
+                              setDeployment({
+                                 ...deployment,
+                                 data_tree: {
+                                    ...deployment.data_tree,
+                                    initialTriggerDelay: parseInt(e.target.value),
+                                 },
                               });
                            }}
                            className="mx-2 w-16"
@@ -436,6 +446,7 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                deployment={deployment}
                messages={messages}
                setDeployment={setDeployment}
+               setMessage={setMessage}
             ></MessageLayer>
          </div>
       </VStack>
@@ -452,7 +463,7 @@ const SpacerArrow = () => {
    );
 };
 
-const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId, open, setOpen }) => {
+const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId, open, setOpen, setMessage }) => {
    if (!deployment.data_tree.nodes.filter((node) => node.parent_id === parentId).length) return;
    return (
       <>
@@ -471,47 +482,63 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                      return (
                         <BoxWithPlus onPlus={() => setOpen({ parentId: node.id })} canAdd={true}>
                            <HStack className="items-center justify-between">
-                              <div className="flex h-full flex-row items-center justify-between gap-2">
-                                 <Sheet>
-                                    <SheetTrigger asChild>
-                                       <button>
-                                          <svg
-                                             xmlns="http://www.w3.org/2000/svg"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             strokeWidth={1.5}
-                                             stroke="currentColor"
-                                             className="h-6 w-6"
-                                          >
-                                             <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                                             />
-                                          </svg>
-                                       </button>
-                                    </SheetTrigger>
-                                    <SheetContent>
-                                       <div className="flex h-full flex-col">
-                                          <SheetTitle>{message.title}</SheetTitle>
-                                          <div className="mt-2 flex flex-col items-center justify-between gap-2">
-                                             <CopyInput className="w-full" value={node.id} title={"step id"}></CopyInput>
-                                             {message.poll_data.type === "popover" ? (
-                                                <CopyInput
-                                                   className="w-full"
-                                                   value={`data-hyperuser="${message.anchor}"`}
-                                                   title={"anchor tag"}
-                                                ></CopyInput>
-                                             ) : null}
+                              <div className="flex h-full w-full flex-row items-center justify-between gap-2">
+                                 <div>
+                                    <Badge className="capitalize" variant={"outline"}>
+                                       {message.poll_data.type}
+                                    </Badge>
+                                 </div>
+                                 <div>
+                                    <Sheet>
+                                       <SheetTrigger asChild>
+                                          <button>
+                                             <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="h-6 w-6"
+                                             >
+                                                <path
+                                                   strokeLinecap="round"
+                                                   strokeLinejoin="round"
+                                                   d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                                                />
+                                             </svg>
+                                          </button>
+                                       </SheetTrigger>
+                                       <SheetContent>
+                                          <div className="flex h-full flex-col">
+                                             <Badge className="mb-1 w-min capitalize" variant={"secondary"}>
+                                                {message.poll_data.type}
+                                             </Badge>
+                                             <SheetTitle>{message.title}</SheetTitle>
+                                             <div className="mt-2 flex flex-col items-center justify-between gap-2">
+                                                <CopyInput className="w-full" value={node.id} title={"step id"}></CopyInput>
+                                                {message.poll_data.type === "popover" ? (
+                                                   <CopyInput
+                                                      className="w-full"
+                                                      value={`data-hyperuser="${message.anchor}"`}
+                                                      title={"anchor tag"}
+                                                   ></CopyInput>
+                                                ) : null}
+                                             </div>
+                                             <p className="mt-6 font-semibold text-neutral-700">Trigger next step</p>
+                                             <Shiki code={`hyperuser.nextStep("${deployment.id}", "${node.id}")`} theme="vitesse-dark"></Shiki>
+                                             <Textarea
+                                                className="mt-4 w-full"
+                                                value={message.markdown}
+                                                onChange={(e) => {
+                                                   setMessage(message.id, { ...message, markdown: e.target.value });
+                                                }}
+                                             ></Textarea>
+                                             <div className="mt-auto">
+                                                <RemoteWidget poll={message}></RemoteWidget>
+                                             </div>
+                                             {/* <SheetDescription>Make changes to your profile here. Click save when you're done.</SheetDescription> */}
                                           </div>
-                                          <p className="mt-6 font-semibold text-neutral-700">Trigger next step</p>
-                                          <Shiki code={`hyperuser.nextStep("${deployment.id}", "${node.id}")`} theme="vitesse-dark"></Shiki>
-                                          <div className="mt-auto">
-                                             <RemoteWidget poll={message}></RemoteWidget>
-                                          </div>
-                                          {/* <SheetDescription>Make changes to your profile here. Click save when you're done.</SheetDescription> */}
-                                       </div>
-                                       {/* <div className="grid gap-4 py-4">
+                                          {/* <div className="grid gap-4 py-4">
                                           <div className="grid grid-cols-4 items-center gap-4">
                                              <Label htmlFor="name" className="text-right">
                                                 Name
@@ -525,51 +552,50 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                                              <Input id="username" value="@peduarte" className="col-span-3" />
                                           </div>
                                        </div> */}
-                                       {/* <SheetFooter>
+                                          {/* <SheetFooter>
                                           <SheetClose asChild>
                                              <Button type="submit">Save changes</Button>
                                           </SheetClose>
                                        </SheetFooter> */}
-                                    </SheetContent>
-                                 </Sheet>
+                                       </SheetContent>
+                                    </Sheet>
 
-                                 <DropdownMenu>
-                                    <DropdownMenuTrigger>
-                                       <button>
-                                          <svg
-                                             xmlns="http://www.w3.org/2000/svg"
-                                             fill="none"
-                                             viewBox="0 0 24 24"
-                                             strokeWidth={1.5}
-                                             stroke="currentColor"
-                                             className="h-6 w-6"
-                                          >
-                                             <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                                             />
-                                          </svg>
-                                       </button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                       <DropdownMenuItem
-                                          onClick={() => {
-                                             setDeployment((deployment) => {
-                                                return {
+                                    <DropdownMenu>
+                                       <DropdownMenuTrigger>
+                                          <button className="grid place-items-center">
+                                             <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={1.5}
+                                                stroke="currentColor"
+                                                className="h-6 w-6"
+                                             >
+                                                <path
+                                                   strokeLinecap="round"
+                                                   strokeLinejoin="round"
+                                                   d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                                                />
+                                             </svg>
+                                          </button>
+                                       </DropdownMenuTrigger>
+                                       <DropdownMenuContent>
+                                          <DropdownMenuItem
+                                             onClick={() => {
+                                                setDeployment({
                                                    ...deployment,
                                                    data_tree: {
                                                       ...deployment.data_tree,
                                                       nodes: deployment.data_tree.nodes.filter((nodex) => nodex.id !== node.id),
                                                    },
-                                                };
-                                             });
-                                          }}
-                                       >
-                                          Delete
-                                       </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                 </DropdownMenu>
+                                                });
+                                             }}
+                                          >
+                                             Delete
+                                          </DropdownMenuItem>
+                                       </DropdownMenuContent>
+                                    </DropdownMenu>
+                                 </div>
                               </div>
                            </HStack>
 
@@ -587,19 +613,17 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                                        <Input
                                           value={deployment.data_tree.nodes.find((nodex) => nodex.id === node.id).programmatic_filter}
                                           onChange={(e) => {
-                                             setDeployment((deployment) => {
-                                                return {
-                                                   ...deployment,
-                                                   data_tree: {
-                                                      ...deployment.data_tree,
-                                                      nodes: deployment.data_tree.nodes.map((nodex) => {
-                                                         if (nodex.id === node.id) {
-                                                            return { ...nodex, programmatic_filter: e.target.value };
-                                                         }
-                                                         return nodex;
-                                                      }),
-                                                   },
-                                                };
+                                             setDeployment({
+                                                ...deployment,
+                                                data_tree: {
+                                                   ...deployment.data_tree,
+                                                   nodes: deployment.data_tree.nodes.map((nodex) => {
+                                                      if (nodex.id === node.id) {
+                                                         return { ...nodex, programmatic_filter: e.target.value };
+                                                      }
+                                                      return nodex;
+                                                   }),
+                                                },
                                              });
                                           }}
                                           className="mx-2 w-12"
@@ -629,35 +653,8 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
             messages={messages}
             setDeployment={setDeployment}
             projectId={projectId}
+            setMessage={setMessage}
          ></MessageLayer>
       </>
    );
-};
-
-const useUploadToSupabase = (dataKey: string, dataValue: any, danceId: string, enabled: boolean) => {
-   const supabase = createClient();
-   const [saved, setSaved] = useState(true);
-   // If viewOnlyInitial is true, immediately exit from the hook
-
-   const upload = useCallback(
-      debounce(async (dataValue) => {
-         console.log(`uploading ${dataKey}`);
-         const { data, error } = await supabase
-            .from("deployments")
-            .update({ [dataKey]: dataValue })
-            .eq("id", danceId);
-         console.log({ data });
-         console.log({ error });
-         setSaved(true);
-      }, 2000),
-      [danceId]
-   );
-
-   useEffect(() => {
-      if (!enabled) return;
-
-      setSaved(false);
-      upload(dataValue);
-   }, [dataValue]);
-   return saved;
 };

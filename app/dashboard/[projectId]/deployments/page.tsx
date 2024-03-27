@@ -17,5 +17,5 @@ export default async function Index({ params: { projectId } }: { params: { proje
       getPolls(),
    ]);
 
-   return <Client audiences={audiences} messages={messages} projectId={projectId} project={project} deployments={deployments}></Client>;
+   return <Client deployments={deployments} project={project} audiences={audiences} messages={messages} projectId={projectId}></Client>;
 }

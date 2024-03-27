@@ -27,7 +27,7 @@ export default function Client({ deployments, projectId, events, polls }: { depl
 import hyperuser from "../utils/hyperuser";
    
    <Script
-     src="https://widget.holyuser.com/holyuser.js"
+     src="https://static.hyperuser.dev/main.js"
      onLoad={() => {
        hyperuser.initialize({
          disabled: !isDesktop,
@@ -40,13 +40,13 @@ import hyperuser from "../utils/hyperuser";
          },
        });
      }}
-     type="module"
+ 
    />;
    `;
 
-   const reactScript = `<script type="module" src="https://widget.holyuser.com/holyuser.js"></script>`;
+   const reactScript = `<script src="https://static.hyperuser.dev/main.js"></script>`;
    const reactConsume = `import hyperuser from "../utils/hyperuser";
-   
+
 useEffect(() => {
       hyperuser.initialize({
          userId: "<user_id>",

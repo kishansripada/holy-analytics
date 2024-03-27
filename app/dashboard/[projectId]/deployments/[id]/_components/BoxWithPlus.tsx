@@ -2,7 +2,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 
 export const BoxWithPlus = ({ children, onPlus, canAdd }) => {
    return (
-      <div className="relative flex min-w-[275px] max-w-xs flex-col justify-center gap-3 rounded-xl border border-neutral-300 px-5 py-3  ">
+      <div className="relative flex min-w-[200px] max-w-xs flex-col justify-center gap-3 rounded-xl border border-neutral-300 px-5 py-3  ">
          {canAdd && (
             <button
                onClick={onPlus}

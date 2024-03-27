@@ -45,8 +45,8 @@ export default function Sidebar({ user }: { user: User }) {
                </Button>
             </Link>
          ) : (
-            <p className="ml-2 text-2xl font-medium text-neutral-700">
-               👧🏻 <span className="ml-1">hyperuser</span>
+            <p className="ml-2 flex flex-row items-end gap-2 text-2xl font-medium text-neutral-700">
+               <img className="h-8 w-8" src="/logo.png" alt="" /> <span className="ml-1">hyperuser</span>
             </p>
          )}
          <div data-hyperuser="testing" className="flex h-full flex-col gap-1">
