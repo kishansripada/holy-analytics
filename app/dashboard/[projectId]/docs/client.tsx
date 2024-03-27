@@ -64,6 +64,8 @@ useEffect(() => {
          <div>
             <div className=" h-full px-24 py-24">
                <p className="text-4xl font-semibold">Installation</p>
+
+               <p className="mt-1 text-xs text-neutral-600">API Key: {projectId}</p>
                <div className="h-5"></div>
                <p className="text-2xl font-semibold">Helper file (important!)</p>
                <div className="h-2"></div>
