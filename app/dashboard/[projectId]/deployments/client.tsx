@@ -27,7 +27,6 @@ export default function Client({ projectId, deployments, messages, audiences, pr
          .insert([
             {
                name: newDeploymentName,
-               // unique_id: newDeploymentName.toLowerCase().replace(" ", "_"),
                app_id: projectId,
                data_tree: {
                   nodes: [
@@ -38,7 +37,7 @@ export default function Client({ projectId, deployments, messages, audiences, pr
                         programmatic_filter: "30",
                      },
                   ],
-                  initialTrigger: "programmatic",
+                  initialTrigger: "page_load",
                   initialAudience: newDeploymentAudienceId,
                   initialTriggerDelay: 0,
                },
