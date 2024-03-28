@@ -137,7 +137,10 @@ export default function Client({ projectId, deployments, messages, audiences, pr
                         .map((deployment) => {
                            const audience = audiences.find((audience) => audience.id === deployment.data_tree.initialAudience);
                            const intialTrigger = deployment.data_tree.initialTrigger !== "page_load" ? "Code trigger" : "On load";
-                           const firstMessage = messages.find((message) => message.id === deployment.data_tree.nodes[0].message_id);
+                           const firstMessage = messages.find((message) => message.id === deployment?.data_tree?.nodes[0]?.message_id) || {
+                              title: "No message",
+                              id: "",
+                           };
 
                            return (
                               <ContextMenu>

@@ -1,6 +1,11 @@
 declare module "react" {
    interface HTMLAttributes<T> extends DOMAttributes<T> {
-      "data-hyperuser"?: "watch_a_demo_element" | null;
+      "data-hyperuser"?:
+         | "you_can_also_show_modals_element"
+         | "watch_a_demo_element"
+         | "this_text_says_developers"
+         | "this_is_our_logo_element"
+         | null;
    }
 }
 export interface EmbedProps {
@@ -10,9 +15,9 @@ export interface EmbedProps {
    apiKey: string;
    user: any;
 }
-const eventIds = [] as const;
+const eventIds = ["user_clicks_start_onboarding_on_landing_page"] as const;
 type EventId = (typeof eventIds)[number];
-const deploymentIds = [] as const;
+const deploymentIds = ["1b6b1979-0d47-40e6-af86-e872a42d0300"] as const;
 type DeploymentId = (typeof deploymentIds)[number];
 type Hyperuser = {
    initialize(params: EmbedProps): void;
@@ -30,6 +35,9 @@ const errorBoundary = (functionToExcecute: Function) => {
          console.warn("There was an error excuting a function");
       }
    } else {
+      console.warn(
+         "[hyperuser]: the hyperuser script tag was not properly loaded, or is blocked and you attempting to call a function from hyperuser"
+      );
    }
 };
 class hyperuser implements Hyperuser {

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -172,7 +173,7 @@ hyperuser.trackEvent("${initialTriggerEvent?.unique_id}")`;
                                  ...deployment.data_tree,
                                  nodes: [
                                     ...deployment.data_tree.nodes,
-                                    { id: generateNanoId(), parent_id: messageSelect.parentId, message_id: message.id },
+                                    { id: generateNanoId(), parent_id: messageSelect.parentId, message_id: message.id, programmatic_filter: 1 },
                                  ],
                               },
                            });
@@ -454,11 +455,7 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                   .filter((node) => node.parent_id === parentId)
                   .map((node) => {
                      const message = messages.find((message) => message.id === node.message_id);
-                     // const code = `hyperuser.nextStep("${deployment.id}", "${node.id}")`; // input code
-                     // const endDeploymentCode = codeToHtml(code, {
-                     //    lang: "javascript",
-                     //    theme: "vitesse-dark",
-                     // }).then((r) => r);
+                     console.log(deployment.data_tree.nodes.find((nodex) => nodex.id === node.id).programmatic_filter);
 
                      return (
                         <BoxWithPlus onPlus={() => setOpen({ parentId: node.id })} canAdd={true}>
@@ -581,35 +578,37 @@ const MessageLayer = ({ deployment, messages, setDeployment, parentId, projectId
                            </HStack>
 
                            <div className="flex flex-row items-end justify-between gap-2">
-                              <div className="flex w-full flex-col gap-2">
+                              <div className="gap- flex w-full flex-col gap-2">
                                  <DropdownPill
                                     type="message"
                                     onClick={() => setOpen((open: boolean) => (open ? false : { current: node.id }))}
                                     value={message.title}
                                  />
 
-                                 {deployment.data_tree.initialTrigger !== "page_load" ? (
-                                    <div className="flex flex-row items-center text-sm">
-                                       After{" "}
-                                       <Input
-                                          value={deployment.data_tree.nodes.find((nodex) => nodex.id === node.id).programmatic_filter}
-                                          onChange={(e) => {
-                                             setDeployment({
-                                                ...deployment,
-                                                data_tree: {
-                                                   ...deployment.data_tree,
-                                                   nodes: deployment.data_tree.nodes.map((nodex) => {
-                                                      if (nodex.id === node.id) {
-                                                         return { ...nodex, programmatic_filter: e.target.value };
-                                                      }
-                                                      return nodex;
-                                                   }),
-                                                },
-                                             });
-                                          }}
-                                          className="mx-2 w-12"
-                                       />
-                                       triggers
+                                 {deployment.data_tree.initialTrigger !== "page_load" && node.parent_id === "initialTrigger" ? (
+                                    <div className="flex flex-row items-center gap-3 text-sm">
+                                       <div className="flex flex-row items-center ">
+                                          <Input
+                                             value={deployment.data_tree.nodes.find((nodex) => nodex.id === node.id).programmatic_filter}
+                                             onChange={(e) => {
+                                                setDeployment({
+                                                   ...deployment,
+                                                   data_tree: {
+                                                      ...deployment.data_tree,
+                                                      nodes: deployment.data_tree.nodes.map((nodex) => {
+                                                         if (nodex.id === node.id) {
+                                                            return { ...nodex, programmatic_filter: e.target.value };
+                                                         }
+                                                         return nodex;
+                                                      }),
+                                                   },
+                                                });
+                                             }}
+                                             type="number"
+                                             className="mx-2 w-20"
+                                          />
+                                          triggers
+                                       </div>
                                     </div>
                                  ) : (
                                     <></>

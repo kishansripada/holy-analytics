@@ -163,12 +163,15 @@ export default function What({ poll, setPoll, upload }: { poll: poll; setPoll: F
                         onChange={(e) => {
                            //  console.log(e);
                            setPoll((poll) => {
+                              upload("polls", poll.id, {
+                                 ...poll,
+                                 anchor: e.target.value,
+                              });
                               return {
                                  ...poll,
                                  anchor: e.target.value,
                               };
                            });
-                           upload("polls", poll.id, poll);
                         }}
                         value={poll.anchor}
                         placeholder="Anchor ID"

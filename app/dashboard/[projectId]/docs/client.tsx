@@ -169,6 +169,9 @@ const buildUtilsFile = (deploymentIds: string[], eventIds: string[], anchors: st
             console.warn("There was an error excuting a function");
          }
       } else {
+         console.warn(
+            "[hyperuser]: the hyperuser script tag was not properly loaded, or is blocked and you attempting to call a function from hyperuser"
+         );
       }
    };
    class hyperuser implements Hyperuser {
