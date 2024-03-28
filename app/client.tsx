@@ -24,7 +24,14 @@ export default function Client() {
             }}
          />
 
-         <Button variant={"outline"}>Click here for mock onboarding/messaging</Button>
+         <Button
+            onClick={() => {
+               hyperuser.trackEvent("user_clicks_start_onboarding_on_landing_page");
+            }}
+            variant={"outline"}
+         >
+            Click here for mock onboarding/messaging
+         </Button>
          <Link href="https://youtu.be/HF-IU7NZ25k?si=ynF1QAArwKct2d0f ">
             <Button data-hyperuser="watch_a_demo_element" variant={"outline"}>
                Watch a demo
