@@ -71,7 +71,8 @@ useEffect(() => {
                <div className="h-2"></div>
                <p className="text-sm text-neutral-700">
                   Copy and paste this code to some utils file in your codebase, this exports the hyperuser object you will use. It also includes types
-                  for all the events and deployments in your project.``
+                  for all the events and deployments in your project. You should copy and paste this code every time you make a change in your
+                  dashboard in order to keep your codebase up to date and typesafe.
                </p>
                <div className="h-5"></div>
 

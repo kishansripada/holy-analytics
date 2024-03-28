@@ -7,6 +7,7 @@ import Link from "next/link";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { Logo } from "./Logo";
 
 export default function Sidebar({ user }: { user: User }) {
    const path = usePathname();
@@ -45,9 +46,7 @@ export default function Sidebar({ user }: { user: User }) {
                </Button>
             </Link>
          ) : (
-            <p className="ml-2 flex flex-row items-end gap-2 text-2xl font-medium text-neutral-700">
-               <img className="h-8 w-8" src="/logo.png" alt="" /> <span className="ml-1">hyperuser</span>
-            </p>
+            <Logo />
          )}
          <div data-hyperuser="testing" className="flex h-full flex-col gap-1">
             {path.includes("/dashboard/") ? (

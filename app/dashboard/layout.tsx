@@ -11,8 +11,8 @@ const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` 
 
 export const metadata = {
    metadataBase: new URL(defaultUrl),
-   title: "Dashboard | Holy User",
-   description: "Dashboard for Holy User. Create and edit your notifications",
+   title: "Dashboard | Hyperuser",
+   description: "Dashboard for Hyperuser. Create and edit your notifications",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

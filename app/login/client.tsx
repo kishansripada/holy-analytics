@@ -41,10 +41,7 @@ export default function Client() {
       <AppWrapper className={"flex select-none flex-col items-center justify-center "}>
          <VStack className="h-full w-[330px] max-w-[330px] items-center ">
             <VStack className="h-full w-full items-center justify-center gap-6 ">
-               <Link href={"/"}>
-                  <p className="text-6xl">🙏🏽</p>
-               </Link>
-               <p className="w-full text-center  text-xl font-semibold">Log in to Holy User</p>
+               <p className="w-full text-center  text-xl font-semibold">Log in to Hyperuser</p>
 
                <VStack className="w-full gap-3">
                   <Button

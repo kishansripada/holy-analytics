@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import RemoteModal from "./remote-modal";
+import Script from "next/script";
+import hyperuser from "@/utils/hyperuser";
 
 const SAMPLE_ANNOUNCEMENT = {
    poll_data: {
@@ -31,24 +33,23 @@ export default function Client() {
 
    return (
       <>
-         <div className="flex w-full flex-row items-center justify-between gap-10">
-            {/* <Button
-               onClick={() => {
-                  setNotificationOpen(true);
-               }}
-               variant={"outline"}
-            >
-               View Notification Example
-            </Button> */}
-            <Button
-               onClick={() => {
-                  setAnnouncementOpen(true);
-               }}
-               variant={"outline"}
-            >
-               View Example
-            </Button>
-         </div>
+         <Script
+            src="https://static.hyperuser.dev/main.js"
+            onLoad={() => {
+               hyperuser.initialize({
+                  userId: "dummy",
+                  apiKey: "6ff56c62-aad3-418a-88a0-9e94fc50de19",
+                  user: {},
+               });
+            }}
+         />
+
+         <Button data-hyperuser="watch_a_demo_element" variant={"outline"}>
+            Click here for mock onboarding/messaging
+         </Button>
+         <Button data-hyperuser="watch_a_demo_element" variant={"outline"}>
+            Watch a demo
+         </Button>
 
          <RemoteModal poll={SAMPLE_YES_OR_NO} open={notificationOpen} setOpen={setNotificationOpen}></RemoteModal>
          <RemoteModal poll={SAMPLE_ANNOUNCEMENT} open={announcementOpen} setOpen={setAnnouncementOpen}></RemoteModal>
