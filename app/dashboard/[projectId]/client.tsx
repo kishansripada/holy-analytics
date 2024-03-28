@@ -164,7 +164,7 @@ export default function Client({ projectId, messages, project }: { messages: pol
                                  <ContextMenuContent>
                                     <ContextMenuItem
                                        onClick={async () => {
-                                          const test = await supabase.from("messages").delete().eq("id", poll.id);
+                                          const test = await supabase.from("polls").delete().eq("id", poll.id);
                                           router.refresh();
                                        }}
                                     >
